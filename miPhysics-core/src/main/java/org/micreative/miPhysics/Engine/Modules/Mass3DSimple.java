@@ -30,11 +30,5 @@ public class Mass3DSimple extends Mat {
     m_frc.set(0., 0., 0.);
   }
 
-  public void updateGravity(Vect3D grav) {
-    // nothing here
-  }
-  public void updateFriction(double fric) {
-    // nothing here
-  }
 
 }

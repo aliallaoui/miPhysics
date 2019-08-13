@@ -13,8 +13,8 @@ public class SpringDamper3D extends Link {
 
     public SpringDamper3D(double distance, double K_param, double Z_param, Mat m1, Mat m2) {
         super(distance, m1, m2);
-        m_K = K_param;
-        m_Z = Z_param;
+        stiffness = K_param;
+        damping = Z_param;
 
         // for experimental implementation
         m_PrevD = calcDelayedDistance();
@@ -22,7 +22,7 @@ public class SpringDamper3D extends Link {
 
     public void compute() {
         updateEuclidDist();
-        applyForces( -(m_dist-m_dRest)*(m_K) - getVel() *  m_Z );
+        applyForces( -(m_dist-m_dRest)*(stiffness) - getVel() *  damping );
     }
   
     // Experimental alternate computation algorithm

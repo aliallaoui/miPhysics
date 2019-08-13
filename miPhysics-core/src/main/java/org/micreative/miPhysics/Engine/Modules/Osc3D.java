@@ -16,15 +16,15 @@ public class Osc3D extends Mat {
     m_pRest = new Vect3D();
     m_pRest.set(initPos);
 
-    m_K = K_param;
-    m_Z = Z_param;
+    stiffness = K_param;
+    damping = Z_param;
 
-    m_A = 2. - m_invMass * m_K - m_invMass * (m_Z+m_fricZ) ;
-    m_B = 1. -m_invMass * (m_fricZ + m_Z) ;
+    m_A = 2. - m_invMass * stiffness - m_invMass * (damping+friction) ;
+    m_B = 1. -m_invMass * (friction + damping) ;
 
-    m_fricZ = friction;
-    m_gFrc = new Vect3D();
-    m_gFrc.set(grav);
+    this.friction = friction;
+    gravity = new Vect3D();
+    gravity.set(grav);
   }
 
   public void compute() { 
@@ -46,7 +46,7 @@ public class Osc3D extends Mat {
     m_pos.add(m_frc);
 
     // Add gravitational force.
-    m_pos.sub(m_gFrc);
+    m_pos.sub(gravity);
     
     // Restore the offset of the module
     m_pos.x += m_pRest.x;
@@ -58,25 +58,23 @@ public class Osc3D extends Mat {
     m_frc.set(0., 0., 0.);
   }
 
-  public double getStiffness(){return m_K;}
-  public double getDamping(){return m_Z;}
+  public double getStiffness(){return stiffness;}
+  public double getDamping(){return damping;}
 
   public void setStiffness(double K){
-    m_K = K;
+    stiffness = K;
   }
 
   public void setDamping(double Z){
-    m_Z = Z;
+    damping = Z;
   }
 
-  public void updateGravity(Vect3D grav) { 
-    m_gFrc.set(grav);
-  }
-  public void updateFriction(double fric) { 
-    m_fricZ= fric;
 
-    m_A = 2. - m_invMass * m_K - m_invMass * (m_Z+m_fricZ) ;
-    m_B = 1. -m_invMass * (m_fricZ + m_Z) ;
+  public void setFriction(double fric) { 
+    friction= fric;
+
+    m_A = 2. - m_invMass * stiffness - m_invMass * (damping+friction) ;
+    m_B = 1. -m_invMass * (friction + damping) ;
   }
   
   public double distRest() {  // AJOUT JV Permet de sortir le DeltaX relatif entre mas et sol d'une cel
@@ -88,10 +86,8 @@ public class Osc3D extends Mat {
   private double m_A;
   private double m_B;
   
-  private double m_K;
-  private double m_Z;
-  private double m_fricZ;
-  private Vect3D m_gFrc;
+  private double stiffness;
+  private double damping;
   
   private Vect3D m_pRest;
 }

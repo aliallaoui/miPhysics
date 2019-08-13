@@ -15,13 +15,13 @@ public class SpringDamper1D extends Link {
 
 	public SpringDamper1D(double distance, double K_param, double Z_param, Mat m1, Mat m2) {
 		super(distance, m1, m2);
-		m_K = K_param;
-		m_Z = Z_param;
+		stiffness = K_param;
+		damping = Z_param;
 	}
 
 	public void compute() {
 		m_dist_1D = calcDist1D();
-		applyForces1D( (m_dist_1D - m_dRest)* m_K + getVel() *  m_Z );
+		applyForces1D( (m_dist_1D - m_dRest)* stiffness + getVel() *  damping );
 		m_distR_1D = m_dist_1D;
 	}
 

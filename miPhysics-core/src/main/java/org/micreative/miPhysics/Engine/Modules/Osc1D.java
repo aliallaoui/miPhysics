@@ -10,13 +10,13 @@ public class Osc1D extends Mat {
 
 		m_pRest = initPos.z;
 
-		m_K = K_param;
-		m_Z = Z_param;
+		stiffness = K_param;
+		damping = Z_param;
 
 		updateAB();
-		m_fricZ = friction;
-		m_gFrc = new Vect3D();
-		m_gFrc.set(grav);
+		this.friction = friction;
+		gravity = new Vect3D();
+		gravity.set(grav);
 	}
 
 	public void compute() {
@@ -34,33 +34,12 @@ public class Osc1D extends Mat {
 
 	}
 
-	public double getStiffness(){return m_K;}
-	public double getDamping(){return m_Z;}
 
-	public void setStiffness(double K){
-		m_K = K;
-	}
-
-	public void setDamping(double Z){
-		m_Z = Z;
-	}
-
-	public boolean changeStiffness(double K){setStiffness(K);updateAB(); return true;}
-	public boolean changeDamping(double Z){setDamping(Z);updateAB();return true;}
-
-	public void updateGravity(Vect3D grav) {
-		m_gFrc.set(grav);
-	}
-	public void updateFriction(double fric) {
-		m_fricZ= fric;
-
-		updateAB();
-	}
-
+	
 	public void updateAB()
 	{
-		m_A = 2. - m_invMass * m_K - m_invMass * (m_Z+m_fricZ) ;
-		m_B = 1. -m_invMass * (m_fricZ + m_Z) ;
+		m_A = 2. - m_invMass * stiffness - m_invMass * (damping+friction) ;
+		m_B = 1. -m_invMass * (friction + damping) ;
 	}
 
 	public double distRest() {  // AJOUT JV Permet de sortir le DeltaX relatif entre mas et sol d'une cel
@@ -72,10 +51,8 @@ public class Osc1D extends Mat {
 	private double m_A;
 	private double m_B;
 
-	private double m_K;
-	private double m_Z;
-	private double m_fricZ;
-	private Vect3D m_gFrc;
+	private double stiffness;
+	private double damping;
 
 	double m_pRest;
 	double newPos;

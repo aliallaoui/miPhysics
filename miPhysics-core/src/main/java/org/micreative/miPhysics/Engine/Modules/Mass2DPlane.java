@@ -17,9 +17,9 @@ public class Mass2DPlane extends Mat {
     // Make sure there is no initial velocity on the Z axis
     m_posR.z = m_pos.z;
 
-    m_fricZ = friction;
-    m_gFrc = new Vect3D();
-    m_gFrc.set(grav);
+    this.friction = friction;
+    gravity = new Vect3D();
+    gravity.set(grav);
   }
 
   public void compute() {
@@ -32,11 +32,11 @@ public class Mass2DPlane extends Mat {
     {
     // Calculate the update of the mass's position
     m_frc.mult(m_invMass);
-    m_pos.mult(2 - m_invMass * m_fricZ);
-    m_posR.mult(1 -m_invMass * m_fricZ);
+    m_pos.mult(2 - m_invMass * friction);
+    m_posR.mult(1 -m_invMass * friction);
     m_pos.sub(m_posR);
     m_pos.add(m_frc);
-    m_pos.sub(m_gFrc);
+    m_pos.sub(gravity);
 
     // Constrain to 2D Plane : keep Z axis value constant
     m_pos.z = tmp.z;
@@ -45,15 +45,5 @@ public class Mass2DPlane extends Mat {
     m_frc.set(0., 0., 0.);
   }
 
-  public void updateGravity(Vect3D grav) {
-    m_gFrc.set(grav);
-  }
-  public void updateFriction(double fric) {
-    m_fricZ= fric;
-  }
 
-  /* Class attributes */
-
-  private double m_fricZ;
-  private Vect3D m_gFrc;
 }

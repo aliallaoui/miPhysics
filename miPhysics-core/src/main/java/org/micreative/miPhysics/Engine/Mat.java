@@ -9,7 +9,7 @@ import org.micreative.miPhysics.*;
  * @author James Leonard / james.leonard@gipsa-lab.fr
  *
  */
-public abstract class Mat {
+public abstract class Mat extends Module{
 
 
     /**
@@ -50,6 +50,9 @@ public abstract class Mat {
      */
     public abstract void compute();
 
+    public void computeForces(){}
+
+    public void computeMoves(){compute();};
     /**
      * Apply external force to this Mat module.
      * @param force force to apply.
@@ -114,19 +117,6 @@ public abstract class Mat {
         return true;
     }
 
-    /**
-     * Set the stiffness parameter.
-     * @param K stiffness value.
-     * @return true if set the stiffness val
-     */
-    public boolean changeStiffness(double K){return false;}
-
-    /**
-     * Set the damping parameter.
-     * @param Z damping value.
-     * @return true if set the damping val
-     */
-    public boolean changeDamping(double Z){return false;}
 
     /**
      * Get the mass parameter.
@@ -136,23 +126,19 @@ public abstract class Mat {
         return  1. / m_invMass;
     }
 
-    /**
-     * Get the stiffness parameter.
-     * @return the stiffness value
-     */
-    public double getStiffness () {
-        return  -1.;
+
+
+
+    public void setGravity(Vect3D grav) {
+        gravity.set(grav);
+    }
+    public void setFriction(double fric) {
+        friction= fric;
     }
 
-    /**
-     * Get the damping parameter.
-     * @return the damping value
-     */
-    public double getDamping () {
-        return  -1.;
-    }
-
-
+    /* Class attributes */
+    protected double friction;
+    protected Vect3D gravity;
     /**
      * Trigger a temporary velocity control
      * @param v the velocity used to displace the mat at each step
@@ -172,7 +158,7 @@ public abstract class Mat {
         m_controlled = false;
     }
 
-    public String getType(){return getClass().toString();}
+
     /* Class attributes */
 
     protected Vect3D m_pos;

@@ -18,8 +18,8 @@ public class PlaneContact extends Link {
   public PlaneContact(double distance, double K_param, double Z_param, Mat m1, Mat m2, int or, double pos) {
     super(0., m1, m2);
 
-    m_Z = Z_param;
-    m_K = K_param;
+    damping = Z_param;
+    stiffness = K_param;
     m_dRest = distance;
     m_position = pos;
     m_orientation = or;
@@ -39,7 +39,7 @@ public class PlaneContact extends Link {
       m_posForPlane = getMat1().getPos().z;
 
     double thresholdPos = m_posForPlane - m_position - m_dRest ;
-    double lnkFrc = - thresholdPos *(m_K) - (m_posForPlane - m_dlyPosForPlane) *  m_Z;
+    double lnkFrc = - thresholdPos *(stiffness) - (m_posForPlane - m_dlyPosForPlane) *  damping;
 
     if (thresholdPos < 0) {
       if (m_orientation == 0)

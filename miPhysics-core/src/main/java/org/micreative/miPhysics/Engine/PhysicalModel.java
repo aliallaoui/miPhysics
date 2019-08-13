@@ -1364,7 +1364,7 @@ public class PhysicalModel {
 	public void setLinkDRest(String name, double d) {
 		int link_index = getLinkIndex(name);
 		try {
-			links.get(link_index).changeDRest(d);
+			links.get(link_index).setDRest(d);
 		} catch (Exception e) {
 			System.out.println("Issue changing link distance!");
 			System.exit(1);
@@ -1389,9 +1389,9 @@ public class PhysicalModel {
 
 		// Update the parameters of all these links
 		for (Link ln : tmplist) {
-			ln.changeStiffness(stiff);
-			ln.changeDamping(damp);
-			ln.changeDRest(dist);
+			ln.setStiffness(stiff);
+			ln.setDamping(damp);
+			ln.setDRest(dist);
 		}
 	}
 
@@ -1431,9 +1431,9 @@ public class PhysicalModel {
 
 		int link_index = getLinkIndex(name);
 		try {
-			links.get(link_index).changeStiffness(stiff);
-			links.get(link_index).changeDamping(damp);
-			links.get(link_index).changeDRest(dist);
+			links.get(link_index).setStiffness(stiff);
+			links.get(link_index).setDamping(damp);
+			links.get(link_index).setDRest(dist);
 		} catch (Exception e) {
 			System.out.println("Issue changing link params!");
 			System.exit(1);
@@ -1452,7 +1452,7 @@ public class PhysicalModel {
 
 
 		try {
-			links.get(index).changeStiffness(stiff);
+			links.get(index).setStiffness(stiff);
 		} catch (Exception e) {
 			System.out.println("Issue changing link stiffness!");
 			System.exit(1);
@@ -1501,7 +1501,7 @@ public class PhysicalModel {
 	public void setLinkDampingAt(int index, double damp) {
 
 		try {
-			links.get(index).changeDamping(damp);
+			links.get(index).setDamping(damp);
 		} catch (Exception e) {
 			System.out.println("Issue changing link damping!");
 			System.exit(1);
@@ -2199,18 +2199,18 @@ public class PhysicalModel {
 	 * @param subsetName
 	 *            the name of the subset of modules to address.
 	 */
-	public void changeStiffnessParamOfSubset(double newParam, String subsetName) {
+	public void setStiffnessParamOfSubset(double newParam, String subsetName) {
 
 		if(this.link_subsets.containsKey(subsetName))
 		{
 			for (int linkIndex : this.link_subsets.get(subsetName)) {
-				links.get(linkIndex).changeStiffness(newParam);
+				links.get(linkIndex).setStiffness(newParam);
 			}
 		}
 		if(this.mat_subsets.containsKey(subsetName)) {
 			for (int matIndex : this.mat_subsets.get(subsetName)) {
 
-				if(!mats.get(matIndex).changeStiffness(newParam)) System.out.println("ouïe !!!!");
+				mats.get(matIndex).setStiffness(newParam);
 			}
 		}
 	}
@@ -2223,17 +2223,17 @@ public class PhysicalModel {
 	 * @param subsetName
 	 *            the name of the subset of modules to address.
 	 */
-	public void changeDampingParamOfSubset(double newParam, String subsetName) {
+	public void setDampingParamOfSubset(double newParam, String subsetName) {
 
 		if(this.link_subsets.containsKey(subsetName)) {
 			for (int linkIndex : this.link_subsets.get(subsetName)) {
-				links.get(linkIndex).changeDamping(newParam);
+				links.get(linkIndex).setDamping(newParam);
 			}
 		}
 		if(this.mat_subsets.containsKey(subsetName)) {
 
 			for (int matIndex : this.mat_subsets.get(subsetName)) {
-				mats.get(matIndex).changeDamping(newParam);
+				mats.get(matIndex).setDamping(newParam);
 			}
 		}
 	}
@@ -2248,7 +2248,7 @@ public class PhysicalModel {
 	 */
 	public void changeDistParamOfSubset(double newParam, String subsetName) {
 		for (int linkIndex : this.link_subsets.get(subsetName)) {
-			links.get(linkIndex).changeDRest(newParam);
+			links.get(linkIndex).setDRest(newParam);
 		}
 	}
 
@@ -2290,8 +2290,8 @@ public class PhysicalModel {
 
 	public void changeParamOfSubset(float newParam,String subsetName,String paramName)
 	{
-		if(paramName.equals("stiffness")) changeStiffnessParamOfSubset(newParam,subsetName);
-		else if(paramName.equals("damping")) changeDampingParamOfSubset(newParam,subsetName);
+		if(paramName.equals("stiffness")) setStiffnessParamOfSubset(newParam,subsetName);
+		else if(paramName.equals("damping")) setDampingParamOfSubset(newParam,subsetName);
 		else if(paramName.equals("dist")) changeDistParamOfSubset(newParam,subsetName);
 		else if(paramName.equals("mass")) changeMassParamOfSubset(newParam,subsetName);
 		else System.out.println("Parameter  "+ paramName + " unknown");

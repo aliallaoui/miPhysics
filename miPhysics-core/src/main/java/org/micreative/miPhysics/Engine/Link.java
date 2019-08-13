@@ -11,7 +11,7 @@ import org.micreative.miPhysics.Vect3D;
  * @author James Leonard / james.leonard@gipsa-lab.fr
  *
  */
-public abstract class Link {
+public abstract class Link extends Module{
 
     /**
      * Constructor method.
@@ -24,8 +24,8 @@ public abstract class Link {
         m_mat1 = m1;
         m_mat2 = m2;
 
-        m_K = 0;
-        m_Z = 0;
+        stiffness = 0;
+        damping = 0;
 
         m_invDist = 0;
     }
@@ -36,6 +36,10 @@ public abstract class Link {
      */
     public abstract void compute();
 
+
+    public void computeForces(){compute();}
+
+    public void computeMoves(){};
     /**
      * Connect the Link to two Mat modules.
      * @param m1 connected Mat at one end.
@@ -127,11 +131,9 @@ public abstract class Link {
     /**
      * Change resting distance for this Link.
      * @param d new resting distance.
-     *  @return true if succesfully changed
      */
-    public boolean changeDRest(double d) {
+    public void setDRest(double d) {
         m_dRest = d;
-        return true;
     }
 
     /**
@@ -142,31 +144,7 @@ public abstract class Link {
         return m_dRest;
     }
 
-    /**
-     * Change the stiffness of this Link.
-     * @param k stiffness value.
-     * @return true if succesfully changed
-     */
-    public boolean changeStiffness(double k) {m_K = k; return true;}
 
-    /**
-     * Change the damping of this Link.
-     * @param z the damping value.
-     * @return true if succesfully changed
-     */
-    public boolean changeDamping(double z){m_Z = z; return true;}
-
-    /**
-     * Get the stiffness of this link element
-     * @return the stiffness parameter
-     */
-    public double getStiffness(){return m_K;}
-
-    /**
-     * Get the damping of this link element
-     * @return the damping parameter
-     */
-    public double getDamping(){return m_Z;}
 
     /**
      * Get delayed velocity (per sample) between the two connected Mat modules
@@ -233,8 +211,7 @@ public abstract class Link {
     protected double m_distR;
     protected double m_dRest;
 
-    protected double m_K;
-    protected double m_Z;
+
 
     private double m_invDist;
 

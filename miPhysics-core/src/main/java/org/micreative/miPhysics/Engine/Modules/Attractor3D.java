@@ -21,31 +21,24 @@ public class Attractor3D extends Link {
      */
     public Attractor3D(double limitDist, double attrFactor, Mat m1, Mat m2) {
         super(limitDist, m1, m2);
-        m_attrFactor = attrFactor;
+        this.attrFactor = attrFactor;
     }
 
     public void compute() {
 
         updateEuclidDist();
         if(m_dist > m_dRest)
-            this.applyForces(-m_attrFactor / (m_dist*m_dist));
+            this.applyForces(-attrFactor / (m_dist*m_dist));
     }
 
 
-    public boolean changeStiffness(double stiff){
-        return false;
+    public double getAttrFactor() {
+        return attrFactor;
     }
 
-    public boolean changeDamping(double damp){
-        return false;
+    public void setAttrFactor(double attrFactor) {
+        this.attrFactor = attrFactor;
     }
 
-    /* Reimplement in order to store squared distance */
-    public boolean changeDRest(double d) {
-        //m_dRest = d;
-        //m_dRsquared = m_dRest * m_dRest;
-        return false;
-    }
-
-    private double m_attrFactor;
+    private double attrFactor;
 }
