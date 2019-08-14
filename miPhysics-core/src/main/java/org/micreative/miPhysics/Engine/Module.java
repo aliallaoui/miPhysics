@@ -11,7 +11,10 @@ public abstract class Module {
 
     public abstract void computeMoves();
 
-    public String getType(){return getClass().toString();}
+    public String getType()
+    {
+        return getClass().toString().split("\\.")[5];
+    }
 
 
     protected double stiffness;

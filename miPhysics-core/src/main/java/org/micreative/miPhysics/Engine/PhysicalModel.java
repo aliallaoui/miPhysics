@@ -10,6 +10,7 @@ import org.micreative.miPhysics.Vect3D;
 import processing.core.*;
 import processing.core.PVector;
 
+//TODO two subclasses : STPhysicalModel (Static Topology) & DTPhysicalModel (Dynamic  Topology)
 /**
  * This is the main class in which to create a 3D mass-interaction physical
  * model. A global physical context is created, then populated with modules,
@@ -460,7 +461,7 @@ public class PhysicalModel {
 	 */
 	public String getMatTypeAt(int i) {
 		if (getNumberOfMats() > i)
-			return mats.get(i).getClass().toString();
+			return mats.get(i).getType();
 		else
 			return "";
 	}
@@ -552,7 +553,7 @@ public class PhysicalModel {
 	 */
 	public String getLinkTypeAt(int i) {
 		if (getNumberOfLinks() > i)
-			return links.get(i).getClass().toString();
+			return links.get(i).getType();
 		else
 			return "";
 	}
@@ -857,8 +858,8 @@ public class PhysicalModel {
 				throw new Exception("The module name already exists!");
 			}
 			mats.add(new Ground3D(initPos));
+			System.out.println(mats.get(mats.size()-1).getType() + " added");
 			matIndexList.add(name);
-
 		} catch (Exception e) {
 			System.out.println("Error adding Module " + name + ": " + e);
 			System.exit(1);
