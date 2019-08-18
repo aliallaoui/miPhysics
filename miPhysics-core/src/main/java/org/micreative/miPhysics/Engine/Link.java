@@ -39,7 +39,7 @@ public abstract class Link extends Module{
 
     public void computeForces(){compute();}
 
-    public void computeMoves(){};
+    public void computeMoves(){}
     /**
      * Connect the Link to two Mat modules.
      * @param m1 connected Mat at one end.

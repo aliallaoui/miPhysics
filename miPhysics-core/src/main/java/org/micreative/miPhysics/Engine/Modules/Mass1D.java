@@ -14,13 +14,11 @@ public class Mass1D extends Mat {
 	}
 
 	public void compute() {
+		double newPos;
 		newPos = (2 - m_invMass * friction) * m_pos.z - (1 - m_invMass * friction) * m_posR.z + m_frc.z * m_invMass;
 		m_posR.z = m_pos.z;
 		m_pos.z = newPos;
 		m_frc.set(0., 0., 0.);
 	}
 
-
-
-	private double newPos;
 }

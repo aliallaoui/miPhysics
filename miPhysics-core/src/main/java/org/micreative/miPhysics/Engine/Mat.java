@@ -52,7 +52,7 @@ public abstract class Mat extends Module{
 
     public void computeForces(){}
 
-    public void computeMoves(){compute();};
+    public void computeMoves(){compute();}
     /**
      * Apply external force to this Mat module.
      * @param force force to apply.

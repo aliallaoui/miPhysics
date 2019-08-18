@@ -389,10 +389,7 @@ public class PhysicalModel {
 	 * @return True of the module exists, False otherwise.
 	 */
 	public boolean matExists(String mName) {
-		if (getMatIndex(mName) < 0)
-			return false;
-		else
-			return true;
+		return getMatIndex(mName) >= 0;
 	}
 
 	/**
@@ -403,10 +400,7 @@ public class PhysicalModel {
 	 * @return True of the module exists, False otherwise.
 	 */
 	public boolean linkExists(String lName) {
-		if (getLinkIndex(lName) < 0)
-			return false;
-		else
-			return true;
+		return getLinkIndex(lName) >= 0;
 	}
 
 	/**
@@ -738,7 +732,7 @@ public class PhysicalModel {
 	 */
 	public int addMass3D(String name, double mass, Vect3D initPos, Vect3D initVel) {
 		try {
-			if (matIndexList.contains(name) == true) {
+			if (matIndexList.contains(name)) {
 
 				System.out.println("The module name already exists!");
 				throw new Exception("The module name already exists!");
@@ -767,7 +761,7 @@ public class PhysicalModel {
 	 */
 	public int addMass2DPlane(String name, double mass, Vect3D initPos, Vect3D initVel) {
 		try {
-			if (matIndexList.contains(name) == true) {
+			if (matIndexList.contains(name)) {
 
 				System.out.println("The module name already exists!");
 				throw new Exception("The module name already exists!");
@@ -796,7 +790,7 @@ public class PhysicalModel {
 	 */
 	public int addMass1D(String name, double mass, Vect3D initPos, Vect3D initVel) {
 		try {
-			if (matIndexList.contains(name) == true) {
+			if (matIndexList.contains(name)) {
 
 				System.out.println("The module name already exists!");
 				throw new Exception("The module name already exists!");
@@ -825,7 +819,7 @@ public class PhysicalModel {
 	 */
 	public int addMass3DSimple(String name, double mass, Vect3D initPos, Vect3D initVel) {
 		try {
-			if (matIndexList.contains(name) == true) {
+			if (matIndexList.contains(name)) {
 
 				System.out.println("The module name already exists!");
 				throw new Exception("The module name already exists!");
@@ -852,7 +846,7 @@ public class PhysicalModel {
 	 */
 	public int addGround3D(String name, Vect3D initPos) {
 		try {
-			if (matIndexList.contains(name) == true) {
+			if (matIndexList.contains(name)) {
 
 				System.out.println("The module name already exists!");
 				throw new Exception("The module name already exists!");
@@ -869,7 +863,7 @@ public class PhysicalModel {
 
 	public int addGround1D(String name, Vect3D initPos) {
 		try {
-			if (matIndexList.contains(name) == true) {
+			if (matIndexList.contains(name)) {
 
 				System.out.println("The module name already exists!");
 				throw new Exception("The module name already exists!");
@@ -906,7 +900,7 @@ public class PhysicalModel {
 
 
 		try {
-			if (matIndexList.contains(name) == true) {
+			if (matIndexList.contains(name)) {
 				System.out.println("The module name already exists!");
 				throw new Exception("The module name already exists!");
 			}
@@ -924,7 +918,7 @@ public class PhysicalModel {
 
 
 		try {
-			if (matIndexList.contains(name) == true) {
+			if (matIndexList.contains(name)) {
 				System.out.println("The module name already exists!");
 				throw new Exception("The module name already exists!");
 			}
@@ -1473,9 +1467,8 @@ public class PhysicalModel {
 			return 0;
 		}
 
-		double stiff = links.get(index).getStiffness();
+		return links.get(index).getStiffness();
 
-			return stiff;
 	}
 
 	/**
@@ -1522,8 +1515,8 @@ public class PhysicalModel {
 			return 0;
 		}
 
-		double damp = links.get(index).getDamping();
-		return damp;
+		return links.get(index).getDamping();
+
 	}
 
 	/**
@@ -2002,8 +1995,7 @@ public class PhysicalModel {
 		Osc3D tmp;
 		if (mats.get(i).getType() == "Osc3D") {
 			tmp = (Osc3D) mats.get(i);
-			double dist = tmp.distRest();
-			return dist;
+			return tmp.distRest();
 		}
 		return 0;
 	}
@@ -2367,7 +2359,7 @@ public class PhysicalModel {
 	public HapticInput3D addHapticInput3D(String name, Vect3D initPos, int smoothing) {
 		HapticInput3D inputMod;
 		try {
-			if (matIndexList.contains(name) == true) {
+			if (matIndexList.contains(name)) {
 
 				System.out.println("The module name already exists!");
 				throw new Exception("The module name already exists!");

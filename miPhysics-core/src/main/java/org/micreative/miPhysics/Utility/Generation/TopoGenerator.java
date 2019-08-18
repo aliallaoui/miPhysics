@@ -278,7 +278,7 @@ public class TopoGenerator {
             System.out.println("Iteration mass : " + mdl.getMatNameAt(i) +", " + test2.x +" " + test2.y + " " + test2.z);
             System.out.println("distance: " + test2.dist(test));
 
-            if (ext == true) {
+            if (ext) {
                 if (test.dist(test2) > radius) {
                     System.out.println("Adding to remove list: " + mdl.getMatNameAt(i));
                     toRemove.add(i);

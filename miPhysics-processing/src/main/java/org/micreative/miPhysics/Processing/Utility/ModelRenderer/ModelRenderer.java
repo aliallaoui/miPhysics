@@ -56,7 +56,7 @@ public class ModelRenderer implements PConstants{
         linkStyles.put("Bubble3D", new LinkRenderProps(30, 100, 100, 0));
         linkStyles.put("Rope3D", new LinkRenderProps(0, 255, 100, 255));
 
-    };
+    }
 
     public boolean setColor(String m, int r, int g, int b){
         if(matStyles.containsKey(m)) {
@@ -216,7 +216,7 @@ public class ModelRenderer implements PConstants{
                 tmp2 = linkStyles.get(lH.getType());
             else tmp2 = fallbackLink;
 
-            if(tmp2.strainGradient() == true){
+            if(tmp2.strainGradient()){
                 if ((tmp2.getAlpha() > 0) || (tmp2.getStrainAlpha() > 0))
                 {
                     float stretching = (float)lH.getElongation();
