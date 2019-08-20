@@ -1,5 +1,6 @@
 package org.micreative.miPhysics.Engine;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.locks.*;
 import java.lang.Math;
@@ -2290,6 +2291,26 @@ public class PhysicalModel {
 		else System.out.println("Parameter  "+ paramName + " unknown");
 	}
 
+	public void setParamForSubset(float newParam,String subsetName,  Method setter)
+	{
+		try {
+			if (this.link_subsets.containsKey(subsetName)) {
+				for (int linkIndex : this.link_subsets.get(subsetName)) {
+					setter.invoke(links.get(linkIndex), newParam);
+				}
+			}
+			if (this.mat_subsets.containsKey(subsetName)) {
+
+				for (int matIndex : this.mat_subsets.get(subsetName)) {
+					mats.get(matIndex).setDamping(newParam);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("could not set parameter " + e.getMessage());//TODO should rethrow exception
+		}
+	}
 	/**
 	 * Get any param for a subset of modules.
 	 *
@@ -2494,6 +2515,14 @@ public class PhysicalModel {
 	}
 
 	public ParamController getParamController(String name) {return param_controllers.get(name);}
+
+	public Module getFirstModuleOfSubset(String subsetName)
+	{
+		if(mat_subsets.containsKey(subsetName)) return mats.get(mat_subsets.get(subsetName).get(0));
+		else if(link_subsets.containsKey(subsetName)) return links.get(link_subsets.get(subsetName).get(0));
+		else return null;//TODO should throw exception
+	}
+
 
 
 

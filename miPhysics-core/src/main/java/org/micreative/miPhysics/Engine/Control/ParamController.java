@@ -3,6 +3,10 @@ package org.micreative.miPhysics.Engine.Control;
 import org.micreative.miPhysics.Engine.PhysicalModel;
 import org.micreative.miPhysics.Vect3D;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+
 public class ParamController extends AbstractController
 {
 
@@ -11,12 +15,24 @@ public class ParamController extends AbstractController
     private float previous_value;
     private boolean inRamp = false;
     private Vect3D center;
+    private Method writeMethod;
+    private float rampTime;
+
 
     public ParamController(PhysicalModel pm_, float rampTime, String name, String param_ ) {
         super(pm_,name,param_);
-      params.put("rampTime",rampTime);
-      params.put("vmin",new Float(0));
-      params.put("vmax",rampTime*pm.getSimRate());
+      this.rampTime =rampTime;
+      this.vmin=new Float(0);
+      this.vmax=rampTime*pm.getSimRate();
+        PropertyDescriptor p;
+      try {
+          p = PropertyUtils.getPropertyDescriptor(pm.getFirstModuleOfSubset(name), param_);
+          writeMethod = PropertyUtils.getWriteMethod(p);
+      }
+      catch(Exception e)
+      {
+          System.out.println("could not initialize controller : " + e.getMessage());
+      }
     }
 
 
@@ -24,10 +40,9 @@ public class ParamController extends AbstractController
     {
         if(inRamp) {
             step++;
-            if (step <= params.get("vmax")) {
-                //System.out.println("change  param " + param + " of subset " + subsetName + " with value " + linearScale(step));
-                if (param.equals("distX")) pm.changeDistXBetweenSubset(center, linearScale(step), subsetName);
-                else pm.changeParamOfSubset(linearScale(step), subsetName, param);
+            if (step <= vmax) {
+                /*if (param.equals("distX")) pm.changeDistXBetweenSubset(center, linearScale(step), subsetName);
+                else*/ pm.setParamForSubset(linearScale(step), subsetName, writeMethod);
             }
             else inRamp = false;
         }
@@ -35,11 +50,10 @@ public class ParamController extends AbstractController
 
     public void triggerRamp(float value)
     {
-        params.put("min",previous_value);
-        params.put("max",value);
-        params.put("vmax",params.get("rampTime")*pm.getSimRate());//in case it changed
+        min=previous_value;
+        max=value;
+        vmax=rampTime*pm.getSimRate();//in case rampTime changed
         computeLinearParams();
-        //System.out.println("trigger ramp for " + params.get("rampTime")*pm.getSimRate() + " steps from " + previous_value + " to " + value + " a=" + a + " b="+b);
         inRamp = true;
         step = 0;
         previous_value = value;
@@ -48,8 +62,8 @@ public class ParamController extends AbstractController
     public void init(float value)
     {
         previous_value = value;
-        params.put("min",value);
-        params.put("max",value);
+        min=value;
+        max=value;
         computeLinearParams();
         if(param.equals("distX"))
         {
