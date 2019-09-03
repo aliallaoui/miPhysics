@@ -163,13 +163,12 @@
     </target>
 
     <target name="copy.jar">
-        <echo level="info" message="copying to ${project.tmp}/${library.name}/library ../miPhysics-core/target/*.java"/>
         <copy todir="${project.tmp}/${library.name}/library" >
             <!-- <fileset dir="../miPhysics-core/target" includes="*.jar"/> -->
-            <fileset dir="target" includes="*.jar" excludes="miPhysics-processing*.jar"></fileset>
+            <fileset dir="target" includes="*.jar" excludes="miPhysics-processing*.jar"/>
         </copy>
         <copy tofile="${project.tmp}/${library.name}/library/${library.name}.jar">
-            <fileset dir="target" includes="miPhysics-processing*.jar"></fileset>
+            <fileset dir="target" includes="miPhysics-processing*.jar"/>
         </copy>
 
         <!--         -->

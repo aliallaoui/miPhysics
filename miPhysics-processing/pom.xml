@@ -10,7 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>miPhysics-processing</artifactId>
-    <name>${project.groupId}:${project.artifactId}</name>
+  <!--  <name>${project.groupId}:${project.artifactId}</name> -->
+    <name>miPhysics-processing</name>
     <description>miPhysics package for Processing </description>
 
 
@@ -24,6 +25,13 @@
     <source>8</source>
     <target>8</target>
     </configuration>
+
+        <executions>
+            <execution>
+                <phase>compile</phase>
+            </execution>
+        </executions>
+
     </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -47,12 +55,13 @@
             </executions>
         </plugin>
 
+
  <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <version>1.8</version>
             <executions>
                 <execution>
-                    <phase>generate-sources</phase>
+                    <phase>package</phase>
                     <configuration>
                         <target>
                             <ant antfile="resources/build.xml">
@@ -87,5 +96,22 @@
         <groupId>org.micreative.miPhysics</groupId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
+
+        <!-- miPhysics-core dependencies, necessary for ant task (we don't want transitive dependencies, there are too many -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
+        </dependency>
+<dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.2</version>
+        </dependency>
     </dependencies>
 </project>
