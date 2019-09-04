@@ -27,7 +27,7 @@ public abstract class Mat extends Module{
         tmp = new Vect3D();
 
 
-        changeMass(M);
+        setMass(M);
         m_pos.set(initPos);
         m_posR.set(initPosR);
 
@@ -61,6 +61,11 @@ public abstract class Mat extends Module{
         m_frc.add(force);
     }
 
+    public void addFrc(double frc,int i,Vect3D symPos)
+    {
+        //TODO should throw exception if i > 0
+
+    }
     //TODO should this be public ? only SpringDamper1D requires it
     /**
      * Get the current position of this Mat module.
@@ -70,6 +75,8 @@ public abstract class Mat extends Module{
         return m_pos;
     }
 
+    public Vect3D getPos(int i){return m_pos;}
+    public Vect3D getPosR(int i){return m_posR;}
     /**
      * Set the current position of this Mat module.
      * @param newPos the target position to set.
@@ -110,11 +117,9 @@ public abstract class Mat extends Module{
     /**
      * Set the mass parameter.
      * @param M mass value.
-     * @return true if set the mass val
      */
-    public boolean changeMass (double M) {
+    public void setMass (double M) {
         m_invMass = 1 / M;
-        return true;
     }
 
 
@@ -127,7 +132,7 @@ public abstract class Mat extends Module{
     }
 
 
-
+    public int getNbMats() {return 1;}
 
     public void setGravity(Vect3D grav) {
         gravity.set(grav);

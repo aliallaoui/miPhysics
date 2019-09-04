@@ -75,7 +75,7 @@ public abstract class Link extends Module{
      * Initialise distance and delayed distance for this Link.
      *
      */
-    protected void initDistances() {
+    public void initDistances() {
         m_dist = m_mat1.getPos().dist(m_mat2.getPos());
         m_distR = m_mat1.getPosR().dist(m_mat2.getPosR());
     }
@@ -200,6 +200,8 @@ public abstract class Link extends Module{
         getMat2().m_frc.z += lnkFrc;
         getMat1().m_frc.z -= lnkFrc;
     }
+
+    public int getNbMats(){return 0;}
 
     /* Class attributes */
 

@@ -1,5 +1,7 @@
 package org.micreative.miPhysics.Engine;
 
+import org.micreative.miPhysics.Vect3D;
+
 public abstract class Module {
 
     public Module()
@@ -47,4 +49,12 @@ public abstract class Module {
      * @return the damping parameter
      */
     public double getDamping(){return damping;}
+
+    public abstract int getNbMats();
+
+    public Vect3D getPos(int i){return null;}
+    public Vect3D getPosR(int i){return null;}
+
+    public void addFrc(double frc,int i,Vect3D symPos){}
+    public void initDistances(){}
 }

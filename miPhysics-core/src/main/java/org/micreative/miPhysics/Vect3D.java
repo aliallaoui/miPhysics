@@ -119,5 +119,11 @@ public class Vect3D {
 	public String toString() {
 		return "["+x+", "+y+", "+z+"]";
 	}
+
+	static public Vect3D fromString(String s)
+	{
+		String [] v = s.substring(1,s.length()-1).split(",");
+		return new Vect3D(Double.parseDouble( v[0]),Double.parseDouble( v[1]),Double.parseDouble( v[2]));
+	}
 }
 

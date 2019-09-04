@@ -1,5 +1,6 @@
 package org.micreative.miPhysics.Engine;
 
+import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.locks.*;
@@ -42,12 +43,14 @@ public class PhysicalModel {
 	/* List of Mats and Links that compose the physical model */
 	private ArrayList<Mat> mats;
 	private ArrayList<Link> links;
+	private ArrayList<Module> modules;
 
 	/*
 	 * Mat and Link index lists: matches module name to index of module in ArrayList
 	 */
 	private ArrayList<String> matIndexList;
 	private ArrayList<String> linkIndexList;
+	private ArrayList<String> moduleIndexList;
 
 	/* Super dirty but works as a dummy for plane-based interactions */
 	private Mat fakePlaneMat;
@@ -78,6 +81,7 @@ public class PhysicalModel {
 	/* Library version */
 	public final static String VERSION = "##library.prettyVersion##";
 
+	public String defaultParamsPropertiesPath = "/home/ali/sketchbook/libraries/miPhysics/defaultParams.properties";
 	/**
 	 * Constructor method. Call this in the setup to create a physical context with
 	 * a given simulation rate.
@@ -91,8 +95,10 @@ public class PhysicalModel {
 		/* Create empty Mat and Link arrays */
 		mats = new ArrayList<Mat>();
 		links = new ArrayList<Link>();
+		modules = new ArrayList<Module>();
 		matIndexList = new ArrayList<String>();
 		linkIndexList = new ArrayList<String>();
+		moduleIndexList = new ArrayList<String>();
 
 		/* Initialise the Mat and Link subset groups */
 		mat_subsets = new HashMap<String, ArrayList<Integer>>();
@@ -223,6 +229,10 @@ public class PhysicalModel {
 		for (int i = 0; i < links.size(); i++) {
 			links.get(i).initDistances();
 		}
+		for (int i = 0; i < modules.size(); i++) {
+			modules.get(i).initDistances();
+		}
+
 
 		// Should init grav and friction here, in case they were set after the module
 		// creation...
@@ -250,6 +260,18 @@ public class PhysicalModel {
 	public int getLinkIndex(String name) {
 		return linkIndexList.indexOf(name);
 	}
+
+	/**
+	 * Get the index of a Module module identified by a given string.
+	 *
+	 * @param name
+	 *            Module module identifier.
+	 * @return
+	 */
+	public int getModuleIndex(String name) {
+		return moduleIndexList.indexOf(name);
+	}
+
 
 	/**
 	 * Get the position of a Mat module identified by its name.
@@ -380,6 +402,15 @@ public class PhysicalModel {
 	 */
 	public int getNumberOfLinks() {
 		return links.size();
+	}
+
+	/**
+	 * get number of  modules in current model.
+	 *
+	 * @return the number of  modules in this model.
+	 */
+	public int getNumberOfModules() {
+		return modules.size();
 	}
 
 	/**
@@ -690,7 +721,7 @@ public class PhysicalModel {
 	public void computeNSteps(int N) {
 		synchronized (m_lock) {
 			for (int j = 0; j < N; j++) {
-				param_controllers.forEach((k,v)-> v.updateParams());
+				if(!param_controllers.isEmpty()) param_controllers.forEach((k,v)-> v.updateParams());
 
 				for (int i = 0; i < mats.size(); i++) {
 					mats.get(i).compute();
@@ -1202,6 +1233,25 @@ public class PhysicalModel {
 		return 0;
 	}
 
+	public void addString2D(String name)
+	{
+		try
+		{
+			Properties p = new Properties();
+			p.load(new FileReader(defaultParamsPropertiesPath));
+			modules.add(new String2D(Double.parseDouble(p.getProperty("String2D.restDistance")), Double.parseDouble(p.getProperty("String2D.stiffness")),
+					Double.parseDouble(p.getProperty("String2D.viscosity")),Double.parseDouble(p.getProperty("String2D.mass")),
+					Integer.parseInt(p.getProperty("String2D.size")),Double.parseDouble(p.getProperty("String2D.stretchFactor")),
+					Vect3D.fromString(p.getProperty("String2D.left")),Vect3D.fromString(p.getProperty("String2D.direction"))));
+			moduleIndexList.add(name);
+		}
+		catch (Exception e)
+		{
+			System.out.println("Error allocating the String2D macro module: " + e);
+			System.exit(1);
+		}
+	}
+
 
 	/***************************************************/
 
@@ -1406,7 +1456,7 @@ public class PhysicalModel {
 
 		// Update the parameters of all these links
 		for (Mat ma : tmplist) {
-			ma.changeMass(mass);
+			ma.setMass(mass);
 		}
 	}
 
@@ -1543,7 +1593,7 @@ public class PhysicalModel {
 	 */
 	public void setMatMassAt(int index, double mass) {
 		try {
-			mats.get(index).changeMass(mass);
+			mats.get(index).setMass(mass);
 		} catch (Exception e) {
 			System.out.println("Issue changing mass inertia!");
 			System.exit(1);
@@ -2171,6 +2221,10 @@ public class PhysicalModel {
 		return this.addLinkToSubset(linkIndex, subsetName);
 	}
 
+	public boolean hasSubset(String name)
+	{
+		return link_subsets.containsKey(name) || mat_subsets.containsKey(name);
+	}
 	/**
 	 * Change the mass parameters for a subset of Mat modules.
 	 *
@@ -2179,9 +2233,9 @@ public class PhysicalModel {
 	 * @param subsetName
 	 *            the name of the subset of modules to address.
 	 */
-	public void changeMassParamOfSubset(double newParam, String subsetName) {
+	public void setMassParamOfSubset(double newParam, String subsetName) {
 		for (int matIndex : this.mat_subsets.get(subsetName)) {
-			mats.get(matIndex).changeMass(newParam);
+			mats.get(matIndex).setMass(newParam);
 		}
 	}
 
@@ -2287,7 +2341,7 @@ public class PhysicalModel {
 		if(paramName.equals("stiffness")) setStiffnessParamOfSubset(newParam,subsetName);
 		else if(paramName.equals("damping")) setDampingParamOfSubset(newParam,subsetName);
 		else if(paramName.equals("dist")) changeDistParamOfSubset(newParam,subsetName);
-		else if(paramName.equals("mass")) changeMassParamOfSubset(newParam,subsetName);
+		else if(paramName.equals("mass")) setMassParamOfSubset(newParam,subsetName);
 		else System.out.println("Parameter  "+ paramName + " unknown");
 	}
 
@@ -2302,9 +2356,10 @@ public class PhysicalModel {
 			if (this.mat_subsets.containsKey(subsetName)) {
 
 				for (int matIndex : this.mat_subsets.get(subsetName)) {
-					mats.get(matIndex).setDamping(newParam);
+					setter.invoke(mats.get(matIndex), newParam);
 				}
 			}
+			if (this.moduleIndexList.contains(subsetName)) setter.invoke(modules.get(getModuleIndex(subsetName)),newParam);
 		}
 		catch(Exception e)
 		{
@@ -2523,6 +2578,10 @@ public class PhysicalModel {
 		else return null;//TODO should throw exception
 	}
 
+	public Module getModule(String moduleName)
+	{
+		return modules.get(getModuleIndex(moduleName));
+	}
 
 
 

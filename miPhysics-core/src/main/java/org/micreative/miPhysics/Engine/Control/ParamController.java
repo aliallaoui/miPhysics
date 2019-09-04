@@ -26,7 +26,8 @@ public class ParamController extends AbstractController
       this.vmax=rampTime*pm.getSimRate();
         PropertyDescriptor p;
       try {
-          p = PropertyUtils.getPropertyDescriptor(pm.getFirstModuleOfSubset(name), param_);
+          if(pm.hasSubset(name)) p = PropertyUtils.getPropertyDescriptor(pm.getFirstModuleOfSubset(name), param_);
+          else p = PropertyUtils.getPropertyDescriptor(pm.getModule(name),param_);
           writeMethod = PropertyUtils.getWriteMethod(p);
       }
       catch(Exception e)
@@ -43,6 +44,7 @@ public class ParamController extends AbstractController
             if (step <= vmax) {
                 /*if (param.equals("distX")) pm.changeDistXBetweenSubset(center, linearScale(step), subsetName);
                 else*/ pm.setParamForSubset(linearScale(step), subsetName, writeMethod);
+
             }
             else inRamp = false;
         }
@@ -65,13 +67,18 @@ public class ParamController extends AbstractController
         min=value;
         max=value;
         computeLinearParams();
+        /*
         if(param.equals("distX"))
         {
           center = pm.getBarycenterOfSubset(subsetName);
             System.out.println("controller distX init with center " + center.toString());
           pm.changeDistXBetweenSubset(center,value,subsetName);
         }
-        else pm.changeParamOfSubset(value,subsetName,param);
+        else
+        */
+
+        pm.setParamForSubset(value,subsetName,writeMethod);
+
         System.out.println("controller for param " + param + " of subset " + subsetName + " initialized with value " + value);
     }
 }

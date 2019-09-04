@@ -26,7 +26,7 @@ public class SpringDamper1D extends Link {
 	}
 
 
-	protected void initDistances() {
+	public void initDistances() {
 		m_dist_1D = this.getMat1().getPos().distZ(this.getMat2().getPos());
 		m_distR_1D = this.getMat1().getPosR().distZ(this.getMat2().getPosR());
 	}
