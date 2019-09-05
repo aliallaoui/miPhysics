@@ -83,7 +83,12 @@
 
     </distributionManagement>
 
-
+    <repositories>
+        <repository>
+            <id>marsonline-repo</id>
+            <url>https://ivy.marsonline.org/mvn/</url>
+        </repository>
+    </repositories>
     <dependencies>
     <!-- https://mvnrepository.com/artifact/org.processing/core -->
     <dependency>
