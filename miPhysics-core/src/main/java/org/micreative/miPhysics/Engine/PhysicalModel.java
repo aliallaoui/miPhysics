@@ -1,6 +1,7 @@
 package org.micreative.miPhysics.Engine;
 
 import java.io.FileReader;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.locks.*;
@@ -295,6 +296,28 @@ public class PhysicalModel {
 		return new Vect3D();
 	}
 
+	/**
+	 * Get the position of a Mat module identified by its name.
+	 *
+	 * @param masName
+	 *            identifier of the Mat module.
+	 * @return a Vect3D containing the position (in double format)
+	 */
+	public Vect3D getMatPosition(String masName,int index) {
+		try {
+			int mod_index = getModuleIndex(masName);
+			if (mod_index > -1) {
+				return modules.get(mod_index).getPos(index);
+			} else {
+				throw new Exception("The module name already exists!");
+			}
+		} catch (Exception e) {
+			System.out.println("Error accessing Module " + masName + ": " + e);
+			System.exit(1);
+		}
+		return new Vect3D();
+	}
+
 
 	/**
 	 * Get the position of a Mat module identified by its name.
@@ -433,6 +456,18 @@ public class PhysicalModel {
 	 */
 	public boolean linkExists(String lName) {
 		return getLinkIndex(lName) >= 0;
+	}
+
+
+	/**
+	 * Check if a Module module with a given identifier exists in the current model.
+	 *
+	 * @param lName
+	 *            the identifier of the Module module.
+	 * @return True of the module exists, False otherwise.
+	 */
+	public boolean moduleExists(String lName) {
+		return getModuleIndex(lName) >= 0;
 	}
 
 	/**
@@ -1235,10 +1270,16 @@ public class PhysicalModel {
 
 	public void addString2D(String name)
 	{
-		try
+		try(InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties"))
 		{
 			Properties p = new Properties();
-			p.load(new FileReader(defaultParamsPropertiesPath));
+			if(input == null)
+			{
+				System.out.println("defaultParams.properties not found");
+				return ;
+			}
+			//p.load(new FileReader(defaultParamsPropertiesPath));
+			p.load(input);
 			modules.add(new String2D(Double.parseDouble(p.getProperty("String2D.restDistance")), Double.parseDouble(p.getProperty("String2D.stiffness")),
 					Double.parseDouble(p.getProperty("String2D.viscosity")),Double.parseDouble(p.getProperty("String2D.mass")),
 					Integer.parseInt(p.getProperty("String2D.size")),Double.parseDouble(p.getProperty("String2D.stretchFactor")),
@@ -1248,6 +1289,29 @@ public class PhysicalModel {
 		catch (Exception e)
 		{
 			System.out.println("Error allocating the String2D macro module: " + e);
+			System.exit(1);
+		}
+	}
+
+	public void addMContact2D(String name,String module1,String module2)
+	{
+		try(InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties"))
+		{
+			Properties p = new Properties();
+			if(input == null)
+			{
+				System.out.println("defaultParams.properties not found");
+				return ;
+			}
+			//p.load(new FileReader(defaultParamsPropertiesPath));
+			p.load(input);
+			modules.add(new MContact2D(Double.parseDouble(p.getProperty("MContact2D.distance")), Double.parseDouble(p.getProperty("MContact2D.stiffness")),
+					Double.parseDouble(p.getProperty("MContact2D.viscosity")),getModule(module1),getModule(module2)));
+			moduleIndexList.add(name);
+		}
+		catch (Exception e)
+		{
+			System.out.println("Error allocating the MContact2D macro module: " + e);
 			System.exit(1);
 		}
 	}
@@ -2580,7 +2644,10 @@ public class PhysicalModel {
 
 	public Module getModule(String moduleName)
 	{
-		return modules.get(getModuleIndex(moduleName));
+		if(moduleIndexList.contains(moduleName)) return modules.get(getModuleIndex(moduleName));
+		else if(matExists(moduleName)) return mats.get(getMatIndex(moduleName));
+		else if(linkExists(moduleName)) return links.get(getLinkIndex(moduleName));
+		else return null;//TODO throw exception or at least log sth
 	}
 
 

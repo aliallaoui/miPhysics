@@ -18,6 +18,8 @@ public abstract class MacroLink extends Module {
 
        m_dist = new ArrayList<>(n1*n2);
        m_distR = new ArrayList<>(n1*n2);
+       this.m1 = m1;
+       this.m2 = m2;
     }
 
     protected void updateEuclidDist()
@@ -80,8 +82,9 @@ public abstract class MacroLink extends Module {
     public void initDistances() {
         for (int i = 0; i < m1.getNbMats(); i++) {
             for (int j = 0; j < m2.getNbMats(); j++) {
-                m_dist.set(i * m2.getNbMats() + j, m1.getPos(i).dist(m2.getPos(j)));
-                m_distR.set(i * m2.getNbMats() + j, m1.getPosR(i).dist(m2.getPosR(j)));
+                //i * m2.getNbMats() + j iteration
+                m_dist.add( m1.getPos(i).dist(m2.getPos(j)));
+                m_distR.add( m1.getPosR(i).dist(m2.getPosR(j)));
             }
         }
     }

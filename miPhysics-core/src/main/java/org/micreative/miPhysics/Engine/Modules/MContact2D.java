@@ -26,9 +26,6 @@ public class MContact2D extends MacroLink {
         this.distance = distance;
         stiffness = K_param;
         damping = Z_param;
-
-
-
     }
 
     public void computeForces() {

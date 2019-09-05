@@ -18,8 +18,13 @@ public class PhyUGen extends UGen { //TODO maybe PhyUGen should inherits also Ph
     public void setListeningPoint(String[] listeningPoint) {
         this.listeningPoint = listeningPoint;
     }
+    public void setListeningPoint(String[] listeningPoint,int[] listeningPointsInd) {
+        this.listeningPoint = listeningPoint;
+        this.listeningPointsInd = listeningPointsInd;
+    }
 
     protected String[] listeningPoint;
+    protected int[] listeningPointsInd;
 //    private float    oneOverSampleRate;
      protected float    audioOut;
     protected float    currAudio;
@@ -53,7 +58,14 @@ public class PhyUGen extends UGen { //TODO maybe PhyUGen should inherits also Ph
                 audioOut =(float)( sample - prevSample + 0.95 * audioOut);
                 prevSample = sample;
             }
-            else
+            else if(mdl.moduleExists(listeningPoint[0]))
+            {
+                sample =(float)((mdl.getMatPosition(listeningPoint[0],listeningPointsInd[0]).y)* 2.);
+
+                /* High pass filter to remove the DC offset */
+                audioOut =(float)( sample - prevSample + 0.95 * audioOut);
+                prevSample = sample;
+            }
                 sample = 0;
        // }
         Arrays.fill( channels, audioOut );

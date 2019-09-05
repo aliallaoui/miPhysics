@@ -23,7 +23,8 @@ public class BasicTests {
     {
         PhysicalModel pm = new PhysicalModel();
         pm.addString2D("string");
-
+        pm.addMass3D("percMass", 100, new Vect3D(3, -4, 0.), new Vect3D(0, 2, 0.));
+        pm.addMContact2D("perc","string","percMass");
         pm.init();
 
         pm.computeNSteps(300);

@@ -16,10 +16,7 @@ public class String2D extends MacroModule {
     /* Class attributes */
     protected double friction;
     protected Vect3D gravity;
-    protected List<Vect3D> m_pos;
-    protected List<Vect3D> m_posR;
-    protected List<Vect3D> m_frc;
-    protected List<Double> distR;
+
 
   //  protected Vect3D leftSol;
   //  protected Vect3D rightSol;
