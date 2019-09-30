@@ -3,6 +3,7 @@ package org.micreative.miPhysics.Processing.Utility.ModelRenderer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.micreative.miPhysics.Engine.Module;
 import processing.core.PVector;
 
 import processing.core.*;
@@ -165,6 +166,15 @@ public class ModelRenderer implements PConstants{
                     matHolders.add(new MatDataHolder(mdl.getMatPosAt(i),
                             mdl.getMatMassAt(i),
                             mdl.getMatTypeAt(i)));
+                for(int i=0; i< mdl.getNumberOfModules();i++)
+                {
+                    Module m = mdl.getModule(i);
+                    for(int j=0;j<m.getNbMats();j++)
+                    {
+                        matHolders.add(new MatDataHolder(m.getPos(j),1,"Mass3D"));
+                        nbMats++;
+                    }
+                }
             }
 
             for (int i = 0; i < mdl.getNumberOfLinks(); i++)
