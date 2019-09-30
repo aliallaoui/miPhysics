@@ -415,9 +415,22 @@ public class PhysicalModel {
 	 * @return the number of Mat modules in this model.
 	 */
 	public int getNumberOfMats() {
-		return mats.size();
+		int m = mats.size();
+		return m;
 	}
-
+	/**
+	 * Get number of Mat modules in current model.
+	 *
+	 * @return the number of Mat modules in this model.
+	 */
+	public int getNumberOfMasses() {
+		int m = mats.size();
+		for(Module mod:modules)
+		{
+			m+=mod.getNbMats();
+		}
+		return m;
+	}
 	/**
 	 * get number of Link modules in current model.
 	 *
@@ -761,7 +774,11 @@ public class PhysicalModel {
 				for (int i = 0; i < mats.size(); i++) {
 					mats.get(i).compute();
 				}
+				for(Module m:modules)
+					m.computeMoves();
 				//mats.parallelStream().forEach(o -> o.compute());
+				for(Module m:modules)
+					m.computeForces();
 
 				for (int i = 0; i < links.size(); i++) {
 					links.get(i).compute();
@@ -1283,7 +1300,7 @@ public class PhysicalModel {
 			modules.add(new String2D(Double.parseDouble(p.getProperty("String2D.restDistance")), Double.parseDouble(p.getProperty("String2D.stiffness")),
 					Double.parseDouble(p.getProperty("String2D.viscosity")),Double.parseDouble(p.getProperty("String2D.mass")),
 					Integer.parseInt(p.getProperty("String2D.size")),Double.parseDouble(p.getProperty("String2D.stretchFactor")),
-					Vect3D.fromString(p.getProperty("String2D.left")),Vect3D.fromString(p.getProperty("String2D.direction"))));
+					Vect3D.fromString(p.getProperty("String2D.left")),Vect3D.fromString(p.getProperty("String2D.direction")),0,new Vect3D(0,0,0)));
 			moduleIndexList.add(name);
 		}
 		catch (Exception e)
@@ -2648,6 +2665,11 @@ public class PhysicalModel {
 		else if(matExists(moduleName)) return mats.get(getMatIndex(moduleName));
 		else if(linkExists(moduleName)) return links.get(getLinkIndex(moduleName));
 		else return null;//TODO throw exception or at least log sth
+	}
+
+	public Module getModule(int i)
+	{
+		return modules.get(i);
 	}
 
 

@@ -22,22 +22,27 @@ public class String2D extends MacroModule {
   //  protected Vect3D rightSol;
 
 
-    public String2D(double restDistance, double K_param, double Z_param,double M_param,int size, double stretchRatio,Vect3D left, Vect3D direction)
+    public String2D(double restDistance, double K_param, double Z_param,double M_param,int size, double stretchRatio,Vect3D left, Vect3D direction,double friction,Vect3D gravity)
     {
         stiffness = K_param;
         damping = Z_param;
         m_invMass = 1/M_param;
         this.restDistance = restDistance;
+        this.friction=friction;
+        this.gravity=gravity;
 
         m_pos = new ArrayList<Vect3D>(size+2);
         m_posR = new ArrayList<Vect3D>(size+2);
         m_frc = new ArrayList<Vect3D>(size);
         distR = new ArrayList<Double>(size+1);
 
+
+        direction.mult(restDistance*stretchRatio);
         for(int i=0;i<size+2;i++)
         {
-            m_pos.add(left.add(direction.mult(i*restDistance*stretchRatio)));
-            m_posR.add(left.add(direction.mult(i*restDistance*stretchRatio)));
+            Vect3D curPos = Vect3D.add(left,Vect3D.mult(direction,i));;
+            m_pos.add(curPos);
+            m_posR.add(new Vect3D(curPos));
             if(i<size) m_frc.add(new Vect3D(0,0,0));
             if(i< size+1) distR.add(restDistance*stretchRatio);
         }
@@ -60,6 +65,9 @@ public class String2D extends MacroModule {
             applyForces(curFrc,curDist,i);
             distR.set(i,curDist);
         }
+        curFrc=0;
+        curFrc+=1;
+
 
     }
 
@@ -83,7 +91,7 @@ public class String2D extends MacroModule {
         }
 
 
-        if(i<m_pos.size()+1)
+        if(i<m_pos.size()-2)
         {
             m_frc.get(i).x -= lnkFrc * x_proj;
             m_frc.get(i).y -= lnkFrc * y_proj;
@@ -141,6 +149,6 @@ public class String2D extends MacroModule {
 
     public void addFrc(double frc,int i,Vect3D symPos)
     {
-        if(i>0 && i<m_pos.size()+1) super.addFrc(frc,i,symPos);
+        if(i>0 && i<m_pos.size()-1) addFrc(frc,i,symPos,i-1);
     }
 }

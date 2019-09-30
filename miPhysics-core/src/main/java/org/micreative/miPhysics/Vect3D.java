@@ -68,6 +68,13 @@ public class Vect3D {
 		return this;
 	}
 
+	public static Vect3D add(Vect3D v1,Vect3D v2)
+	{
+		Vect3D res = new Vect3D(v1);
+		res.add(v2);
+		return res;
+	}
+
 	public Vect3D sub(Vect3D v2) {
 		this.x -= v2.x;
 		this.y -= v2.y;
@@ -80,6 +87,13 @@ public class Vect3D {
 		this.y = this.y * factor;
 		this.z = this.z * factor;
 		return this;
+	}
+
+	public static Vect3D mult(Vect3D v,double factor)
+	{
+		Vect3D res = new Vect3D(v);
+		res.mult(factor);
+		return res;
 	}
 
 	public Vect3D div(double factor) {
