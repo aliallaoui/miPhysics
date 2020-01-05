@@ -170,6 +170,7 @@ listeningPoints[0] = "str4";
   renderer.setColor("SpringDamper3D", 135, 70, 70, 255);
   renderer.setStrainGradient("SpringDamper3D", true, 0.1);
   renderer.setStrainColor("SpringDamper3D", 105, 100, 200, 255);
+  renderer.init(simUGen.getMdl());
   cam.setDistance(500);  // distance from looked-at point
 
   frameRate(baseFrameRate);

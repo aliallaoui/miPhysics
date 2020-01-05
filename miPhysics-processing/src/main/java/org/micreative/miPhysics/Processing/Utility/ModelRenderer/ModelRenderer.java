@@ -2,7 +2,10 @@ package org.micreative.miPhysics.Processing.Utility.ModelRenderer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.micreative.miPhysics.Engine.Link;
+import org.micreative.miPhysics.Engine.Mat;
 import org.micreative.miPhysics.Engine.Module;
 import processing.core.PVector;
 
@@ -23,6 +26,12 @@ public class ModelRenderer implements PConstants{
 
     MatRenderProps fallbackMat = new MatRenderProps(125, 125, 125, 5);
     LinkRenderProps fallbackLink = new LinkRenderProps(125, 125, 125, 0);
+
+    ArrayList<MatDataHolder> matHolders = new ArrayList<MatDataHolder>();
+    ArrayList<LinkDataHolder> linkHolders = new ArrayList<LinkDataHolder>();
+
+    int nbMats;
+    int nbLinks;
 
     float m_scale;
 
@@ -138,51 +147,65 @@ public class ModelRenderer implements PConstants{
     }
 
 
+    public void init(PhysicalModel mdl)
+    {
+        nbMats = mdl.getNumberOfMats();
+        nbLinks = mdl.getNumberOfLinks();
+
+        if(m_matDisplay) {
+            for (Mat m :mdl.getMats())
+                matHolders.add(new MatDataHolder(m.getPos(),
+                        m.getMass(),
+                        m.getType()));
+            for(Module m: mdl.getMultiPointModules())
+            {
+                for(int j=0;j<m.getNbMats();j++)
+                {
+                    matHolders.add(new MatDataHolder(m.getPos(j),1,"Mass3D"));
+                    nbMats++;
+                }
+            }
+        }
+        for (Link l:mdl.getLinks())
+            linkHolders.add(new LinkDataHolder(l.getMat1().getPos(),
+                    l.getMat2().getPos(),
+                    l.getElong() / l.getDRest(),
+                    l.getType()));
+    }
+
+    public void updateMatHolders(PhysicalModel mdl)
+    {
+        List<Vect3D> positions = mdl.getAllPositions();
+        int i=0;
+        for(MatDataHolder mh:matHolders)
+        {
+            mh.setPos(positions.get(i++));
+        }
+    }
+    public void updateLinkHolders(PhysicalModel mdl)
+    {
+        List<Vect3D> positions = mdl.getAllLinkPositions();
+        int i=0;
+        for(LinkDataHolder lh:linkHolders)
+        {
+            lh.setP1(positions.get(i++));
+            lh.setP2(positions.get(i++));
+        }
+    }
 
     public void renderModel(PhysicalModel mdl) {
         PVector v;
         MatRenderProps tmp;
         LinkRenderProps tmp2;
 
-        ArrayList<MatDataHolder> matHolders = new ArrayList<MatDataHolder>();
-        ArrayList<LinkDataHolder> linkHolders = new ArrayList<LinkDataHolder>();
-
-        int nbMats;
-        int nbLinks;
-
         MatDataHolder mH;
         LinkDataHolder lH;
-
-
 
         // Limit the synchronized section to a copy of the model state
         synchronized (mdl.getLock()) {
 
-            nbMats = mdl.getNumberOfMats();
-            nbLinks = mdl.getNumberOfLinks();
-
-            if(m_matDisplay) {
-                for (int i = 0; i < mdl.getNumberOfMats(); i++)
-                    matHolders.add(new MatDataHolder(mdl.getMatPosAt(i),
-                            mdl.getMatMassAt(i),
-                            mdl.getMatTypeAt(i)));
-                for(int i=0; i< mdl.getNumberOfModules();i++)
-                {
-                    Module m = mdl.getModule(i);
-                    for(int j=0;j<m.getNbMats();j++)
-                    {
-                        matHolders.add(new MatDataHolder(m.getPos(j),1,"Mass3D"));
-                        nbMats++;
-                    }
-                }
-            }
-
-            for (int i = 0; i < mdl.getNumberOfLinks(); i++)
-                linkHolders.add(new LinkDataHolder(mdl.getLinkPos1At(i),
-                        mdl.getLinkPos2At(i),
-                        mdl.getLinkElongationAt(i) / mdl.getLinkDRestAt(i),
-                        mdl.getLinkTypeAt(i)));
-
+            updateMatHolders(mdl);
+            updateLinkHolders(mdl);
         }
 
         if(m_matDisplay){
@@ -245,6 +268,10 @@ public class ModelRenderer implements PConstants{
                 app.stroke(tmp2.red(), tmp2.green(), tmp2.blue(), tmp2.getAlpha());
                 app.strokeWeight(tmp2.getSize());
 
+                drawLine(lH.getP1(), lH.getP2());
+            }
+            else
+            {
                 drawLine(lH.getP1(), lH.getP2());
             }
         }

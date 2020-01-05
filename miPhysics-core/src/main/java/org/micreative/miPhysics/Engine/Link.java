@@ -158,7 +158,7 @@ public abstract class Link extends Module{
      * Get the distance between mat modules connected by the link
      * @return distance value.
      */
-    protected double getDist() {
+    public double getDist() {
         return m_dist;
     }
 
@@ -166,7 +166,7 @@ public abstract class Link extends Module{
      * Get the elongation (distance minus resting length between mat modules connected by the link
      * @return elongation value.
      */
-    protected double getElong() {
+    public double getElong() {
         return getDist() - m_dRest;
     }
 
