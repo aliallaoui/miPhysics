@@ -28,13 +28,57 @@ public class BasicTests {
         pm.addMContact2D("perc","string","percMass");
         pm.init();
 
-        for(int i=0;i<pm.getModule(0).getNbMats();i++)
-        System.out.println(pm.getModule(0).getPos(i));
+//        for(int i=0;i<pm.getModule(0).getNbMats();i++)
+ //       System.out.println(pm.getModule(0).getPos(i));
+        int nbMats = pm.getNumberOfMats();
+
 
         pm.computeNSteps(500);
 
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }
+
+    public @Test void testOsc2DControl() throws Exception
+    {
+        PhysicalModel pm = new PhysicalModel();
+        pm.addGround3D("ground",new Vect3D(0,0,0));
+        pm.addMass3D("osc", 100, new Vect3D(3, -4, 0.), new Vect3D(0, 2, 0.));
+        pm.addSpringDamper3D("spring",1,0.1,0.0001,"ground","osc");
+
+        pm.addParamController("spring_stiff","spring","stiffness",0.1f);
+        pm.init();
+
+        for(int i=0;i<pm.getModule(0).getNbMats();i++)
+            System.out.println(pm.getModule(0).getPos(i));
+
+        pm.computeNSteps(500);
+
+        //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
+    }
+
+    public @Test void testString2DControl() throws Exception
+    {
+        PhysicalModel pm = new PhysicalModel();
+        pm.addGround3D("ground",new Vect3D(0,0,0));
+        pm.addMass3D("osc1", 100, new Vect3D(3, -4, 0.), new Vect3D(0, 2, 0.));
+        pm.addMass3D("osc2", 100, new Vect3D(4, -4, 0.), new Vect3D(0, 2, 0.));
+        pm.addSpringDamper3D("spring1",1,0.1,0.0001,"ground","osc1");
+        pm.addSpringDamper3D("spring2",1,0.1,0.0001,"osc1","osc2");
+
+        pm.createLinkSubset("spring");
+        pm.addLinkToSubset("spring1","spring");
+        pm.addLinkToSubset("spring2","spring");
+        pm.addParamController("spring_stiff","spring","stiffness",0.1f);
+        pm.init();
+
+        for(int i=0;i<pm.getModule(0).getNbMats();i++)
+            System.out.println(pm.getModule(0).getPos(i));
+
+        pm.computeNSteps(500);
+
+        //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
+    }
+
 
     public @Test void testString2DAudio() throws Exception
     {
@@ -70,11 +114,14 @@ public class BasicTests {
 
         simUGen.getMdl().init();
 
+        int nbMats = simUGen.getMdl().getNumberOfMats();
+
         for(int i=0;i<simUGen.getMdl().getModule(0).getNbMats();i++)
             System.out.println(simUGen.getMdl().getModule(0).getPos(i));
 
         try {
-            simUGen.getMdl().computeNSteps(300);
+            simUGen.testUGen();
+            //            simUGen.getMdl().computeNSteps(300);
         }
         catch(Exception e)
         {

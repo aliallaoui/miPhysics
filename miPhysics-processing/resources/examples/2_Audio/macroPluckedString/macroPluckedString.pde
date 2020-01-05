@@ -113,20 +113,11 @@ listeningPointsInd[0] = 3;
     simUGen.setListeningPoint(listeningPoints,listeningPointsInd);
 
     simUGen.getMdl().init();
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
   //Adjust this to your settings using 
    MidiBus.list();  
   // Knowing that first integer paramater below is the input MIDI device and the second the output MIDI device
   myBus = new MidiBus(this, 0, 1); // Create a new MidiBus with no input device and the default Java Sound Synthesizer as the output device.
-
 
   midiCtrls.add(MidiController.addMidiController(simUGen.getMdl(),1, 0.01, 0.3, "string", "stiffness",0.05));
   midiCtrls.add(MidiController.addMidiController(simUGen.getMdl(),2, 0.0001, 0.1, "string", "damping",0.05));
@@ -154,6 +145,7 @@ listeningPointsInd[0] = 3;
   renderer.setColor("SpringDamper3D", 135, 70, 70, 255);
   renderer.setStrainGradient("SpringDamper3D", true, 0.1);
   renderer.setStrainColor("SpringDamper3D", 105, 100, 200, 255);
+  renderer.init(simUGen.getMdl());
   cam.setDistance(500);  // distance from looked-at point
 
   frameRate(baseFrameRate);

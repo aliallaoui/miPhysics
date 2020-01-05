@@ -24,15 +24,17 @@ public class ParamController extends AbstractController
       this.rampTime =rampTime;
       this.vmin=new Float(0);
       this.vmax=rampTime*pm.getSimRate();
-        PropertyDescriptor p;
+      PropertyDescriptor p = null;
       try {
+
           if(pm.hasSubset(name)) p = PropertyUtils.getPropertyDescriptor(pm.getFirstModuleOfSubset(name), param_);
-          else p = PropertyUtils.getPropertyDescriptor(pm.getModule(name),param_);
+          else if (pm.hasModule(name)) p = PropertyUtils.getPropertyDescriptor(pm.getModule(name),param_);
+          else throw new Exception("No module nor subset named" + name);//System.out.println(
           writeMethod = PropertyUtils.getWriteMethod(p);
       }
       catch(Exception e)
       {
-          System.out.println("could not initialize controller : " + e.getMessage());
+          System.out.println("could not initialize controller for subset/module " + name + " and param " + param_ + " : " + e.getMessage());
       }
     }
 

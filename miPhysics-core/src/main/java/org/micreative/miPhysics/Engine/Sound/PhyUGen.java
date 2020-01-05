@@ -72,4 +72,12 @@ public class PhyUGen extends UGen { //TODO maybe PhyUGen should inherits also Ph
         currAudio = audioOut;
     }
 
+    public void testUGen()
+    {
+        float [] test= new float[1];
+        uGenerate(test);
+    }
+
+    public float getAudioOut(){return  audioOut;}
+
 }

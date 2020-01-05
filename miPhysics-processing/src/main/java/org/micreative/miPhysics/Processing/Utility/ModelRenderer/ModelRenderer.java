@@ -162,7 +162,6 @@ public class ModelRenderer implements PConstants{
                 for(int j=0;j<m.getNbMats();j++)
                 {
                     matHolders.add(new MatDataHolder(m.getPos(j),1,"Mass3D"));
-                    nbMats++;
                 }
             }
         }

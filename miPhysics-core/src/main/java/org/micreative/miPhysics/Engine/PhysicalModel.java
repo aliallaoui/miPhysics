@@ -240,7 +240,9 @@ public class PhysicalModel {
 	 * @return
 	 */
 	public int getMatIndex(String name) {
-		return moduleIndexList.indexOf(name);
+		int ret = moduleIndexList.indexOf(name);
+		if(modules.get(ret) instanceof Mat) return ret;
+		else return -1;
 	}
 
 	/**
@@ -251,7 +253,9 @@ public class PhysicalModel {
 	 * @return
 	 */
 	public int getLinkIndex(String name) {
-		return moduleIndexList.indexOf(name);
+		int ret = moduleIndexList.indexOf(name);
+		if(modules.get(ret) instanceof Link) return ret;
+		else return -1;
 	}
 
 	/**
@@ -2178,7 +2182,8 @@ public class PhysicalModel {
 
 	public Module getFirstModuleOfSubset(String subsetName)
 	{
-		if(mat_subsets.containsKey(subsetName) || link_subsets.containsKey(subsetName) ) return modules.get(mat_subsets.get(subsetName).get(0));
+		if(mat_subsets.containsKey(subsetName) ) return modules.get(mat_subsets.get(subsetName).get(0));
+		else if(link_subsets.containsKey(subsetName))  return modules.get(link_subsets.get(subsetName).get(0));
 		else return null;//TODO should throw exception
 	}
 
@@ -2186,6 +2191,11 @@ public class PhysicalModel {
 	{
 		if(moduleIndexList.contains(moduleName) || matExists(moduleName) || linkExists(moduleName)) return modules.get(getModuleIndex(moduleName));
 		else return null;//TODO throw exception or at least log sth
+	}
+
+	public Boolean hasModule(String moduleName)
+	{
+		return (moduleIndexList.contains(moduleName) || matExists(moduleName) || linkExists(moduleName));
 	}
 
 	public Module getModule(int i)
