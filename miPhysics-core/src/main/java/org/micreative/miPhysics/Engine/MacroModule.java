@@ -12,6 +12,8 @@ public abstract class MacroModule extends Module {
     protected List<Vect3D> m_frc;
     protected List<Double> distR;
 
+    protected double friction;
+    protected Vect3D gravity;
 
     public int getNbMats()
     {
@@ -33,6 +35,14 @@ public abstract class MacroModule extends Module {
         m_frc.get(f_index).y += frc * y_proj;
 
 
+    }
+
+    public void setGravity(Vect3D grav) {
+        if(gravity == null) gravity = grav;
+        else gravity.set(grav);
+    }
+    public void setFriction(double fric) {
+        friction= fric;
     }
 
 }

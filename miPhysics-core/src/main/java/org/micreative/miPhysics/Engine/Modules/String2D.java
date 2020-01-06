@@ -1,12 +1,16 @@
 package org.micreative.miPhysics.Engine.Modules;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.micreative.miPhysics.Engine.MacroModule;
 import org.micreative.miPhysics.Vect3D;
 
+import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 public class String2D extends MacroModule {
+
+
 
     private double restDistance;
     private double m_invMass;
@@ -14,15 +18,60 @@ public class String2D extends MacroModule {
 
 
     /* Class attributes */
-    protected double friction;
-    protected Vect3D gravity;
+
+    protected int size;
+    protected double stretchFactor;
+
+    public Vect3D getLeft() {
+        return left;
+    }
+
+    public void setLeft(Vect3D left) {
+        this.left = left;
+    }
+
+    protected Vect3D left;
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size)
+    {
+        this.size=size;
+    }
+
+    public double getStretchFactor() {
+        return stretchFactor;
+    }
+
+    public void setStretchFactor(double stretchFactor) {
+        this.stretchFactor = stretchFactor;
+    }
+
+    public Vect3D getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Vect3D direction) {
+        this.direction = direction;
+    }
+
+    public double getRestDistance() {
+        return restDistance;
+    }
+
+    public void setRestDistance(double restDistance) {
+        this.restDistance = restDistance;
+    }
+    protected Vect3D direction;
 
 
   //  protected Vect3D leftSol;
   //  protected Vect3D rightSol;
 
 
-    public String2D(double restDistance, double K_param, double Z_param,double M_param,int size, double stretchRatio,Vect3D left, Vect3D direction,double friction,Vect3D gravity)
+    public String2D(double restDistance, double K_param, double Z_param, double M_param, int size, double stretchFactor, Vect3D left, Vect3D direction, double friction, Vect3D gravity)
     {
         stiffness = K_param;
         damping = Z_param;
@@ -37,14 +86,14 @@ public class String2D extends MacroModule {
         distR = new ArrayList<Double>(size+1);
 
 
-        direction.mult(restDistance*stretchRatio);
+        direction.mult(restDistance* stretchFactor);
         for(int i=0;i<size+2;i++)
         {
             Vect3D curPos = Vect3D.add(left,Vect3D.mult(direction,i));;
             m_pos.add(curPos);
             m_posR.add(new Vect3D(curPos));
             if(i<size) m_frc.add(new Vect3D(0,0,0));
-            if(i< size+1) distR.add(restDistance*stretchRatio);
+            if(i< size+1) distR.add(restDistance* stretchFactor);
         }
 //        distR.add(restDistance*stretchRatio);
  //       leftSol = left.add(direction.mult(-restDistance*stretchRatio));
@@ -52,8 +101,54 @@ public class String2D extends MacroModule {
 
     }
 
+    public String2D(Map<String,String> params)
+    {
 
+        params.forEach((k,v)->{
+            try {
+                PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, k);
+                String type = p.getPropertyType().toString();
+                Object value = null;
+                if (type.equals("double")) value = Double.parseDouble(v);
+                else if (type.equals("float")) value = Float.parseFloat(v);
+                else if (type.equals("int")) value = Integer.parseInt(v);
+                else if (type.equals("class org.micreative.miPhysics.Vect3D")) value = Vect3D.fromString(v);
+                p.getWriteMethod().invoke(this,value);
+            }
+            catch(Exception e)
+            {
+                System.out.println("error creating string2D with " + params + " cause : " + e.getMessage());
+            }
+        });
+        init();
+    }
 
+    public void init()
+    {
+        m_pos = new ArrayList<Vect3D>(size+2);
+        m_posR = new ArrayList<Vect3D>(size+2);
+        m_frc = new ArrayList<Vect3D>(size);
+        distR = new ArrayList<Double>(size+1);
+        direction.mult(restDistance* stretchFactor);
+        for(int i=0;i<size+2;i++)
+        {
+            Vect3D curPos = Vect3D.add(left,Vect3D.mult(direction,i));;
+            m_pos.add(curPos);
+            m_posR.add(new Vect3D(curPos));
+            if(i<size) m_frc.add(new Vect3D(0,0,0));
+            if(i< size+1) distR.add(restDistance* stretchFactor);
+        }
+    }
+
+   /*
+    public void setSize(int size)
+    {
+        m_pos = new ArrayList<Vect3D>(size+2);
+        m_posR = new ArrayList<Vect3D>(size+2);
+        m_frc = new ArrayList<Vect3D>(size);
+        distR = new ArrayList<Double>(size+1);
+    }
+*/
     public void computeForces()
     {
         double curDist;
@@ -130,12 +225,7 @@ public class String2D extends MacroModule {
         }
     }
 
-    public void setGravity(Vect3D grav) {
-        gravity.set(grav);
-    }
-    public void setFriction(double fric) {
-        friction= fric;
-    }
+
     /**
      * Set the mass parameter.
      * @param M mass value.

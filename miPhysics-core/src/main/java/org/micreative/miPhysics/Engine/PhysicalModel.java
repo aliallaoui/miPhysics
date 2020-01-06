@@ -1160,6 +1160,32 @@ public class PhysicalModel {
 		return 0;
 	}
 */
+	protected Properties getPropertySubset(Properties prop, String key)
+	{
+		final Properties p = new Properties();
+
+		for (String s : prop.stringPropertyNames()) {
+			if (s.startsWith(key) && s.length() > key.length())
+			{
+				p.put(s.substring(key.length()), p.getProperty(s));
+			}
+		}
+		return p;
+	}
+
+	protected Map<String,String> getPropertySubsetAsMap(Properties prop, String key)
+	{
+		final Map<String,String> p = new HashMap<>();
+
+		for (String s : prop.stringPropertyNames()) {
+			if (s.startsWith(key) && s.length() > key.length())
+			{
+				p.put(s.substring(key.length()), prop.getProperty(s));
+			}
+		}
+		return p;
+	}
+
 	public void addString2D(String name)
 	{
 		try(InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties"))
@@ -1172,10 +1198,16 @@ public class PhysicalModel {
 			}
 			//p.load(new FileReader(defaultParamsPropertiesPath));
 			p.load(input);
+/*
 			modules.add(new String2D(Double.parseDouble(p.getProperty("String2D.restDistance")), Double.parseDouble(p.getProperty("String2D.stiffness")),
+
 					Double.parseDouble(p.getProperty("String2D.viscosity")),Double.parseDouble(p.getProperty("String2D.mass")),
 					Integer.parseInt(p.getProperty("String2D.size")),Double.parseDouble(p.getProperty("String2D.stretchFactor")),
 					Vect3D.fromString(p.getProperty("String2D.left")),Vect3D.fromString(p.getProperty("String2D.direction")),0,new Vect3D(0,0,0)));
+*/
+			Map params = getPropertySubsetAsMap(p,"String2D.");
+			params.putAll(getPropertySubsetAsMap(p,"Global."));
+			modules.add(new String2D(params));
 			moduleIndexList.add(name);
 		}
 		catch (Exception e)
