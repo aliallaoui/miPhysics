@@ -6,6 +6,7 @@ import org.micreative.miPhysics.Vect3D;
 
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class String2D extends MacroModule {
@@ -103,7 +104,6 @@ public class String2D extends MacroModule {
 
     public String2D(Map<String,String> params)
     {
-
         params.forEach((k,v)->{
             try {
                 PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, k);
@@ -122,6 +122,42 @@ public class String2D extends MacroModule {
         });
         init();
     }
+
+    public String2D(Map<String,String> defaultParams,Map<String,Object> params)
+    {
+        Map<String,Object> finalParams = new HashMap<>();
+
+        defaultParams.forEach((k,v)->{
+            try {
+                PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, k);
+                String type = p.getPropertyType().toString();
+                Object value = null;
+                if (type.equals("double")) value = Double.parseDouble(v);
+                else if (type.equals("float")) value = Float.parseFloat(v);
+                else if (type.equals("int")) value = Integer.parseInt(v);
+                else if (type.equals("class org.micreative.miPhysics.Vect3D")) value = Vect3D.fromString(v);
+                finalParams.put(k,value);
+            }
+            catch(Exception e)
+            {
+                System.out.println("error creating string2D with " + params + " cause : " + e.getMessage());
+            }
+        });
+        finalParams.putAll(params);
+        finalParams.forEach((k,v)->{
+            try {
+                PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, k);
+                p.getWriteMethod().invoke(this,v);
+            }
+            catch(Exception e)
+            {
+                System.out.println("error creating string2D with " + params + " cause : " + e.getMessage());
+            }
+        });
+
+        init();
+    }
+
 
     public void init()
     {

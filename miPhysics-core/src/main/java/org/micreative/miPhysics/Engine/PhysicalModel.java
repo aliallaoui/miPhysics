@@ -1188,6 +1188,11 @@ public class PhysicalModel {
 
 	public void addString2D(String name)
 	{
+		addString2D(name,new HashMap<>());
+	}
+
+	public void addString2D(String name, Map<String,Object> params)
+	{
 		try(InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties"))
 		{
 			Properties p = new Properties();
@@ -1205,9 +1210,9 @@ public class PhysicalModel {
 					Integer.parseInt(p.getProperty("String2D.size")),Double.parseDouble(p.getProperty("String2D.stretchFactor")),
 					Vect3D.fromString(p.getProperty("String2D.left")),Vect3D.fromString(p.getProperty("String2D.direction")),0,new Vect3D(0,0,0)));
 */
-			Map params = getPropertySubsetAsMap(p,"String2D.");
-			params.putAll(getPropertySubsetAsMap(p,"Global."));
-			modules.add(new String2D(params));
+			Map defaultParams = getPropertySubsetAsMap(p,"String2D.");
+			defaultParams.putAll(getPropertySubsetAsMap(p,"Global."));
+			modules.add(new String2D(defaultParams,params));
 			moduleIndexList.add(name);
 		}
 		catch (Exception e)

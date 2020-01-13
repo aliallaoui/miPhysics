@@ -6,6 +6,9 @@ import org.micreative.miPhysics.Engine.Control.MidiController;
 import org.micreative.miPhysics.Engine.PhysicalModel;
 import org.micreative.miPhysics.Engine.Sound.PhyUGen;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BasicTests {
 
     public @Test void testOneMass1D() throws Exception
@@ -23,7 +26,9 @@ public class BasicTests {
     public @Test void testString2D() throws Exception
     {
         PhysicalModel pm = new PhysicalModel();
-        pm.addString2D("string");
+        Map<String,Object> params = new HashMap<>();
+        params.put("size",7);
+        pm.addString2D("string" ,params);
         pm.addMass3D("percMass", 100, new Vect3D(3, -4, 0.), new Vect3D(0, 2, 0.));
         pm.addMContact2D("perc","string","percMass");
         pm.init();
