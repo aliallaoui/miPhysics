@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.concurrent.locks.*;
 import java.lang.Math;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.micreative.miPhysics.Engine.Control.ParamController;
 import org.micreative.miPhysics.Engine.Modules.*;
 import org.micreative.miPhysics.Vect3D;
@@ -223,7 +224,7 @@ public class PhysicalModel {
 
 		/* Initialise the stored distances for the springs */
 		for (int i = 0; i < modules.size(); i++) {
-			modules.get(i).initDistances();
+			modules.get(i).init();
 		}
 
 
@@ -1981,6 +1982,22 @@ public class PhysicalModel {
 		{
 			System.out.println("could not set parameter " + e.getMessage());//TODO should rethrow exception
 		}
+	}
+
+	public void setParam(String moduleName,String param,Object value)
+	{
+		try{
+			if (this.moduleIndexList.contains(moduleName))
+			{
+				Module m = modules.get(getModuleIndex(moduleName));
+				PropertyUtils.getPropertyDescriptor(m, param).getWriteMethod().invoke(m,value);
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("could not set parameter " + e.getMessage());//TODO should rethrow exception
+		}
+
 	}
 	/**
 	 * Get any param for a subset of modules.

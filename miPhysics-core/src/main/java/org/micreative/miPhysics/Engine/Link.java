@@ -69,7 +69,10 @@ public abstract class Link extends Module{
 
 
 
-
+    public void init()
+    {
+        initDistances();
+    }
 
     /**
      * Initialise distance and delayed distance for this Link.

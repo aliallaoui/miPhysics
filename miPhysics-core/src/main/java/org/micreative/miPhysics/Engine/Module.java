@@ -13,6 +13,8 @@ public abstract class Module {
 
     public abstract void computeMoves();
 
+    public abstract void init();
+
     public String getType()
     {
         return getClass().toString().split("\\.")[5];
@@ -56,5 +58,5 @@ public abstract class Module {
     public Vect3D getPosR(int i){return null;}
 
     public void addFrc(double frc,int i,Vect3D symPos){}
-    public void initDistances(){}
+
 }

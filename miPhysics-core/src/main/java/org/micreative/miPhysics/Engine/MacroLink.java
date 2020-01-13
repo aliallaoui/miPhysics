@@ -89,4 +89,9 @@ public abstract class MacroLink extends Module {
         }
     }
 
+    public void init()
+    {
+        initDistances();
+    }
+
 }

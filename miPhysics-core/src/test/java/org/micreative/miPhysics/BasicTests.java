@@ -29,6 +29,7 @@ public class BasicTests {
         Map<String,Object> params = new HashMap<>();
         params.put("size",7);
         pm.addString2D("string" ,params);
+        pm.setParam("string","stretchFactor",1.2);
         pm.addMass3D("percMass", 100, new Vect3D(3, -4, 0.), new Vect3D(0, 2, 0.));
         pm.addMContact2D("perc","string","percMass");
         pm.init();
