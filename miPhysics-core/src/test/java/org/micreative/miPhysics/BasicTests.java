@@ -126,8 +126,9 @@ public class BasicTests {
             System.out.println(simUGen.getMdl().getModule(0).getPos(i));
 
         try {
-            simUGen.testUGen();
-            //            simUGen.getMdl().computeNSteps(300);
+            //simUGen.testUGen();
+            simUGen.getMdl().computeNSteps(1);
+            simUGen.getMdl().setParam("string","stretchFactor",1.1);
         }
         catch(Exception e)
         {
@@ -142,8 +143,10 @@ public class BasicTests {
 
         pm.init();
         MidiController mc = MidiController.addMidiController(pm,3, 0.5f, 1.5f, "string", "mass", 0.05f);
+        MidiController mc2 = MidiController.addMidiController(pm,4, 0.5f, 1.5f, "string", "stretchFactor", 0.05f);
+        pm.computeNSteps(3);
+        mc2.changeParam(67);
         pm.computeNSteps(300);
-
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }
 

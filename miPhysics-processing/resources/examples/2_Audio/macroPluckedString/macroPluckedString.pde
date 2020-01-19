@@ -83,22 +83,22 @@ void setup()
   gain = new Gain(0);
 
   // create a physicalModel UGEN
-  simUGen = new PhyUGen(22050,baseFrameRate); //<>// //<>// //<>//
-  
-  
+  simUGen = new PhyUGen(22050,baseFrameRate); //<>// //<>//
+
+
    simUGen.getMdl().setGravity(grav);
     simUGen.getMdl().setFriction(fric);
 
     simUGen.getMdl().addMass2DPlane("guideM1", 1000000000, new Vect3D(2, -4, 0.), new Vect3D(0, 2, 0.));
     simUGen.getMdl().addMass2DPlane("guideM2", 1000000000, new Vect3D(4, -4, 0.), new Vect3D(0, 2, 0.));
-    simUGen.getMdl().addMass2DPlane("guideM3", 1000000000, new Vect3D(3, -3, 0.), new Vect3D(0, 2, 0.)); 
-    simUGen.getMdl().addMass3D("percMass", 100, new Vect3D(3, -4, 0.), new Vect3D(0, 2, 0.));    
+    simUGen.getMdl().addMass2DPlane("guideM3", 1000000000, new Vect3D(3, -3, 0.), new Vect3D(0, 2, 0.));
+    simUGen.getMdl().addMass3D("percMass", 100, new Vect3D(3, -4, 0.), new Vect3D(0, 2, 0.));
     simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM1", "percMass");
     simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM2", "percMass");
     simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM3", "percMass");
 
    simUGen.getMdl().addString2D("string");
-   
+
    simUGen.getMdl().addMContact2D("perc","percMass","string");
    /*
     for(int i= 0; i< nbmass; i++)
@@ -114,26 +114,26 @@ listeningPointsInd[0] = 3;
 
     simUGen.getMdl().init();
 
-  //Adjust this to your settings using 
-   MidiBus.list();  
+  //Adjust this to your settings using
+   MidiBus.list();
   // Knowing that first integer paramater below is the input MIDI device and the second the output MIDI device
   myBus = new MidiBus(this, 0, 1); // Create a new MidiBus with no input device and the default Java Sound Synthesizer as the output device.
 
   midiCtrls.add(MidiController.addMidiController(simUGen.getMdl(),1, 0.01, 0.3, "string", "stiffness",0.05));
   midiCtrls.add(MidiController.addMidiController(simUGen.getMdl(),2, 0.0001, 0.1, "string", "damping",0.05));
   midiCtrls.add(MidiController.addMidiController(simUGen.getMdl(),3, 0.5, 1.5, "string", "mass",0.05));
-//  midiCtrls.add(MidiController.addMidiController(simUGen.getMdl(),4, 20, 100, "gnd", "distX",0.05));
+  midiCtrls.add(MidiController.addMidiController(simUGen.getMdl(),4, 0.5, 1.5, "string", "stretchFactor",0.05));
 
   //midiNotes.add(new midiNote(0.01, 0.9, "str",0,simUGen.nbmass - 1,"Y","impulse"));
  // midiNotes.add(new midiNote(0.1, 10, "str",0,simUGen.getMdl().getNumberOfMats() - 1,"Y","pluck"));
-  
+
   // patch the Oscil to the output
   simUGen.patch(gain).patch(out);
 
   renderer = new ModelRenderer(this);
-  
+
   renderer.setZoomVector(100,100,100);
-  
+
   renderer.displayMats(true);
   renderer.setSize("Mass3D", 40.);
   renderer.setColor("Mass3D", 140, 140, 40);
@@ -141,7 +141,7 @@ listeningPointsInd[0] = 3;
   renderer.setColor("Mass2DPlane", 120, 0, 140);
   renderer.setSize("Ground3D", 25.);
   renderer.setColor("Ground3D", 30, 100, 100);
-  
+
   renderer.setColor("SpringDamper3D", 135, 70, 70, 255);
   renderer.setStrainGradient("SpringDamper3D", true, 0.1);
   renderer.setStrainColor("SpringDamper3D", 105, 100, 200, 255);
@@ -149,7 +149,7 @@ listeningPointsInd[0] = 3;
   cam.setDistance(500);  // distance from looked-at point
 
   frameRate(baseFrameRate);
-  
+
 }
 
 void draw()
@@ -161,10 +161,10 @@ void draw()
 
     float x = 30*(float)mouseX / width - 15;
     float y = 30*(float)mouseY / height - 15;
-    
+
     x_avg = (1-smooth) * x_avg + (smooth) * x;
     y_avg = (1-smooth) * y_avg + (smooth) * y;
-    
+
     simUGen.getMdl().setMatPosition("guideM1",new Vect3D(x_avg-1, y_avg, 0));
     simUGen.getMdl().setMatPosition("guideM2",new Vect3D(x_avg+1, y_avg, 0));
     simUGen.getMdl().setMatPosition("guideM3",new Vect3D(x_avg, y_avg-1, 0));
@@ -180,9 +180,10 @@ void draw()
   textSize(16);
   fill(255, 255, 255);
   text("Curr Audio: " + currAudio, 10, 30);
-  text("stiffness: " + simUGen.getMdl().getParamValueOfSubset("sprd","stiffness"),10,50);
-  text("damping: " + simUGen.getMdl().getParamValueOfSubset("sprd","damping"),10,70);
-  text("mass: " + simUGen.getMdl().getParamValueOfSubset("str","mass"),10,90);
+  text("stiffness: " + simUGen.getMdl().getParam("string","stiffness"),10,50);
+  text("damping: " + simUGen.getMdl().getParam("string","damping"),10,70);
+  text("mass: " + simUGen.getMdl().getParam("string","mass"),10,90);
+   text("stretchFactor: " + simUGen.getMdl().getParam("string","stretchFactor"),10,110);
   cam.endHUD();
 }
 

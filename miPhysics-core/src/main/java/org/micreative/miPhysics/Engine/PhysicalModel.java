@@ -1999,6 +1999,24 @@ public class PhysicalModel {
 		}
 
 	}
+
+	public Object getParam(String moduleName,String param)
+	{
+		try{
+			if (this.moduleIndexList.contains(moduleName))
+			{
+				Module m = modules.get(getModuleIndex(moduleName));
+				return PropertyUtils.getPropertyDescriptor(m, param).getReadMethod().invoke(m);
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("could not set parameter " + e.getMessage());//TODO should rethrow exception
+			return null;
+		}
+		return null;
+	}
+
 	/**
 	 * Get any param for a subset of modules.
 	 *
@@ -2041,15 +2059,6 @@ public class PhysicalModel {
 	 * @return the param value
 	 */
 
-	public double getParam(String moduleName,String paramName)
-	{
-
-			if(paramName.equals("stiffness")) return getModule(moduleName).getStiffness();
-			else if(paramName.equals("damping")) return getModule(moduleName).getDamping();
-			else if(paramName.equals("dist")) return ((Link)getModule(moduleName)).getDist();
-			else if(paramName.equals("mass")) return ((Mat)getModule(moduleName)).getMass();
-			else return -1.; //TODO throw exception
-	}
 
 	public double getParam(int index,String paramName)
 	{

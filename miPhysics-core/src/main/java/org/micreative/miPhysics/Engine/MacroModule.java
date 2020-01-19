@@ -14,10 +14,20 @@ public abstract class MacroModule extends Module {
 
     protected double friction;
     protected Vect3D gravity;
+    protected int size;
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size)
+    {
+        this.size=size;
+    }
 
     public int getNbMats()
     {
-        return m_pos.size();
+        return size;
     }
 
     public Vect3D getPos(int i){return m_pos.get(i);}

@@ -20,27 +20,19 @@ public class String2D extends MacroModule {
 
     /* Class attributes */
 
-    protected int size;
+
     protected double stretchFactor;
+    protected Vect3D direction;
+    protected Vect3D center;
 
-    public Vect3D getLeft() {
-        return left;
+    public Vect3D getCenter() {
+        return center;
     }
 
-    public void setLeft(Vect3D left) {
-        this.left = left;
+    public void setCenter(Vect3D center) {
+        this.center = center;
     }
 
-    protected Vect3D left;
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size)
-    {
-        this.size=size;
-    }
 
     public double getStretchFactor() {
         return stretchFactor;
@@ -48,6 +40,15 @@ public class String2D extends MacroModule {
 
     public void setStretchFactor(double stretchFactor) {
         this.stretchFactor = stretchFactor;
+        if (isInit)
+        {
+            Vect3D dir = new Vect3D(direction);
+            dir.mult(restDistance* stretchFactor);
+            Vect3D left = Vect3D.add(center,Vect3D.mult(dir,-(size+1.)/2.));
+            Vect3D right = Vect3D.add(center,Vect3D.mult(dir,(size+1.)/2.));
+            m_pos.set(0,left);
+            m_pos.set(size+1,right);
+        }
     }
 
     public Vect3D getDirection() {
@@ -65,14 +66,9 @@ public class String2D extends MacroModule {
     public void setRestDistance(double restDistance) {
         this.restDistance = restDistance;
     }
-    protected Vect3D direction;
 
 
-  //  protected Vect3D leftSol;
-  //  protected Vect3D rightSol;
-
-
-    public String2D(double restDistance, double K_param, double Z_param, double M_param, int size, double stretchFactor, Vect3D left, Vect3D direction, double friction, Vect3D gravity)
+    public String2D(double restDistance, double K_param, double Z_param, double M_param, int size, double stretchFactor, Vect3D center, Vect3D direction, double friction, Vect3D gravity)
     {
         stiffness = K_param;
         damping = Z_param;
@@ -86,16 +82,20 @@ public class String2D extends MacroModule {
         m_frc = new ArrayList<Vect3D>(size);
         distR = new ArrayList<Double>(size+1);
 
+        this.direction = direction;
+
 
         direction.mult(restDistance* stretchFactor);
+        Vect3D left = Vect3D.add(center,Vect3D.mult(direction,-(size+1.)/2.));
         for(int i=0;i<size+2;i++)
         {
-            Vect3D curPos = Vect3D.add(left,Vect3D.mult(direction,i));;
+            Vect3D curPos = Vect3D.add(center,Vect3D.mult(direction,i));;
             m_pos.add(curPos);
             m_posR.add(new Vect3D(curPos));
             if(i<size) m_frc.add(new Vect3D(0,0,0));
             if(i< size+1) distR.add(restDistance* stretchFactor);
         }
+        isInit = true;
 //        distR.add(restDistance*stretchRatio);
  //       leftSol = left.add(direction.mult(-restDistance*stretchRatio));
  //       rightSol = left.add(direction.mult(restDistance*stretchRatio*size));
@@ -155,7 +155,6 @@ public class String2D extends MacroModule {
             }
         });
 
-        init();
     }
 
 
@@ -165,15 +164,18 @@ public class String2D extends MacroModule {
         m_posR = new ArrayList<Vect3D>(size+2);
         m_frc = new ArrayList<Vect3D>(size);
         distR = new ArrayList<Double>(size+1);
-        direction.mult(restDistance* stretchFactor);
+        Vect3D dir = direction;
+        dir.mult(restDistance* stretchFactor);
+        Vect3D left = Vect3D.add(center,Vect3D.mult(dir,-(size+1.)/2.));
         for(int i=0;i<size+2;i++)
         {
-            Vect3D curPos = Vect3D.add(left,Vect3D.mult(direction,i));;
+            Vect3D curPos = Vect3D.add(left,Vect3D.mult(dir,i));;
             m_pos.add(curPos);
             m_posR.add(new Vect3D(curPos));
             if(i<size) m_frc.add(new Vect3D(0,0,0));
             if(i< size+1) distR.add(restDistance* stretchFactor);
         }
+        isInit = true;
     }
 
    /*
@@ -277,4 +279,7 @@ public class String2D extends MacroModule {
     {
         if(i>0 && i<m_pos.size()-1) addFrc(frc,i,symPos,i-1);
     }
+
+    //getNbMats should be reimplemented as nbMats = size+2 and not size as defined in MacroModule
+    public int getNbMats(){return size+2;}
 }

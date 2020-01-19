@@ -23,6 +23,7 @@ public abstract class Module {
 
     protected double stiffness;
     protected double damping;
+    protected boolean isInit = false;
 
     /**
      * Change the stiffness of this Link.
