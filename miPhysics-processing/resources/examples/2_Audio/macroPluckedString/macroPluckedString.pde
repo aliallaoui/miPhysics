@@ -4,7 +4,7 @@ import ddf.minim.ugens.*;
 import peasy.*;
 import org.micreative.miPhysics.Processing.Utility.ModelRenderer.*;
 import org.micreative.miPhysics.Engine.Control.*;
-import org.micreative.miPhysics.Engine.Sound.PhyUGen;
+import org.micreative.miPhysics.Engine.Sound.miPhyAudioClient;
 import org.micreative.miPhysics.Vect3D;
 import themidibus.*; //Import the library
 
@@ -28,7 +28,7 @@ PeasyCam cam;
 float percsize = 200;
 
 Minim minim;
-PhyUGen simUGen;
+miPhyAudioClient simUGen;
 Gain gain;
 
 AudioOutput out;
@@ -71,31 +71,18 @@ void setup()
   cam.setMinimumDistance(50);
   cam.setMaximumDistance(2500);
 
-  minim = new Minim(this);
-
-  // use the getLineOut method of the Minim object to get an AudioOutput object
-  //out = minim.getLineOut();
-  out = minim.getLineOut(Minim.STEREO, 1024,22050,16);
-
-  recorder = minim.createRecorder(out, "myrecording.wav");
-
-  // start the Gain at 0 dB, which means no change in amplitude
-  gain = new Gain(0);
-
-  // create a physicalModel UGEN
-  simUGen = new PhyUGen(22050,baseFrameRate); //<>// //<>//
-
-
+  simUGen = miPhyAudioClient.miPhyClassic(22050,0,2);
+  //simUGen = miPhyAudioClient.miPhyJack(22050,0,2);
    simUGen.getMdl().setGravity(grav);
     simUGen.getMdl().setFriction(fric);
 
     simUGen.getMdl().addMass2DPlane("guideM1", 1000000000, new Vect3D(2, -4, 0.), new Vect3D(0, 2, 0.));
-    simUGen.getMdl().addMass2DPlane("guideM2", 1000000000, new Vect3D(4, -4, 0.), new Vect3D(0, 2, 0.));
-    simUGen.getMdl().addMass2DPlane("guideM3", 1000000000, new Vect3D(3, -3, 0.), new Vect3D(0, 2, 0.));
-    simUGen.getMdl().addMass3D("percMass", 100, new Vect3D(3, -4, 0.), new Vect3D(0, 2, 0.));
-    simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM1", "percMass");
-    simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM2", "percMass");
-    simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM3", "percMass");
+  simUGen.getMdl().addMass2DPlane("guideM2", 1000000000, new Vect3D(4, -4, 0.), new Vect3D(0, 2, 0.));
+   simUGen.getMdl().addMass2DPlane("guideM3", 1000000000, new Vect3D(3, -3, 0.), new Vect3D(0, 2, 0.));
+    simUGen.getMdl().addMass3D("percMass", 100, new Vect3D(0, -4, 0.), new Vect3D(0, 2, 0.));
+   simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM1", "percMass");
+  simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM2", "percMass");
+  simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM3", "percMass");
 
    simUGen.getMdl().addString2D("string");
 
@@ -106,10 +93,12 @@ void setup()
     simUGen.getMdl().addContact3D("col", c_gnd, 10, c_z, "percMass", "gnd0");
     simUGen.getMdl().addContact3D("col", c_gnd, 10, c_z, "percMass", "gnd1");
 */
-String[] listeningPoints = new String[1];
-listeningPoints[0] = "string";
-int[] listeningPointsInd = new int[1];
-listeningPointsInd[0] = 3;
+        String[] listeningPoints = new String[2];
+        listeningPoints[0] = "string";
+        int[] listeningPointsInd = new int[2];
+        listeningPointsInd[0] = 3;
+        listeningPoints[1] ="string";
+        listeningPointsInd[1]= 2;
     simUGen.setListeningPoint(listeningPoints,listeningPointsInd);
 
     simUGen.getMdl().init();
@@ -127,8 +116,6 @@ listeningPointsInd[0] = 3;
   //midiNotes.add(new midiNote(0.01, 0.9, "str",0,simUGen.nbmass - 1,"Y","impulse"));
  // midiNotes.add(new midiNote(0.1, 10, "str",0,simUGen.getMdl().getNumberOfMats() - 1,"Y","pluck"));
 
-  // patch the Oscil to the output
-  simUGen.patch(gain).patch(out);
 
   renderer = new ModelRenderer(this);
 
@@ -149,7 +136,7 @@ listeningPointsInd[0] = 3;
   cam.setDistance(500);  // distance from looked-at point
 
   frameRate(baseFrameRate);
-
+simUGen.start();
 }
 
 void draw()
@@ -168,7 +155,7 @@ void draw()
     simUGen.getMdl().setMatPosition("guideM1",new Vect3D(x_avg-1, y_avg, 0));
     simUGen.getMdl().setMatPosition("guideM2",new Vect3D(x_avg+1, y_avg, 0));
     simUGen.getMdl().setMatPosition("guideM3",new Vect3D(x_avg, y_avg-1, 0));
-    simUGen.getMdl().computeStep();
+    //simUGen.getMdl().computeStep();
   renderer.renderModel(simUGen.getMdl());
  // simUGen.
 

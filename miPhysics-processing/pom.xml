@@ -101,7 +101,12 @@
         <groupId>org.micreative.miPhysics</groupId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
-
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
         <!-- miPhysics-core dependencies, necessary for ant task (we don't want transitive dependencies, there are too many -->
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -112,6 +117,32 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jaudiolibs/audioservers-api -->
+        <dependency>
+            <groupId>org.jaudiolibs</groupId>
+            <artifactId>audioservers-api</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jaudiolibs/audioservers-javasound -->
+        <dependency>
+            <groupId>org.jaudiolibs</groupId>
+            <artifactId>audioservers-javasound</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jaudiolibs</groupId>
+            <artifactId>audioservers-jack</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jaudiolibs</groupId>
+            <artifactId>jnajack</artifactId>
+            <version>1.4.0</version>
         </dependency>
 <dependency>
             <groupId>commons-collections</groupId>
