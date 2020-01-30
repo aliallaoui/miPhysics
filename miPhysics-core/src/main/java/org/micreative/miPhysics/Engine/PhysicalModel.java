@@ -10,6 +10,7 @@ import java.lang.Math;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.micreative.miPhysics.Engine.Control.ParamController;
+import org.micreative.miPhysics.Engine.Control.PositionController;
 import org.micreative.miPhysics.Engine.Modules.*;
 import org.micreative.miPhysics.Vect3D;
 import processing.core.*;
@@ -81,6 +82,7 @@ public class PhysicalModel {
 	private Map<String, ArrayList<Integer>> link_subsets;
 
 	private Map<String, ParamController> param_controllers;
+	private Map<String, PositionController> position_controllers;
 
 	/* Library version */
 	public final static String VERSION = "##library.prettyVersion##";
@@ -126,7 +128,7 @@ public class PhysicalModel {
 		m_lock = new ReentrantLock();
 
 		param_controllers = new HashMap<String,ParamController>();
-
+		position_controllers = new HashMap<String,PositionController>();
 
 		System.out.println("Physical Model Class Initialised");
 	}
@@ -692,6 +694,7 @@ public class PhysicalModel {
 				//for (int i = 0; i < modules.size(); i++) 	modules.get(i).compute();
 
 				for(Module m:modules) 	m.computeMoves();
+				if(!position_controllers.isEmpty()) position_controllers.forEach((k,v)-> v.updatePosition());
 				//modules.parallelStream().forEach(o -> o.compute());
 				for(Module m:modules)	m.computeForces();
 
@@ -2242,6 +2245,21 @@ public class PhysicalModel {
 	}
 
 	public ParamController getParamController(String name) {return param_controllers.get(name);}
+
+
+	public void addPositionController(String name,int inputIndex,String moduleName,int matIndex,Vect3D pointA, Vect3D pointB)
+	{
+		position_controllers.put(name,new PositionController(this,inputIndex,moduleName,matIndex,pointA,pointB));
+	}
+
+	public PositionController getPositionController(String name) {return position_controllers.get(name);}
+
+	public List<PositionController> getPositionControllers()
+	{
+		List<PositionController> ret = new ArrayList<>();
+		position_controllers.forEach((k,v)->ret.add(v));
+		return ret;
+	}
 
 	public Module getFirstModuleOfSubset(String subsetName)
 	{

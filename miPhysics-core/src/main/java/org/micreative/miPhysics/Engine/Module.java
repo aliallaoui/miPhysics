@@ -60,4 +60,6 @@ public abstract class Module {
 
     public void addFrc(double frc,int i,Vect3D symPos){}
 
+    public void setPosition(int index,Vect3D pos){}
+
 }

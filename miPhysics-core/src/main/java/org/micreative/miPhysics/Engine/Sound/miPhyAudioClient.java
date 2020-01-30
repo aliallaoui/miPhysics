@@ -12,6 +12,7 @@ import org.jaudiolibs.audioservers.AudioServer;
 import org.jaudiolibs.audioservers.AudioServerProvider;
 import org.jaudiolibs.audioservers.ext.ClientID;
 import org.jaudiolibs.audioservers.ext.Connections;
+import org.micreative.miPhysics.Engine.Control.PositionController;
 import org.micreative.miPhysics.Engine.PhysicalModel;
 import org.micreative.miPhysics.Vect3D;
 
@@ -131,21 +132,25 @@ public class miPhyAudioClient implements  AudioClient{
             if( bf == null || bf.length != nframes) bf = new float[nframes];
         }
         // always use nframes as the number of samples to process
-
-        float sample;
+        //System.out.println("input=" + inputs.get(0).get(0));
         for (int i = 0; i < nframes; i++) {
             int currentChannel=0;
+
+            for(PositionController pc:mdl.getPositionControllers())
+            {
+                FloatBuffer input = inputs.get(pc.getInputIndex());
+                pc.setValue(input.get(i));
+            }
             mdl.computeStep();
-            for(FloatBuffer buff:outputs)
+            currentChannel=0;
+            for(float[] buff:buffers)
             {
                 if (mdl.matExists(listeningPoint[0])) {
-                    sample = (float) ((mdl.getMatPosition(listeningPoint[currentChannel]).y));
-                    buffers.get(currentChannel)[i] = sample;
+                    buff[i] = (float) ((mdl.getMatPosition(listeningPoint[currentChannel]).y));
                 }
                 else if (mdl.moduleExists(listeningPoint[0])) {
-                    sample = (float) ((mdl.getMatPosition(listeningPoint[currentChannel],
+                    buff[i] =(float) ((mdl.getMatPosition(listeningPoint[currentChannel],
                             listeningPointsInd[currentChannel]).y));
-                    buffers.get(currentChannel)[i] = sample;
                 }
                 currentChannel++;
             }
@@ -167,7 +172,7 @@ public class miPhyAudioClient implements  AudioClient{
     }
 
     public static void main(String[] args) throws Exception {
-        miPhyAudioClient simUGen = miPhyAudioClient.miPhyJack(44100.f,0,2);//new miPhyAudioClient(44100.f,0,2,1024,"JACK"); //<>// //<>//
+        miPhyAudioClient simUGen = miPhyAudioClient.miPhyJack(44100.f,1,2);//new miPhyAudioClient(44100.f,0,2,1024,"JACK"); //<>// //<>//
 
         simUGen.getMdl().setGravity(0);
         simUGen.getMdl().setFriction(0);
@@ -184,7 +189,7 @@ public class miPhyAudioClient implements  AudioClient{
         listeningPointsInd[0] = 3;
         listeningPoints[1] ="string";
         listeningPointsInd[1]= 2;
-
+        simUGen.getMdl().addPositionController("osc_perc",0,"percMass",0,new Vect3D(0,10,0),new Vect3D(0,0,0));
         simUGen.setListeningPoint(listeningPoints,listeningPointsInd);
 
         simUGen.getMdl().init();

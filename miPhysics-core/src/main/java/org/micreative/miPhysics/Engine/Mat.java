@@ -89,7 +89,11 @@ public abstract class Mat extends Module{
         m_posR.set(newPos);
     }
 
-
+    public void setPosition(int index,Vect3D pos)
+    {
+        m_posR.set(m_pos);
+        m_pos.set(pos);
+    }
 
     /**
      * Get the current position of this Mat module (in a PVector format).
