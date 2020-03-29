@@ -286,7 +286,7 @@ public class PhysicalModel {
 			if (mat_index > -1) {
 				return modules.get(mat_index).getPos(0);
 			} else {
-				throw new Exception("The module name already exists!");
+				throw new Exception("The module name does not exist!");
 			}
 		} catch (Exception e) {
 			System.out.println("Error accessing Module " + masName + ": " + e);
