@@ -1,6 +1,3 @@
-
-import ddf.minim.*;
-import ddf.minim.ugens.*;
 import peasy.*;
 import org.micreative.miPhysics.Processing.Utility.ModelRenderer.*;
 import org.micreative.miPhysics.Engine.Control.*;
@@ -27,12 +24,7 @@ PeasyCam cam;
 
 float percsize = 200;
 
-Minim minim;
 miPhyAudioClient simUGen;
-Gain gain;
-
-AudioOutput out;
-AudioRecorder recorder;
 
 ModelRenderer renderer;
 
@@ -76,23 +68,11 @@ void setup()
    simUGen.getMdl().setGravity(grav);
     simUGen.getMdl().setFriction(fric);
 
-    simUGen.getMdl().addMass2DPlane("guideM1", 1000000000, new Vect3D(2, -4, 0.), new Vect3D(0, 2, 0.));
-  simUGen.getMdl().addMass2DPlane("guideM2", 1000000000, new Vect3D(4, -4, 0.), new Vect3D(0, 2, 0.));
-   simUGen.getMdl().addMass2DPlane("guideM3", 1000000000, new Vect3D(3, -3, 0.), new Vect3D(0, 2, 0.));
     simUGen.getMdl().addMass3D("percMass", 100, new Vect3D(0, -4, 0.), new Vect3D(0, 2, 0.));
-   simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM1", "percMass");
-  simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM2", "percMass");
-  simUGen.getMdl().addSpringDamper3D("test", 1, 1., 1., "guideM3", "percMass");
 
    simUGen.getMdl().addString2D("string");
 
    simUGen.getMdl().addMContact2D("perc","percMass","string");
-   /*
-    for(int i= 0; i< nbmass; i++)
-      simUGen.getMdl().addContact3D("col", c_dist, c_k, c_z, "percMass", "str"+i);
-    simUGen.getMdl().addContact3D("col", c_gnd, 10, c_z, "percMass", "gnd0");
-    simUGen.getMdl().addContact3D("col", c_gnd, 10, c_z, "percMass", "gnd1");
-*/
 
   simUGen.getMdl().addPositionController("osc_perc",0,"percMass",0,new Vect3D(0,10,0),new Vect3D(0,0,0));
 
@@ -149,16 +129,6 @@ void draw()
   directionalLight(126, 126, 126, 100, 0, -1);
   ambientLight(182, 182, 182);
 
-    float x = 30*(float)mouseX / width - 15;
-    float y = 30*(float)mouseY / height - 15;
-
-    x_avg = (1-smooth) * x_avg + (smooth) * x;
-    y_avg = (1-smooth) * y_avg + (smooth) * y;
-
-    simUGen.getMdl().setMatPosition("guideM1",new Vect3D(x_avg-1, y_avg, 0));
-    simUGen.getMdl().setMatPosition("guideM2",new Vect3D(x_avg+1, y_avg, 0));
-    simUGen.getMdl().setMatPosition("guideM3",new Vect3D(x_avg, y_avg-1, 0));
-    //simUGen.getMdl().computeStep();
   renderer.renderModel(simUGen.getMdl());
  // simUGen.
 
