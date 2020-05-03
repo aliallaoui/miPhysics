@@ -33,7 +33,7 @@ public class MContact2D extends MacroLink {
         for (int i = 0; i < m1.getNbMats(); i++) {
             for (int j = 0; j < m2.getNbMats(); j++) {
                 if (m_dist.get(i * m2.getNbMats() + j) < distance)
-                    this.applyForces(-(m_dist.get(i * m2.getNbMats() + j) - distance) * stiffness - getVel(i * m2.getNbMats() + j) * damping, i, j);
+                    this.applyForces((m_dist.get(i * m2.getNbMats() + j) - distance) * stiffness + getVel(i * m2.getNbMats() + j) * damping, i, j);
             }
         }
     }
