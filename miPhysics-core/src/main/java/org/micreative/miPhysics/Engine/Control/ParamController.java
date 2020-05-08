@@ -15,7 +15,7 @@ public class ParamController extends AbstractController
     private float previous_value;
     private boolean inRamp = false;
     private Vect3D center;
-    private Method writeMethod;
+    protected Method writeMethod;
     private float rampTime;
 
 
@@ -44,9 +44,7 @@ public class ParamController extends AbstractController
         if(inRamp) {
             step++;
             if (step <= vmax) {
-                /*if (param.equals("distX")) pm.changeDistXBetweenSubset(center, linearScale(step), subsetName);
-                else*/ pm.setParamForSubset(linearScale(step), subsetName, writeMethod);
-
+                 pm.setParamForSubset(linearScale(step), subsetName, writeMethod);
             }
             else inRamp = false;
         }

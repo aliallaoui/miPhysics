@@ -13,6 +13,7 @@ import org.jaudiolibs.audioservers.AudioServerProvider;
 import org.jaudiolibs.audioservers.ext.ClientID;
 import org.jaudiolibs.audioservers.ext.Connections;
 import org.micreative.miPhysics.Engine.Control.PositionController;
+import org.micreative.miPhysics.Engine.Control.SimpleParamController;
 import org.micreative.miPhysics.Engine.PhysicalModel;
 import org.micreative.miPhysics.Vect3D;
 
@@ -37,6 +38,20 @@ public class miPhyAudioClient implements  AudioClient{
     private int idx;
     private float prevSample;
     private Thread runner;
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    private int state = 0; // should be an enum : 0 = not started, 1=started, not computing, initializing params
+                           // 2= params initialized, start simulation
+                           // 3= listening to simulation
+
+
     public void setListeningPoint(String[] listeningPoint) {
         this.listeningPoint = listeningPoint;
     }
@@ -136,23 +151,35 @@ public class miPhyAudioClient implements  AudioClient{
         for (int i = 0; i < nframes; i++) {
             int currentChannel=0;
 
-            for(PositionController pc:mdl.getPositionControllers())
-            {
-                FloatBuffer input = inputs.get(pc.getInputIndex());
-                pc.setValue(input.get(i));
+            if(state > 0) {
+                for (PositionController pc : mdl.getPositionControllers()) {
+                    FloatBuffer input = inputs.get(pc.getInputIndex());
+                    pc.setValue(input.get(i));
+                }
+                for (SimpleParamController spc : mdl.getSimpleParamControllers()) {
+                    FloatBuffer input = inputs.get(spc.getInputIndex());
+                    spc.setValue(input.get(i));
+                }
+                mdl.computeStep(state == 1);
             }
-            mdl.computeStep();
-            currentChannel=0;
-            for(float[] buff:buffers)
+//            if(state > 1) mdl.computeStep();
+            if(state > 2) {
+                currentChannel = 0;
+                for (float[] buff : buffers) {
+                    if (mdl.matExists(listeningPoint[0])) {
+                        buff[i] = (float) ((mdl.getMatPosition(listeningPoint[currentChannel]).y));
+                    } else if (mdl.moduleExists(listeningPoint[0])) {
+                        buff[i] = (float) ((mdl.getMatPosition(listeningPoint[currentChannel],
+                                listeningPointsInd[currentChannel]).y));
+                    }
+                    currentChannel++;
+                }
+            }
+            else
             {
-                if (mdl.matExists(listeningPoint[0])) {
-                    buff[i] = (float) ((mdl.getMatPosition(listeningPoint[currentChannel]).y));
+                for (float[] buff : buffers) {
+                    buff[i]=0.f;
                 }
-                else if (mdl.moduleExists(listeningPoint[0])) {
-                    buff[i] =(float) ((mdl.getMatPosition(listeningPoint[currentChannel],
-                            listeningPointsInd[currentChannel]).y));
-                }
-                currentChannel++;
             }
         }
         int currentChannel = 0;
@@ -169,6 +196,7 @@ public class miPhyAudioClient implements  AudioClient{
     public void start()
     {
         runner.start();
+        state = 1;
     }
 
     public static void main(String[] args) throws Exception {

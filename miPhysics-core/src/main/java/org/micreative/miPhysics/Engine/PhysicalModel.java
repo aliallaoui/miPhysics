@@ -11,6 +11,7 @@ import java.lang.Math;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.micreative.miPhysics.Engine.Control.ParamController;
 import org.micreative.miPhysics.Engine.Control.PositionController;
+import org.micreative.miPhysics.Engine.Control.SimpleParamController;
 import org.micreative.miPhysics.Engine.Modules.*;
 import org.micreative.miPhysics.Vect3D;
 import processing.core.*;
@@ -684,7 +685,7 @@ public class PhysicalModel {
 	 * @param N
 	 *            number of steps to compute.
 	 */
-	public void computeNSteps(int N) {
+	public void computeNSteps(int N,boolean init) {
 		synchronized (m_lock) {
 			for (int j = 0; j < N; j++) {
 				if(nbStepsSimulated== 0) timestamp = new Timestamp(System.currentTimeMillis());
@@ -692,12 +693,14 @@ public class PhysicalModel {
 				if(!param_controllers.isEmpty()) param_controllers.forEach((k,v)-> v.updateParams());
 
 				//for (int i = 0; i < modules.size(); i++) 	modules.get(i).compute();
-
-				for(Module m:modules) 	m.computeMoves();
+				if(!init) {
+					for (Module m : modules) m.computeMoves();
+				}
 				if(!position_controllers.isEmpty()) position_controllers.forEach((k,v)-> v.updatePosition());
 				//modules.parallelStream().forEach(o -> o.compute());
-				for(Module m:modules)	m.computeForces();
-
+				if(!init) {
+					for (Module m : modules) m.computeForces();
+				}
 				//for (int i = 0; i < links.size(); i++) 	links.get(i).compute();
 
 				//links.parallelStream().forEach(o ->o.compute());
@@ -717,8 +720,8 @@ public class PhysicalModel {
 	 * Compute a single step of the physical simulation. Should be called once the
 	 * model creation is finished and the init() method has been called.
 	 */
-	public void computeStep() {
-		computeNSteps(1);
+	public void computeStep(boolean init) {
+		computeNSteps(1,init);
 	}
 
 	/*************************************************/
@@ -2246,6 +2249,17 @@ public class PhysicalModel {
 
 	public ParamController getParamController(String name) {return param_controllers.get(name);}
 
+	public void addSimpleParamController(String name,String subsetName,String paramName,int inputIndex)
+	{
+		param_controllers.put(name,new SimpleParamController(this,subsetName,paramName,inputIndex));
+	}
+
+	public List<SimpleParamController> getSimpleParamControllers()
+	{
+		List<SimpleParamController> ret = new ArrayList<>();
+		param_controllers.forEach((k,v)-> {if(v instanceof SimpleParamController)ret.add((SimpleParamController)v);});
+		return ret;
+	}
 
 	public void addPositionController(String name,int inputIndex,String moduleName,int matIndex,Vect3D pointA, Vect3D pointB)
 	{
