@@ -31,7 +31,8 @@ public class SimpleParamController extends ParamController {
 
     public void updateParams()
     {
-         pm.setParamForSubset(value, subsetName, writeMethod);
+       // System.out.println("update " + name + " with " + value);
+        pm.setParam(name,writeMethod,value);
     }
 
 

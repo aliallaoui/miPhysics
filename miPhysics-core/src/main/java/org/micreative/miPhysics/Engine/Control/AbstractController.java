@@ -11,7 +11,7 @@ public class AbstractController
 
     protected PhysicalModel pm;
     protected     String param;
-    protected     String subsetName;
+    protected     String name;
 
     protected float a;
     protected float b;
@@ -29,9 +29,9 @@ public class AbstractController
     }
 
     public void setSubsetName(String subsetName) {
-        this.subsetName = subsetName;
+        this.name = subsetName;
     }
-    public String getSubsetName(){return subsetName;}
+    public String getSubsetName(){return name;}
 
     public float getA() {
         return a;
@@ -85,11 +85,11 @@ public class AbstractController
 
 
 
-    public AbstractController(PhysicalModel pm_,String name,String param_)
+    public AbstractController(PhysicalModel pm_,String name_,String param_)
 {
     pm=pm_;
     param = param_;
-    subsetName = name;
+    name = name_;
 }
 
 protected float linearScale(float val)

@@ -22,8 +22,8 @@ public class MidiController extends AbstractController
         computeLinearParams();
 
         //if(pm.get)
-        pm.addParamController(subsetName + "_" + param,subsetName,param,rampTime);
-        pm.getParamController(subsetName + "_" + param).init((max+min)/2);
+        pm.addParamController(name + "_" + param,name,param,rampTime);
+        pm.getParamController(name + "_" + param).init((max+min)/2);
     }
 
     public static MidiController addMidiController(PhysicalModel pm_,int ctrl_,float min_,float max_,String name_,String param_ ,float rampTime)
@@ -45,6 +45,6 @@ public class MidiController extends AbstractController
 
     public void changeParam(int value)
     {
-        pm.getParamController(subsetName + "_" + param).triggerRamp(linearScale(value));
+        pm.getParamController(name + "_" + param).triggerRamp(linearScale(value));
     }
 }

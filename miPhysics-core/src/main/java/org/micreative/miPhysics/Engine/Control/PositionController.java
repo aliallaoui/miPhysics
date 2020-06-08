@@ -19,6 +19,74 @@ public class PositionController {
 
     protected float b;
 
+    protected float pointAx;
+    protected float pointAy;
+    protected float pointAz;
+
+    public float getPointAx() {
+        return pointAx;
+    }
+
+    public void setPointAx(float pAx) {
+        this.pointAx = pAx;
+        this.pointA.x = pAx;
+        unitVector = Vect3D.sub(pointB,pointA);
+    }
+
+    public float getPointAy() {
+        return pointAy;
+    }
+
+    public void setPointAy(float pAy) {
+        this.pointAy = pAy;
+        this.pointA.y = pAy;
+        unitVector = Vect3D.sub(pointB,pointA);
+    }
+
+    public float getPointAz() {
+        return pointAz;
+    }
+
+    public void setPointAz(float pAz) {
+        this.pointAz = pAz;
+        this.pointA.z = pAz;
+        unitVector = Vect3D.sub(pointB,pointA);
+    }
+
+    public float getPointBx() {
+        return pointBx;
+    }
+
+    public void setPointBx(float pBx) {
+        this.pointBx = pBx;
+        this.pointB.x = pBx;
+        unitVector = Vect3D.sub(pointB,pointA);
+    }
+
+    public float getPointBy() {
+        return pointBy;
+    }
+
+    public void setPointBy(float pBy) {
+        this.pointBy = pBy;
+        this.pointB.y = pBy;
+        unitVector = Vect3D.sub(pointB,pointA);
+    }
+
+    public float getPointBz() {
+        return pointBz;
+    }
+
+    public void setPointBz(float pBz) {
+        this.pointBz = pBz;
+        this.pointB.z = pBz;
+        unitVector = Vect3D.sub(pointB,pointA);
+    }
+
+    protected float pointBx;
+    protected float pointBy;
+    protected float pointBz;
+
     protected String moduleName;
 
     public int getInputIndex() {

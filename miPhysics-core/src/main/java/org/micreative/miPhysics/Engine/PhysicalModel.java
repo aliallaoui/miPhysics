@@ -245,7 +245,7 @@ public class PhysicalModel {
 	 */
 	public int getMatIndex(String name) {
 		int ret = moduleIndexList.indexOf(name);
-		if(modules.get(ret) instanceof Mat) return ret;
+		if(ret != -1 && modules.get(ret) instanceof Mat) return ret;
 		else return -1;
 	}
 
@@ -258,7 +258,7 @@ public class PhysicalModel {
 	 */
 	public int getLinkIndex(String name) {
 		int ret = moduleIndexList.indexOf(name);
-		if(modules.get(ret) instanceof Link) return ret;
+		if(ret != -1 && modules.get(ret) instanceof Link) return ret;
 		else return -1;
 	}
 
@@ -686,7 +686,7 @@ public class PhysicalModel {
 	 *            number of steps to compute.
 	 */
 	public void computeNSteps(int N,boolean init) {
-		synchronized (m_lock) {
+//		synchronized (m_lock) {
 			for (int j = 0; j < N; j++) {
 				if(nbStepsSimulated== 0) timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -705,14 +705,14 @@ public class PhysicalModel {
 
 				//links.parallelStream().forEach(o ->o.compute());
 				}
-		}
+//		}
 		nbStepsSimulated+=N;
-		if(nbStepsSimulated%simRate == 0)
+		if(nbStepsSimulated%(simRate*5) == 0)
 		{
 			Timestamp current = new Timestamp(System.currentTimeMillis());
 			double secs = (double)(current.getTime() - timestamp.getTime())/1000.;
 			double sim_secs = (double)nbStepsSimulated/(double)simRate;
-			if(secs > sim_secs) System.out.println(secs + " seconds ellapsed " +  sim_secs + " simulated");
+			if(Math.abs(secs-sim_secs) > 0.05) System.out.println(secs + " seconds ellapsed " +  sim_secs + " simulated");
 		}
 	}
 
@@ -1990,13 +1990,50 @@ public class PhysicalModel {
 		}
 	}
 
-	public void setParam(String moduleName,String param,Object value)
+	public void setParam(String name,String param,Object value)
 	{
 		try{
-			if (this.moduleIndexList.contains(moduleName))
+			if (this.moduleIndexList.contains(name))
 			{
-				Module m = modules.get(getModuleIndex(moduleName));
+				Module m = modules.get(getModuleIndex(name));
 				PropertyUtils.getPropertyDescriptor(m, param).getWriteMethod().invoke(m,value);
+			}
+			else if(this.hasPositionController((name)))
+			{
+				PositionController pc = getPositionController(name);
+				PropertyUtils.getPropertyDescriptor(pc, param).getWriteMethod().invoke(pc,value);
+			}
+
+		}
+		catch(Exception e)
+		{
+			System.out.println("could not set parameter " + e.getMessage());//TODO should rethrow exception
+		}
+
+	}
+
+	public void setParam(String name,Method setter,Object value)
+	{
+		try{
+			if (this.moduleIndexList.contains(name))
+			{
+				Module m = modules.get(getModuleIndex(name));
+				setter.invoke(m,value);
+			}
+			else if(hasPositionController(name))
+			{
+				PositionController pc = getPositionController(name);
+				setter.invoke(pc,value);
+			}
+			else if (this.link_subsets.containsKey(name)) {
+				for (int linkIndex : this.link_subsets.get(name)) {
+					setter.invoke(modules.get(linkIndex), value);
+				}
+			}
+			else if (this.mat_subsets.containsKey(name)) {
+				for (int matIndex : this.mat_subsets.get(name)) {
+					setter.invoke(modules.get(matIndex), value);
+				}
 			}
 		}
 		catch(Exception e)
@@ -2012,6 +2049,16 @@ public class PhysicalModel {
 			if (this.moduleIndexList.contains(moduleName))
 			{
 				Module m = modules.get(getModuleIndex(moduleName));
+				return PropertyUtils.getPropertyDescriptor(m, param).getReadMethod().invoke(m);
+			}
+			else if(this.param_controllers.containsKey(moduleName))
+			{
+				ParamController m = param_controllers.get(moduleName);
+				return PropertyUtils.getPropertyDescriptor(m, param).getReadMethod().invoke(m);
+			}
+			else if(this.position_controllers.containsKey(moduleName))
+			{
+				PositionController m = position_controllers.get(moduleName);
 				return PropertyUtils.getPropertyDescriptor(m, param).getReadMethod().invoke(m);
 			}
 		}
@@ -2291,6 +2338,11 @@ public class PhysicalModel {
 	public Boolean hasModule(String moduleName)
 	{
 		return (moduleIndexList.contains(moduleName) || matExists(moduleName) || linkExists(moduleName));
+	}
+
+	public Boolean hasPositionController(String posCtrlName)
+	{
+		return position_controllers.containsKey(posCtrlName);
 	}
 
 	public Module getModule(int i)

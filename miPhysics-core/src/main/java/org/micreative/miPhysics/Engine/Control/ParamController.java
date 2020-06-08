@@ -17,6 +17,7 @@ public class ParamController extends AbstractController
     private Vect3D center;
     protected Method writeMethod;
     private float rampTime;
+    private boolean moduleController = true;
 
 
     public ParamController(PhysicalModel pm_, float rampTime, String name, String param_ ) {
@@ -29,6 +30,11 @@ public class ParamController extends AbstractController
 
           if(pm.hasSubset(name)) p = PropertyUtils.getPropertyDescriptor(pm.getFirstModuleOfSubset(name), param_);
           else if (pm.hasModule(name)) p = PropertyUtils.getPropertyDescriptor(pm.getModule(name),param_);
+          else if (pm.hasPositionController(name))
+          {
+              PositionController pc = pm.getPositionController(name);
+              p = PropertyUtils.getPropertyDescriptor(pc,param_);
+          }
           else throw new Exception("No module nor subset named" + name);//System.out.println(
           writeMethod = PropertyUtils.getWriteMethod(p);
       }
@@ -44,7 +50,7 @@ public class ParamController extends AbstractController
         if(inRamp) {
             step++;
             if (step <= vmax) {
-                 pm.setParamForSubset(linearScale(step), subsetName, writeMethod);
+                pm.setParam(name, writeMethod,linearScale(step));
             }
             else inRamp = false;
         }
@@ -77,8 +83,8 @@ public class ParamController extends AbstractController
         else
         */
 
-        pm.setParamForSubset(value,subsetName,writeMethod);
+        pm.setParamForSubset(value,name,writeMethod);
 
-        System.out.println("controller for param " + param + " of subset " + subsetName + " initialized with value " + value);
+        System.out.println("controller for param " + param + " of subset " + name + " initialized with value " + value);
     }
 }

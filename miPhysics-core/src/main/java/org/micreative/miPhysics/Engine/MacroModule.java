@@ -54,6 +54,11 @@ public abstract class MacroModule extends Module {
     public void setFriction(double fric) {
         friction= fric;
     }
+    public double getFriction() {
+        return friction;
+    }
+
+
 
     public void setPosition(int index,Vect3D pos)
     {

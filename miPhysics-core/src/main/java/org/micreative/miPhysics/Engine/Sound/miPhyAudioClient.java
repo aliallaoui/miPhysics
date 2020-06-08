@@ -142,43 +142,44 @@ public class miPhyAudioClient implements  AudioClient{
     }
     public boolean process(long time, List<FloatBuffer> inputs, List<FloatBuffer> outputs, int nframes) {
 
+
         for(float[] bf:buffers)
         {
             if( bf == null || bf.length != nframes) bf = new float[nframes];
         }
         // always use nframes as the number of samples to process
         //System.out.println("input=" + inputs.get(0).get(0));
-        for (int i = 0; i < nframes; i++) {
-            int currentChannel=0;
+        synchronized (mdl.getLock()) {
+            for (int i = 0; i < nframes; i++) {
+                int currentChannel = 0;
 
-            if(state > 0) {
-                for (PositionController pc : mdl.getPositionControllers()) {
-                    FloatBuffer input = inputs.get(pc.getInputIndex());
-                    pc.setValue(input.get(i));
-                }
-                for (SimpleParamController spc : mdl.getSimpleParamControllers()) {
-                    FloatBuffer input = inputs.get(spc.getInputIndex());
-                    spc.setValue(input.get(i));
-                }
-                mdl.computeStep(state == 1);
-            }
-//            if(state > 1) mdl.computeStep();
-            if(state > 2) {
-                currentChannel = 0;
-                for (float[] buff : buffers) {
-                    if (mdl.matExists(listeningPoint[0])) {
-                        buff[i] = (float) ((mdl.getMatPosition(listeningPoint[currentChannel]).y));
-                    } else if (mdl.moduleExists(listeningPoint[0])) {
-                        buff[i] = (float) ((mdl.getMatPosition(listeningPoint[currentChannel],
-                                listeningPointsInd[currentChannel]).y));
+                if (state > 0) {
+                    for (PositionController pc : mdl.getPositionControllers()) {
+                        FloatBuffer input = inputs.get(pc.getInputIndex());
+                        pc.setValue(input.get(i));
                     }
-                    currentChannel++;
+                    for (SimpleParamController spc : mdl.getSimpleParamControllers()) {
+                        FloatBuffer input = inputs.get(spc.getInputIndex());
+                        spc.setValue(input.get(i));
+                    }
+                    mdl.computeStep(state == 1);
                 }
-            }
-            else
-            {
-                for (float[] buff : buffers) {
-                    buff[i]=0.f;
+//            if(state > 1) mdl.computeStep();
+                if (state > 2) {
+                    currentChannel = 0;
+                    for (float[] buff : buffers) {
+                        if (mdl.matExists(listeningPoint[0])) {
+                            buff[i] = (float) ((mdl.getMatPosition(listeningPoint[currentChannel]).y));
+                        } else if (mdl.moduleExists(listeningPoint[0])) {
+                            buff[i] = (float) ((mdl.getMatPosition(listeningPoint[currentChannel],
+                                    listeningPointsInd[currentChannel]).y));
+                        }
+                        currentChannel++;
+                    }
+                } else {
+                    for (float[] buff : buffers) {
+                        buff[i] = 0.f;
+                    }
                 }
             }
         }
@@ -200,7 +201,7 @@ public class miPhyAudioClient implements  AudioClient{
     }
 
     public static void main(String[] args) throws Exception {
-        miPhyAudioClient simUGen = miPhyAudioClient.miPhyJack(44100.f,1,2);//new miPhyAudioClient(44100.f,0,2,1024,"JACK"); //<>// //<>//
+        miPhyAudioClient simUGen = miPhyAudioClient.miPhyJack(44100.f,2,2);//new miPhyAudioClient(44100.f,0,2,1024,"JACK"); //<>// //<>//
 
         simUGen.getMdl().setGravity(0);
         simUGen.getMdl().setFriction(0);
@@ -219,7 +220,7 @@ public class miPhyAudioClient implements  AudioClient{
         listeningPointsInd[1]= 2;
         simUGen.getMdl().addPositionController("osc_perc",0,"percMass",0,new Vect3D(0,10,0),new Vect3D(0,0,0));
         simUGen.setListeningPoint(listeningPoints,listeningPointsInd);
-
+        simUGen.getMdl().addSimpleParamController("osc_perc_ctrl","osc_perc","pointAy",1);
         simUGen.getMdl().init();
 
         simUGen.start();
