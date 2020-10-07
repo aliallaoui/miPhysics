@@ -84,8 +84,8 @@ public class Vect3D {
 
 	public static Vect3D sub(Vect3D v1,Vect3D v2)
 	{
-		Vect3D res = new Vect3D(v1);
-		res.sub(v2);
+		Vect3D res = new Vect3D(v2);
+		res.sub(v1);
 		return res;
 	}
 	public Vect3D mult(double factor) {
