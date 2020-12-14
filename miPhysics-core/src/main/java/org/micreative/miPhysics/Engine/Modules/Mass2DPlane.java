@@ -12,7 +12,7 @@ import org.micreative.miPhysics.Vect3D;
 public class Mass2DPlane extends Mat {
 
   public Mass2DPlane(double M, Vect3D initPos, Vect3D initPosR, double friction, Vect3D grav) {
-    super(M, initPos, initPosR);
+    super(initPos, initPosR);
 
     // Make sure there is no initial velocity on the Z axis
     m_posR.z = m_pos.z;
@@ -22,7 +22,7 @@ public class Mass2DPlane extends Mat {
     gravity.set(grav);
   }
 
-  public void compute() {
+  public void computeMoves() {
     tmp.set(m_pos);
 
     if (m_controlled) {

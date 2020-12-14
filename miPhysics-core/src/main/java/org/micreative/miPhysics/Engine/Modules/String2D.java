@@ -14,8 +14,7 @@ public class String2D extends MacroModule {
 
 
     private double restDistance;
-    private double m_invMass;
-    private double mass;// for beans convenience only
+
 
 
     /* Class attributes */
@@ -65,41 +64,6 @@ public class String2D extends MacroModule {
 
     public void setRestDistance(double restDistance) {
         this.restDistance = restDistance;
-    }
-
-
-    public String2D(double restDistance, double K_param, double Z_param, double M_param, int size, double stretchFactor, Vect3D center, Vect3D direction, double friction, Vect3D gravity)
-    {
-        stiffness = K_param;
-        damping = Z_param;
-        m_invMass = 1/M_param;
-        this.restDistance = restDistance;
-        this.friction=friction;
-        this.gravity=gravity;
-
-        m_pos = new ArrayList<Vect3D>(size+2);
-        m_posR = new ArrayList<Vect3D>(size+2);
-        m_frc = new ArrayList<Vect3D>(size);
-        distR = new ArrayList<Double>(size+1);
-
-        this.direction = direction;
-
-
-        direction.mult(restDistance* stretchFactor);
-        Vect3D left = Vect3D.add(center,Vect3D.mult(direction,-(size+1.)/2.));
-        for(int i=0;i<size+2;i++)
-        {
-            Vect3D curPos = Vect3D.add(center,Vect3D.mult(direction,i));;
-            m_pos.add(curPos);
-            m_posR.add(new Vect3D(curPos));
-            if(i<size) m_frc.add(new Vect3D(0,0,0));
-            if(i< size+1) distR.add(restDistance* stretchFactor);
-        }
-        isInit = true;
-//        distR.add(restDistance*stretchRatio);
- //       leftSol = left.add(direction.mult(-restDistance*stretchRatio));
- //       rightSol = left.add(direction.mult(restDistance*stretchRatio*size));
-
     }
 
     public String2D(Map<String,String> params)
@@ -264,22 +228,29 @@ public class String2D extends MacroModule {
     }
 
 
-    /**
-     * Set the mass parameter.
-     * @param M mass value.
-     */
-    public void setMass(double M) {
-        m_invMass = 1 / M;
-    }
-    public double getMass() {
-        return 1/m_invMass;
-    }
 
     public void addFrc(double frc,int i,Vect3D symPos)
     {
         if(i>0 && i<m_pos.size()-1) addFrc(frc,i,symPos,i-1);
     }
 
-    //getNbMats should be reimplemented as nbMats = size+2 and not size as defined in MacroModule
-    public int getNbMats(){return size+2;}
+    //getNbPoints should be reimplemented as nbMats = size+2 and not size as defined in MacroModule
+    public int getNbPoints(){return size+2;}
+
+    public void setPoint(int i,Vect3D pos)
+    {
+        m_pos.set(i,pos);
+    }
+
+    public void setPointX(int i,float pX) {
+        this.m_pos.get(i).x = pX;
+    }
+    public void setPointY(int i,float pY) {
+        this.m_pos.get(i).y = pY;
+    }
+
+    public void setPointZ(int i,float pZ) {
+        this.m_pos.get(i).z = pZ;
+    }
+
 }

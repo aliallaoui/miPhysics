@@ -1,15 +1,37 @@
-package org.micreative.miPhysics.Engine.Control;
+package org.micreative.miPhysics.Engine;
 
 
-import org.micreative.miPhysics.Engine.PhysicalModel;
+import org.apache.commons.beanutils.PropertyUtils;
+
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
-public class AbstractController
+public class ModuleController
 {
+    protected Module module;
+    protected DataProvider dataProvider;
+    protected String controlledData;
+    protected Method writeMethod;
 
+    ModuleController(Module module_, DataProvider dataProvider_, String controlledData_)
+    {
+        module = module_;
+        dataProvider=dataProvider_;
+        controlledData=controlledData_;
+    }
 
+    public void init() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        PropertyDescriptor p = null;
+        p = PropertyUtils.getPropertyDescriptor(module,controlledData);
+        writeMethod = PropertyUtils.getWriteMethod(p);
+    }
 
-    protected PhysicalModel pm;
+    public void setData() throws InvocationTargetException, IllegalAccessException {
+        writeMethod.invoke(module,dataProvider.getData());
+    }
+/*
     protected     String param;
     protected     String name;
 
@@ -102,5 +124,5 @@ protected void computeLinearParams()
     a = (max-min)/(vmax-vmin);
     b = max - a*vmax;
 }
-
+*/
 }

@@ -20,5 +20,4 @@ public class MSpring2D extends MacroLink {
 
     }
 
-
 }

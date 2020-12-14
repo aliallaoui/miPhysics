@@ -1,29 +1,109 @@
 package org.micreative.miPhysics.Engine;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.micreative.miPhysics.Vect3D;
+import org.micreative.miPhysics.Engine.AbstractModule;
 
-public abstract class Module {
+import java.beans.PropertyDescriptor;
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class Module implements AbstractModule {
 
     public Module()
     {
+        isInit = false;
+    }
+
+    public Module(Map<String,String> params)
+    {
+        params.forEach((k,v)->{
+            try {
+                PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, k);
+                String type = p.getPropertyType().toString();
+                Object value = null;
+                if (type.equals("double")) value = Double.parseDouble(v);
+                else if (type.equals("float")) value = Float.parseFloat(v);
+                else if (type.equals("int")) value = Integer.parseInt(v);
+                else if (type.equals("class org.micreative.miPhysics.Vect3D")) value = Vect3D.fromString(v);
+                p.getWriteMethod().invoke(this,value);
+            }
+            catch(Exception e)
+            {
+                System.out.println("error creating string2D with " + params + " cause : " + e.getMessage());
+            }
+        });
+        init();
+    }
+
+    public Module(Map<String,String> defaultParams,Map<String,Object> params)
+    {
+
 
     }
 
-    public abstract void computeForces();
+    public void loadParameters(Map<String,String> defaultParams,Map<String,Object> params) throws Exception
+    {
 
-    public abstract void computeMoves();
+        Map<String,Object> finalParams = new HashMap<>();
+    //    try {
+        for(Map.Entry<String,String> defaultParam:defaultParams.entrySet()) {
+            String param = defaultParam.getKey();
+            String svalue = defaultParam.getValue();
 
-    public abstract void init();
+            PropertyDescriptor p = null;
+            p = PropertyUtils.getPropertyDescriptor(this, param);
+            String type = p.getPropertyType().toString();
+            Object value = null;
+            if (type.equals("double")) value = Double.parseDouble(svalue);
+            else if (type.equals("float")) value = Float.parseFloat(svalue);
+            else if (type.equals("int")) value = Integer.parseInt(svalue);
+            else if (type.equals("class org.micreative.miPhysics.Vect3D")) value = Vect3D.fromString(svalue);
+            finalParams.put(param, value);
+
+        }
+        finalParams.putAll(params);
+        for(Map.Entry<String,Object> finalParam:finalParams.entrySet()) {
+            PropertyDescriptor p = PropertyUtils.getPropertyDescriptor(this, finalParam.getKey());
+            p.getWriteMethod().invoke(this, finalParam.getValue());
+        }
+
+    }
 
     public String getType()
     {
         return getClass().toString().split("\\.")[5];
     }
 
+    abstract public void addFrc(double frc,int i,Vect3D symPos);
+    abstract public void setPoint(int index,Vect3D pos);
+
+    public Vect3D getPoint(String name,int index)
+    {
+        return getPoint(index);
+    }
+    public Vect3D getPointR(String name,int index)
+    {
+        return getPointR(index);
+    }
+
+
+
+    abstract public Vect3D getPoint(int i);
+    abstract public Vect3D getPointR(int i);
+    public abstract void setPointX(int index,float pX);
+    public abstract void setPointY(int index,float pY);
+    public abstract void setPointZ(int index,float pZ);
+
+
+    protected double friction;
+    protected Vect3D gravity;
 
     protected double stiffness;
     protected double damping;
-    protected boolean isInit = false;
+    protected double m_invMass;
+    protected double mass;// for beans convenience only
+    protected boolean isInit;
 
     /**
      * Change the stiffness of this Link.
@@ -53,13 +133,26 @@ public abstract class Module {
      */
     public double getDamping(){return damping;}
 
-    public abstract int getNbMats();
+    /**
+     * Set the mass parameter.
+     * @param M mass value.
+     */
+    public void setMass(double M) {
+        m_invMass = 1 / M;
+    }
+    public double getMass() {
+        return 1/m_invMass;
+    }
+    public void setGravity(Vect3D grav) {
+        if(gravity == null) gravity = grav;
+        else gravity.set(grav);
+    }
+    public void setFriction(double fric) {
+        friction= fric;
+    }
+    public double getFriction() {
+        return friction;
+    }
 
-    public Vect3D getPos(int i){return null;}
-    public Vect3D getPosR(int i){return null;}
-
-    public void addFrc(double frc,int i,Vect3D symPos){}
-
-    public void setPosition(int index,Vect3D pos){}
 
 }

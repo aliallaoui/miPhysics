@@ -19,42 +19,26 @@ public abstract class Link extends Module{
      * @param m1 connected Mat at one end.
      * @param m2 connected Mat at other end.
      */
-    public Link(double distance, Mat m1, Mat m2) {
+    public Link(double distance, Module m1, Module m2) {
         m_dRest = distance;
         m_mat1 = m1;
         m_mat2 = m2;
 
-        stiffness = 0;
-        damping = 0;
-
         m_invDist = 0;
     }
 
-    /**
-     * Compute behavior of the Link (depends on the concrete implementation of concerned module).
-     *
-     */
-    public abstract void compute();
-
-
-    public void computeForces(){compute();}
 
     public void computeMoves(){}
-    /**
-     * Connect the Link to two Mat modules.
-     * @param m1 connected Mat at one end.
-     * @param m2 connected Mat at other end.
-     */
-    public void connect (Mat m1, Mat m2) {
-        m_mat1 = m1;
-        m_mat2 = m2;
-    }
+
+    //TODO should throw exception
+     public Vect3D getPoint(String name,int index){return null;}
+     public Vect3D getPointR(String name,int index) {return null;}
 
     /**
      * Access the first Mat connected to this Link.
      * @return the first Mat module.
      */
-    public Mat getMat1() {
+    public Module getMat1() {
         return m_mat1;
     }
 
@@ -62,7 +46,7 @@ public abstract class Link extends Module{
      * Access the second Mat connected to this Link.
      * @return the second Mat module.
      */
-    public Mat getMat2() {
+    public Module getMat2() {
         return m_mat2;
     }
 
@@ -79,8 +63,8 @@ public abstract class Link extends Module{
      *
      */
     public void initDistances() {
-        m_dist = m_mat1.getPos().dist(m_mat2.getPos());
-        m_distR = m_mat1.getPosR().dist(m_mat2.getPosR());
+        m_dist = m_mat1.getPoint(0).dist(m_mat2.getPoint(0));
+        m_distR = m_mat1.getPointR(0).dist(m_mat2.getPointR(0));
     }
 
     /**
@@ -89,47 +73,14 @@ public abstract class Link extends Module{
      */
     protected double updateEuclidDist() {
         m_distR = m_dist;
-        m_dist = m_mat1.getPos().dist(m_mat2.getPos());
+        m_dist = m_mat1.getPoint(0).dist(m_mat2.getPoint(0));
         return m_dist;
-    }
-
-    protected double calcSquaredDist() {
-        return m_mat1.getPos().sqDist(m_mat2.getPos());
     }
 
     // Experimental stuff
     protected double calcDelayedDistance() {
-        return m_mat1.getPosR().dist(m_mat2.getPosR());
+        return m_mat1.getPointR(0).dist(m_mat2.getPointR(0));
     }
-
-    protected double getDx() {
-        return m_mat1.getPos().x - m_mat2.getPos().x;
-    }
-
-    protected double getDy() {
-        return m_mat1.getPos().y - m_mat2.getPos().y;
-    }
-
-    protected double getDz() {
-        return m_mat1.getPos().z - m_mat2.getPos().z;
-    }
-
-
-    protected double calcDist1D() {
-        return (m_mat1.getPos().z - m_mat2.getPos().z);
-    }
-
-
-///**
-// * Set the distance stored inside the link (and apply previous one to delayed distance).
-// * @param d distance to apply.
-// */
-//protected void updateDistManual(double d) {
-//    distR = dist;
-//    dist = d;
-//  }
-//
-
 
     /**
      * Change resting distance for this Link.
@@ -179,6 +130,9 @@ public abstract class Link extends Module{
      */
     protected void applyForces(double lnkFrc) {
 
+        getMat1().addFrc(lnkFrc,0,getMat2().getPoint(0));
+        getMat2().addFrc(lnkFrc,0,getMat1().getPoint(0));
+/*
         m_invDist = 1 / m_dist;
 
         double x_proj = (getMat1().m_pos.x - getMat2().m_pos.x) * m_invDist;
@@ -192,25 +146,27 @@ public abstract class Link extends Module{
         getMat2().m_frc.x -= lnkFrc * x_proj;
         getMat2().m_frc.y -= lnkFrc * y_proj;
         getMat2().m_frc.z -= lnkFrc * z_proj;
+  */
     }
 
-    protected void applyForces(Vect3D frcVect) {
-        getMat1().m_frc.add(frcVect);
-        getMat2().m_frc.sub(frcVect);
+    public int getNbPoints(){return 0;}
+    public Vect3D getPoint(int index) {
+        return null;
+    }
+    public Vect3D getPointR(int index) {
+        return null;
     }
 
-    protected void applyForces1D(double lnkFrc) {
-        getMat2().m_frc.z += lnkFrc;
-        getMat1().m_frc.z -= lnkFrc;
-    }
-
-    public int getNbMats(){return 0;}
+    public void addFrc(double frc,int i,Vect3D symPos){}
+    public void setPoint(int index,Vect3D pos){}
+    public void setPointX(int index,float pX){}
+    public void setPointY(int index,float pY){}
+    public void setPointZ(int index,float pZ){}
 
     /* Class attributes */
 
-    private Mat m_mat1;
-    private Mat m_mat2;
-
+    private Module m_mat1;
+    private Module m_mat2;
 
     protected double m_dist;
     protected double m_distR;

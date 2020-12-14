@@ -20,7 +20,7 @@ public class SpringDamper3D extends Link {
         m_PrevD = calcDelayedDistance();
     }
 
-    public void compute() {
+    public void computeForces() {
         updateEuclidDist();
         applyForces( -(m_dist-m_dRest)*(stiffness) - getVel() *  damping );
     }

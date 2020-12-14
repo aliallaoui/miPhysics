@@ -28,7 +28,7 @@ public class Contact3D extends Link {
         m_dRsquared = m_dRest*m_dRest;
     }
 
-    public void compute() {
+    public void computeForces() {
         updateEuclidDist();
         if (m_dist < m_dRest)
             this.applyForces(  -(m_dist - m_dRest) * stiffness - getVel() * damping);

@@ -11,15 +11,12 @@ import org.micreative.miPhysics.Vect3D;
  */
 public class Mass3D extends Mat {
 
-  public Mass3D(double M, Vect3D initPos, Vect3D initPosR, double friction, Vect3D grav) {
-    super(M, initPos, initPosR);
+  public Mass3D( Vect3D initPos, Vect3D initPosR) {
+    super(initPos, initPosR);
 
-    this.friction = friction;
-    gravity = new Vect3D();
-    gravity.set(grav);
   }
 
-  public void compute() {
+  public void computeMoves() {
     tmp.set(m_pos);
     if (m_controlled) {
       m_pos.add(m_controlVelocity);

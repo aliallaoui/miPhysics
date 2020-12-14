@@ -12,7 +12,7 @@ public class MatDataHolder{
     }
 
     public MatDataHolder(Mat element){
-        this.setPos(element.getPos());
+        this.setPos(element.getPoint());
         this.m_mass = element.getMass();
         this.m_type = element.getType();
     }
@@ -37,7 +37,7 @@ public class MatDataHolder{
         this.m_type = t;
     }
 
-    public Vect3D getPos(){return this.m_pos;}
+    public Vect3D getPoint(){return this.m_pos;}
     public double getMass(){return this.m_mass;}
     public String getType(){return this.m_type;}
 

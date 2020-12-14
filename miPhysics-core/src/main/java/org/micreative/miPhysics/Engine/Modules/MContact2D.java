@@ -3,9 +3,6 @@ package org.micreative.miPhysics.Engine.Modules;
 import org.micreative.miPhysics.Engine.MacroLink;
 import org.micreative.miPhysics.Engine.Module;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MContact2D extends MacroLink {
 
 
@@ -30,10 +27,10 @@ public class MContact2D extends MacroLink {
 
     public void computeForces() {
         updateEuclidDist();
-        for (int i = 0; i < m1.getNbMats(); i++) {
-            for (int j = 0; j < m2.getNbMats(); j++) {
-                if (m_dist.get(i * m2.getNbMats() + j) < distance)
-                    this.applyForces((m_dist.get(i * m2.getNbMats() + j) - distance) * stiffness + getVel(i * m2.getNbMats() + j) * damping, i, j);
+        for (int i = 0; i < m1.getNbPoints(); i++) {
+            for (int j = 0; j < m2.getNbPoints(); j++) {
+                if (m_dist.get(i * m2.getNbPoints() + j) < distance)
+                    this.applyForces((m_dist.get(i * m2.getNbPoints() + j) - distance) * stiffness + getVel(i * m2.getNbPoints() + j) * damping, i, j);
             }
         }
     }
@@ -42,4 +39,5 @@ public class MContact2D extends MacroLink {
     {
 
     }
+
 }

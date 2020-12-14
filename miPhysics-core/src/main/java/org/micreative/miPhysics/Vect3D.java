@@ -30,6 +30,11 @@ public class Vect3D {
 		return Math.sqrt(Math.pow(this.x,2)+ Math.pow(this.y,2) + Math.pow(this.z,2));
 	}
 
+	public float scalarProduct(Vect3D v2)
+	{
+		return (float)(x*v2.x + y*v2.y + z*v2.z);
+	}
+
 
 	public double dist(Vect3D v2) {
 		// Avoid NaN problems !
@@ -144,6 +149,31 @@ public class Vect3D {
 	{
 		String [] v = s.substring(1,s.length()-1).split(",");
 		return new Vect3D(Double.parseDouble( v[0]),Double.parseDouble( v[1]),Double.parseDouble( v[2]));
+	}
+
+	/**
+	 * Construct delayed position values based on initial position and initial
+	 * velocity. Converts the velocity in [distance unit]/[second] to [distance
+	 * unit]/[sample] then calculates the delayed position for the initialisation of
+	 * the masses.
+	 *
+	 * @param pos
+	 *            initial position
+	 * @param vel_mps
+	 *            initial velocity in distance unit per second
+	 * @return
+	 */
+	static public Vect3D constructDelayedPos(Vect3D pos, Vect3D vel_mps,int simRate) {
+		Vect3D velPerSample = new Vect3D();
+		Vect3D initPosR = new Vect3D();
+
+		velPerSample.set(vel_mps);
+		velPerSample.div(simRate);
+
+		initPosR.set(pos);
+		initPosR.sub(velPerSample);
+
+		return initPosR;
 	}
 }
 

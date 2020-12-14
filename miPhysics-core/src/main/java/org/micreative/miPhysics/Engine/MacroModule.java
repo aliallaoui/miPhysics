@@ -12,8 +12,7 @@ public abstract class MacroModule extends Module {
     protected List<Vect3D> m_frc;
     protected List<Double> distR;
 
-    protected double friction;
-    protected Vect3D gravity;
+;
     protected int size;
 
     public int getSize() {
@@ -25,19 +24,18 @@ public abstract class MacroModule extends Module {
         this.size=size;
     }
 
-    public int getNbMats()
+    public int getNbPoints()
     {
         return size;
     }
 
-    public Vect3D getPos(int i){return m_pos.get(i);}
-    public Vect3D getPosR(int i){return m_posR.get(i);}
+    public Vect3D getPoint(int i){return m_pos.get(i);}
+    public Vect3D getPointR(int i){return m_posR.get(i);}
 
     public void addFrc(double frc,int i,Vect3D symPos,int f_index)
     {
-
+    //This should be in a lambda function, choosen at init with string param in values in ["XY","XZ,"XYZ","X"...]
         double invDist = 1 / m_pos.get(i).dist(symPos);
-
         double x_proj = (m_pos.get(i).x - symPos.x) * invDist;
         double y_proj = (m_pos.get(i).y - symPos.y) * invDist;
 
@@ -45,17 +43,6 @@ public abstract class MacroModule extends Module {
         m_frc.get(f_index).y += frc * y_proj;
 
 
-    }
-
-    public void setGravity(Vect3D grav) {
-        if(gravity == null) gravity = grav;
-        else gravity.set(grav);
-    }
-    public void setFriction(double fric) {
-        friction= fric;
-    }
-    public double getFriction() {
-        return friction;
     }
 
 

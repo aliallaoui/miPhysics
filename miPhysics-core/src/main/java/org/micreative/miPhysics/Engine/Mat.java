@@ -15,19 +15,15 @@ public abstract class Mat extends Module{
     /**
      * Constructor method.
      *
-     * @param M mass value.
      * @param initPos initial position.
      * @param initPosR delayed initial position.
      */
-    public Mat(double M, Vect3D initPos, Vect3D initPosR) {
+    public Mat(Vect3D initPos, Vect3D initPosR) {
         m_pos = new Vect3D(0., 0., 0.);
         m_posR = new Vect3D(0., 0., 0.);
         m_frc = new Vect3D(0., 0., 0.);
 
         tmp = new Vect3D();
-
-
-        setMass(M);
         m_pos.set(initPos);
         m_posR.set(initPosR);
 
@@ -35,24 +31,12 @@ public abstract class Mat extends Module{
     }
 
     /**
-     * Initialise the Mat module.
-     * @param X initial position.
-     * @param XR initial delayed position.
-     */
-    protected void init(Vect3D X, Vect3D XR) {
-        this.m_pos = X;
-        this.m_posR = XR;
-    }
-
-    /**
      * Compute the physics of the Mat module.
      *
      */
-    public abstract void compute();
+
 
     public void computeForces(){}
-
-    public void computeMoves(){compute();}
 
     public void init(){}
     /**
@@ -66,50 +50,42 @@ public abstract class Mat extends Module{
     public void addFrc(double frc,int i,Vect3D symPos)
     {
         //TODO should throw exception if i > 0
+        //This should be in a lambda function, choosen at init with string param in values in ["XY","XZ,"XYZ","X"...]
+        double invDist = 1 / m_pos.dist(symPos);
+        double x_proj = (m_pos.x - symPos.x) * invDist;
+        double y_proj = (m_pos.y - symPos.y) * invDist;
 
+        m_frc.x += frc * x_proj;
+        m_frc.y += frc * y_proj;
     }
-    //TODO should this be public ? only SpringDamper1D requires it
-    /**
-     * Get the current position of this Mat module.
-     * @return the module position.
-     */
-    public Vect3D getPos() {
-        return m_pos;
-    }
+    public Vect3D getPoint(){return m_pos;}
+    public Vect3D getPointR(){return m_posR;}
 
-    public Vect3D getPos(int i){return m_pos;}
-    public Vect3D getPosR(int i){return m_posR;}
-    /**
-     * Set the current position of this Mat module.
-     * @param newPos the target position to set.
-     * @return the module position.
-     */
-    protected void setPos(Vect3D newPos) {
-        m_pos.set(newPos);
-        m_posR.set(newPos);
-    }
+    public Vect3D getPoint(int i){return m_pos;}
+    public Vect3D getPointR(int i){return m_posR;}
 
-    public void setPosition(int index,Vect3D pos)
+    public void setPoint(Vect3D pos)
     {
-        m_posR.set(m_pos);
+        m_pos.set(pos);
+    }
+    public void setPointR(Vect3D pos) {
+        m_posR.set(pos);
+    }
+
+    public void setPoint(int i,Vect3D pos)
+    {
         m_pos.set(pos);
     }
 
-    /**
-     * Get the current position of this Mat module (in a PVector format).
-     * @return the module position.
-     */
-    protected PVector getPosVector() {
-        return new PVector((float)m_pos.x,(float)m_pos.y,(float)m_pos.z);
+    public void setPointX(int i,float pX) {
+        this.m_pos.x = pX;
+    }
+    public void setPointY(int i,float pY) {
+        this.m_pos.y = pY;
     }
 
-    //TODO should this be public ? only SpringDamper1D requires it
-    /**
-     * Get the delayed position of the module.
-     * @return the delayed position.
-     */
-    public Vect3D getPosR() {
-        return m_posR;
+    public void setPointZ(int i,float pZ) {
+        this.m_pos.z = pZ;
     }
 
     /**
@@ -138,7 +114,7 @@ public abstract class Mat extends Module{
     }
 
 
-    public int getNbMats() {return 1;}
+    public int getNbPoints() {return 1;}
 
     public void setGravity(Vect3D grav) {
         gravity.set(grav);
@@ -169,7 +145,24 @@ public abstract class Mat extends Module{
         m_controlled = false;
     }
 
-
+    /**
+     * Get the velocity of the Mat module at index i. Returns a zero filled 3D Vector
+     * if the Mat is not found.
+     *
+     * @param i
+     *            the index of the Mat module
+     * @return the 3D X,Y,Z velocity coordinates of the module.
+     */
+ /*   public Vect3D getVelocity(int simRate) {
+        if (getNumberOfModules() > i) {
+            Vect3D vel = new Vect3D();
+            vel.set(modules.get(i).getPoint(0));
+            return (vel.sub(modules.get(i).getPointR(0)).mult(simRate));
+        }
+        else
+            return new Vect3D(0., 0., 0.);
+    }
+   */
     /* Class attributes */
 
     protected Vect3D m_pos;

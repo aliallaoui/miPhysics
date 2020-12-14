@@ -12,31 +12,20 @@ import org.jaudiolibs.audioservers.AudioServer;
 import org.jaudiolibs.audioservers.AudioServerProvider;
 import org.jaudiolibs.audioservers.ext.ClientID;
 import org.jaudiolibs.audioservers.ext.Connections;
-import org.micreative.miPhysics.Engine.Control.PositionController;
-import org.micreative.miPhysics.Engine.Control.SimpleParamController;
+import org.micreative.miPhysics.Engine.ModuleObserver;
 import org.micreative.miPhysics.Engine.PhysicalModel;
-import org.micreative.miPhysics.Vect3D;
 
 
 /* Based on SineAudioClient, in the example project of jaudiolibs */
-public class miPhyAudioClient implements  AudioClient{
+public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
 
     final protected AudioServer server;
 
     protected long step;
 
-    public PhysicalModel getMdl() {
-        return mdl;
-    }
+    protected ArrayList<AudioOutputChannel> audioOutputChannels;
 
-    protected PhysicalModel mdl;
-
-    protected String[] listeningPoint;
-    protected int[] listeningPointsInd;
     private float[] data;
-    private List<float[]> buffers;
-    private int idx;
-    private float prevSample;
     private Thread runner;
 
     public int getState() {
@@ -47,23 +36,16 @@ public class miPhyAudioClient implements  AudioClient{
         this.state = state;
     }
 
+    static public int bufferSize = 1024;
     private int state = 0; // should be an enum : 0 = not started, 1=started, not computing, initializing params
                            // 2= params initialized, start simulation
                            // 3= listening to simulation
 
 
-    public void setListeningPoint(String[] listeningPoint) {
-        this.listeningPoint = listeningPoint;
-    }
-    public void setListeningPoint(String[] listeningPoint,int[] listeningPointsInd) {
-        this.listeningPoint = listeningPoint;
-        this.listeningPointsInd = listeningPointsInd;
-    }
-
     public static miPhyAudioClient miPhyJack(float sampleRate,int inputChannelCount, int outputChannelCount)
     {
         try {
-            return new miPhyAudioClient(sampleRate, inputChannelCount, outputChannelCount, 1024, "JACK");
+            return new miPhyAudioClient(sampleRate, inputChannelCount, outputChannelCount, bufferSize, "JACK");
         }
         catch(Exception e)
         {
@@ -86,6 +68,7 @@ public class miPhyAudioClient implements  AudioClient{
 
     public miPhyAudioClient(float sampleRate,int inputChannelCount, int outputChannelCount, int bufferSize, String serverType) throws Exception
     {
+        super("AudioPhysicalModel",(int)sampleRate, 0); //maybe not a good thing to have a default name
         AudioServerProvider provider = null;
         for (AudioServerProvider p : ServiceLoader.load(AudioServerProvider.class)) {
             if (serverType.equals(p.getLibraryName())) {
@@ -107,14 +90,8 @@ public class miPhyAudioClient implements  AudioClient{
                 Connections.OUTPUT);
         server = provider.createServer(config, this);
 
-        this.mdl = new PhysicalModel((int)sampleRate, 0); //displayRate should be removed form PhysicalModel constructor
+         //displayRate should be removed form PhysicalModel constructor
 
-        buffers = new ArrayList<>(outputChannelCount);
-
-        for(int i=0; i< outputChannelCount;i++)
-        {
-            buffers.add(new float[bufferSize]);
-        }
         /* Create a Thread to run our server. All servers require a Thread to run in.
          */
         runner = new Thread(new Runnable() {
@@ -143,50 +120,42 @@ public class miPhyAudioClient implements  AudioClient{
     public boolean process(long time, List<FloatBuffer> inputs, List<FloatBuffer> outputs, int nframes) {
 
 
-        for(float[] bf:buffers)
-        {
-            if( bf == null || bf.length != nframes) bf = new float[nframes];
-        }
         // always use nframes as the number of samples to process
         //System.out.println("input=" + inputs.get(0).get(0));
-        synchronized (mdl.getLock()) {
-            for (int i = 0; i < nframes; i++) {
-                int currentChannel = 0;
+        synchronized (getLock()) {
 
+            try {
+                computeNSteps(nframes,state==1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (int frame = 0; frame < nframes; frame++) {
                 if (state > 0) {
-                    for (PositionController pc : mdl.getPositionControllers()) {
+                    /*
+                    for (PositionController pc : mdl.getPointControllers()) {
                         FloatBuffer input = inputs.get(pc.getInputIndex());
-                        pc.setValue(input.get(i));
+                        pc.setValue(input.get(frame));
                     }
                     for (SimpleParamController spc : mdl.getSimpleParamControllers()) {
                         FloatBuffer input = inputs.get(spc.getInputIndex());
-                        spc.setValue(input.get(i));
+                        spc.setValue(input.get(frame));
                     }
-                    mdl.computeStep(state == 1);
-                }
-//            if(state > 1) mdl.computeStep();
-                if (state > 2) {
-                    currentChannel = 0;
-                    for (float[] buff : buffers) {
-                        if (mdl.matExists(listeningPoint[0])) {
-                            buff[i] = (float) ((mdl.getMatPosition(listeningPoint[currentChannel]).y));
-                        } else if (mdl.moduleExists(listeningPoint[0])) {
-                            buff[i] = (float) ((mdl.getMatPosition(listeningPoint[currentChannel],
-                                    listeningPointsInd[currentChannel]).y));
-                        }
-                        currentChannel++;
-                    }
-                } else {
-                    for (float[] buff : buffers) {
-                        buff[i] = 0.f;
-                    }
+                     computeStep(state == 1);
+                     */
+
                 }
             }
         }
-        int currentChannel = 0;
-        for(FloatBuffer buff:outputs) buff.put(buffers.get(currentChannel++));
-
+        for(AudioOutputChannel aof:audioOutputChannels) {
+            if (state <= 2) aof.fillZeroBuffer();
+            aof.copyToOutputs(outputs);
+        }
             return true;
+    }
+
+    public void addAudioOutputChannel(int channel,String moduleName, ModuleObserver observer)
+    {
+        outputBuffers.add(new AudioOutputChannel(channel,bufferSize,observer));
     }
 
     public void shutdown() {
@@ -202,7 +171,7 @@ public class miPhyAudioClient implements  AudioClient{
 
     public static void main(String[] args) throws Exception {
         miPhyAudioClient simUGen = miPhyAudioClient.miPhyJack(44100.f,2,2);//new miPhyAudioClient(44100.f,0,2,1024,"JACK"); //<>// //<>//
-
+/*
         simUGen.getMdl().setGravity(0);
         simUGen.getMdl().setFriction(0);
 
@@ -222,7 +191,7 @@ public class miPhyAudioClient implements  AudioClient{
         simUGen.setListeningPoint(listeningPoints,listeningPointsInd);
         simUGen.getMdl().addSimpleParamController("osc_perc_ctrl","osc_perc","pointAy",1);
         simUGen.getMdl().init();
-
+*/
         simUGen.start();
 
 

@@ -1,14 +1,15 @@
 
 package org.micreative.miPhysics.Engine.Control;
-//import org.micreative.miPhysics.Engine.Control.AbstractController;
+//import org.micreative.miPhysics.Engine.AbstractController;
+import org.micreative.miPhysics.Engine.ModuleController;
 import org.micreative.miPhysics.Engine.PhysicalModel;
 
-public class MidiController extends AbstractController
+public class MidiController //extends ModuleController
 {
 
     int control;
 
-
+/*
     public MidiController(PhysicalModel pm_,int ctrl_,float min_,float max_,String name_,String param_,float rampTime )
     {
         super(pm_,name_,param_);
@@ -47,4 +48,6 @@ public class MidiController extends AbstractController
     {
         pm.getParamController(name + "_" + param).triggerRamp(linearScale(value));
     }
+
+ */
 }

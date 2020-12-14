@@ -10,9 +10,9 @@ import org.micreative.miPhysics.Vect3D;
  */
 public class Ground3D extends Mat {
 	public Ground3D(Vect3D initPos) {
-		super(1., initPos, initPos); // the mass parameter is unused.
+		super( initPos, initPos);
 	}
-	public void compute() {
-		m_frc.set(0., 0., 0.);
+	public void computeMoves() {
+
 	}
 }
