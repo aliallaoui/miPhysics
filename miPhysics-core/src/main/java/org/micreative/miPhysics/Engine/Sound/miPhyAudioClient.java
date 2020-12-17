@@ -3,6 +3,7 @@ package org.micreative.miPhysics.Engine.Sound;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,8 +13,7 @@ import org.jaudiolibs.audioservers.AudioServer;
 import org.jaudiolibs.audioservers.AudioServerProvider;
 import org.jaudiolibs.audioservers.ext.ClientID;
 import org.jaudiolibs.audioservers.ext.Connections;
-import org.micreative.miPhysics.Engine.ModuleObserver;
-import org.micreative.miPhysics.Engine.PhysicalModel;
+import org.micreative.miPhysics.Engine.*;
 
 
 /* Based on SineAudioClient, in the example project of jaudiolibs */
@@ -119,7 +119,10 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     }
     public boolean process(long time, List<FloatBuffer> inputs, List<FloatBuffer> outputs, int nframes) {
 
-
+        for(InputBuffer ib:getInputBuffers()) {
+            AudioInputChannel aic = (AudioInputChannel)ib;
+            aic.copyFromInputs(inputs);
+        }
         // always use nframes as the number of samples to process
         //System.out.println("input=" + inputs.get(0).get(0));
         synchronized (getLock()) {
@@ -129,24 +132,9 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            for (int frame = 0; frame < nframes; frame++) {
-                if (state > 0) {
-                    /*
-                    for (PositionController pc : mdl.getPointControllers()) {
-                        FloatBuffer input = inputs.get(pc.getInputIndex());
-                        pc.setValue(input.get(frame));
-                    }
-                    for (SimpleParamController spc : mdl.getSimpleParamControllers()) {
-                        FloatBuffer input = inputs.get(spc.getInputIndex());
-                        spc.setValue(input.get(frame));
-                    }
-                     computeStep(state == 1);
-                     */
-
-                }
-            }
         }
-        for(AudioOutputChannel aof:audioOutputChannels) {
+        for(OutputBuffer ob:outputBuffers) {
+            AudioOutputChannel aof =(AudioOutputChannel) ob;
             if (state <= 2) aof.fillZeroBuffer();
             aof.copyToOutputs(outputs);
         }
@@ -158,6 +146,13 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
         outputBuffers.add(new AudioOutputChannel(channel,bufferSize,observer));
     }
 
+    public void addAudioInputChannel(int channel)
+    {
+        dataProviders.put("audioInput" + Integer.toString(channel),
+                new AudioInputChannel(channel,bufferSize));
+    }
+
+
     public void shutdown() {
         //dispose resources.
 
@@ -167,6 +162,16 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     {
         runner.start();
         state = 1;
+    }
+
+    public List<InputBuffer> getInputBuffers()
+    {
+        ArrayList<InputBuffer> ibs = new ArrayList<>();
+        for(Map.Entry<String, DataProvider> dataProvider:dataProviders.entrySet()) {
+            if (dataProvider.getValue() instanceof InputBuffer)
+                ibs.add((InputBuffer) dataProvider.getValue());
+        }
+        return ibs;
     }
 
     public static void main(String[] args) throws Exception {

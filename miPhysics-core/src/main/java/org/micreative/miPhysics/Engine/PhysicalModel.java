@@ -53,6 +53,7 @@ public class PhysicalModel extends MetaModule{
 	private Timestamp timestamp ;
 
 	protected List<OutputBuffer> outputBuffers;
+	protected List<InputBuffer> inputBuffers;
 	/* Library version */
 	public final static String VERSION = "##library.prettyVersion##";
 
