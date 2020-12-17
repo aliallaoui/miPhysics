@@ -15,18 +15,14 @@ public abstract class Link extends Module{
 
     /**
      * Constructor method.
-     * @param distance resting distance of the Link.
      * @param m1 connected Mat at one end.
      * @param m2 connected Mat at other end.
      */
-    public Link(double distance, Module m1, Module m2) {
-        m_dRest = distance;
+    public Link( Module m1, Module m2) {
         m_mat1 = m1;
         m_mat2 = m2;
-
         m_invDist = 0;
     }
-
 
     public void computeMoves(){}
 
@@ -86,16 +82,16 @@ public abstract class Link extends Module{
      * Change resting distance for this Link.
      * @param d new resting distance.
      */
-    public void setDRest(double d) {
-        m_dRest = d;
+    public void setRestDistance(double d) {
+        restDistance = d;
     }
 
     /**
      * Get the resting distance of this link
      * @return the resting distance parameter
      */
-    public double getDRest(){
-        return m_dRest;
+    public double getRestDistance(){
+        return restDistance;
     }
 
 
@@ -121,7 +117,7 @@ public abstract class Link extends Module{
      * @return elongation value.
      */
     public double getElong() {
-        return getDist() - m_dRest;
+        return getDist() - restDistance;
     }
 
     /**
@@ -171,7 +167,7 @@ public abstract class Link extends Module{
 
     protected double m_dist;
     protected double m_distR;
-    protected double m_dRest;
+    protected double restDistance;
 
 
 

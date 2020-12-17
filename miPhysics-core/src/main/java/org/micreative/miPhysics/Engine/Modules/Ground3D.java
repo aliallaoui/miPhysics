@@ -9,8 +9,8 @@ import org.micreative.miPhysics.Vect3D;
  *
  */
 public class Ground3D extends Mat {
-	public Ground3D(Vect3D initPos) {
-		super( initPos, initPos);
+	public Ground3D() {
+		super( );
 	}
 	public void computeMoves() {
 

@@ -2,7 +2,7 @@ package org.micreative.miPhysics.Engine.Modules;
 
 
 import org.micreative.miPhysics.Engine.Link;
-import org.micreative.miPhysics.Engine.Mat;
+import org.micreative.miPhysics.Engine.Module;
 
 /**
  * Spring-Damper interaction: viscoelastic interaction between two Mat elements.
@@ -11,18 +11,19 @@ import org.micreative.miPhysics.Engine.Mat;
  */
 public class SpringDamper3D extends Link {
 
-    public SpringDamper3D(double distance, double K_param, double Z_param, Mat m1, Mat m2) {
-        super(distance, m1, m2);
-        stiffness = K_param;
-        damping = Z_param;
+    public SpringDamper3D(Module m1, Module m2) {
+        super(m1, m2);
+    }
 
+    public void init()
+    {
         // for experimental implementation
         m_PrevD = calcDelayedDistance();
     }
 
     public void computeForces() {
         updateEuclidDist();
-        applyForces( -(m_dist-m_dRest)*(stiffness) - getVel() *  damping );
+        applyForces( -(m_dist- restDistance)*(stiffness) - getVel() *  damping );
     }
   
     // Experimental alternate computation algorithm

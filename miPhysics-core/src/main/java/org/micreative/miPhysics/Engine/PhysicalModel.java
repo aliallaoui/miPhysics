@@ -226,6 +226,7 @@ public class PhysicalModel extends MetaModule{
 				if(!init) computeMoves();
 				//controlModulePositions() ?
 				if(!init) computeForces(); //TODO those if should be put outside the loop
+				System.out.println(getPoint("m",0));
 				}
 		nbStepsSimulated+=N;
 	/*	if(nbStepsSimulated%(simRate*5) == 0)

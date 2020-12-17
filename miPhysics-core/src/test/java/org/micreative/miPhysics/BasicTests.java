@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class BasicTests {
 
-    public @Test void testOneMass1D() throws Exception
+    public @Test void testOneMass3D() throws Exception
     {
         PhysicalModel pm = new PhysicalModel("toto",100,25);
         pm.addModule("org.micreative.miPhysics.Engine.Modules.Mass3D","m");
@@ -23,6 +23,22 @@ public class BasicTests {
         pm.init();
 
         pm.computeNSteps(300,false);
+
+        //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
+    }
+
+    public @Test void testMassSpring3D() throws Exception
+    {
+        PhysicalModel pm = new PhysicalModel("toto",100,25);
+        pm.addModule("Ground3D","g");
+        pm.addModule("Mass3D","m");
+        pm.setPoint("m",0,new Vect3D(0,2,0));
+        pm.setPointR("m",0,new Vect3D(0,2,0));
+        //        pm.setVelocity("m",0,new Vect3D(0,0,0));
+        pm.addInteraction("SpringDamper3D","s","g","m");
+        pm.init();
+
+        pm.computeNSteps(5000,false);
 
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }

@@ -20,25 +20,25 @@ public class Contact3D extends Link {
      * @param m1
      * @param m2
      */
-    public Contact3D(double distance, double K_param, double Z_param, Mat m1, Mat m2) {
-        super(distance, m1, m2);
-        stiffness = K_param;
-        damping = Z_param;
-
-        m_dRsquared = m_dRest*m_dRest;
+    public Contact3D( Mat m1, Mat m2) {
+        super( m1, m2);
     }
 
+    public void init()
+    {
+        m_dRsquared = restDistance * restDistance;
+    }
     public void computeForces() {
         updateEuclidDist();
-        if (m_dist < m_dRest)
-            this.applyForces(  -(m_dist - m_dRest) * stiffness - getVel() * damping);
+        if (m_dist < restDistance)
+            this.applyForces(  -(m_dist - restDistance) * stiffness - getVel() * damping);
     }
 
 
     /* Reimplement in order to store squared distance */
     public void setDRest(double d) {
-        m_dRest = d;
-        m_dRsquared = m_dRest * m_dRest;
+        restDistance = d;
+        m_dRsquared = restDistance * restDistance;
     }
 
     private double m_dRsquared;

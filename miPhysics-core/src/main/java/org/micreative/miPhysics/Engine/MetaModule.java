@@ -98,7 +98,27 @@ public abstract class MetaModule implements AbstractModule{
             p.load(input);
             Map defaultParams = getPropertySubsetAsMap(p, type + ".");
             defaultParams.putAll(getPropertySubsetAsMap(p, "Global."));
-            modules.put(name,(Module)Class.forName(type).newInstance());
+            modules.put(name,(Module)Class.forName("org.micreative.miPhysics.Engine.Modules." + type).newInstance());
+            modules.get(name).loadParameters(defaultParams);
+        }
+    }
+
+    public void addInteraction(String type, String name,String moduleA,String moduleB) throws Exception {
+        if(modules.containsKey(name)) throw new Exception("Module named " +name + "already exists");
+
+        try(InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties")) {
+            Properties p = new Properties();
+            if (input == null) {
+                System.out.println("defaultParams.properties not found");
+                return;
+            }
+            //p.load(new FileReader(defaultParamsPropertiesPath));
+            p.load(input);
+            Map defaultParams = getPropertySubsetAsMap(p, type + ".");
+            defaultParams.putAll(getPropertySubsetAsMap(p, "Global."));
+            modules.put(name,(Module)Class.forName("org.micreative.miPhysics.Engine.Modules." + type)
+                    .getDeclaredConstructor(Module.class,Module.class)
+                    .newInstance(getModule(moduleA),getModule(moduleB)));
             modules.get(name).loadParameters(defaultParams);
         }
     }
