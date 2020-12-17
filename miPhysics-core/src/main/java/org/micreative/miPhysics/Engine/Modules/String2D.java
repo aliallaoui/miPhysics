@@ -241,6 +241,10 @@ public class String2D extends MacroModule {
     {
         m_pos.set(i,pos);
     }
+    public void setPointR(int i,Vect3D pos)
+    {
+        m_pos.set(i,pos);
+    }
 
     public void setPointX(int i,float pX) {
         this.m_pos.get(i).x = pX;

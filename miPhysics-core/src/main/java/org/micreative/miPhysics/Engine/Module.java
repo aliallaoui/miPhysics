@@ -41,6 +41,26 @@ public abstract class Module implements AbstractModule {
 
 
     }
+    public void loadParameters(Map<String,String> params)
+    {
+        params.forEach((k,v)->{
+            try {
+                PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, k);
+                String type = p.getPropertyType().toString();
+                Object value = null;
+                if (type.equals("double")) value = Double.parseDouble(v);
+                else if (type.equals("float")) value = Float.parseFloat(v);
+                else if (type.equals("int")) value = Integer.parseInt(v);
+                else if (type.equals("class org.micreative.miPhysics.Vect3D")) value = Vect3D.fromString(v);
+                p.getWriteMethod().invoke(this,value);
+            }
+            catch(Exception e)
+            {
+                System.out.println("error creating string2D with " + params + " cause : " + e.getMessage());
+            }
+        });
+        init();
+    }
 
     public void loadParameters(Map<String,String> defaultParams,Map<String,Object> params) throws Exception
     {
@@ -77,6 +97,7 @@ public abstract class Module implements AbstractModule {
 
     abstract public void addFrc(double frc,int i,Vect3D symPos);
     abstract public void setPoint(int index,Vect3D pos);
+    abstract public void setPointR(int index,Vect3D pos);
 
     public Vect3D getPoint(String name,int index)
     {

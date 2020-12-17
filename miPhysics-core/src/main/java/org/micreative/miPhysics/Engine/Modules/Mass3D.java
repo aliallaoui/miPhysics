@@ -15,7 +15,9 @@ public class Mass3D extends Mat {
     super(initPos, initPosR);
 
   }
-
+  public Mass3D( ) {
+    super();
+  }
   public void computeMoves() {
     tmp.set(m_pos);
     if (m_controlled) {

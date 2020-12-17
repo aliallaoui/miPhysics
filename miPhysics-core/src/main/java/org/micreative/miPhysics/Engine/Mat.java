@@ -28,8 +28,15 @@ public abstract class Mat extends Module{
         m_posR.set(initPosR);
 
         m_frc.set(0., 0., 0.);
+        gravity = new Vect3D(0,0,0);
     }
-
+    public Mat() {
+        m_pos = new Vect3D(0., 0., 0.);
+        m_posR = new Vect3D(0., 0., 0.);
+        m_frc = new Vect3D(0., 0., 0.);
+        tmp = new Vect3D();
+        gravity = new Vect3D(0,0,0);
+    }
     /**
      * Compute the physics of the Mat module.
      *
@@ -75,6 +82,10 @@ public abstract class Mat extends Module{
     public void setPoint(int i,Vect3D pos)
     {
         m_pos.set(pos);
+    }
+    public void setPointR(int i,Vect3D pos)
+    {
+        m_posR.set(pos);
     }
 
     public void setPointX(int i,float pX) {

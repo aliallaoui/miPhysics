@@ -159,6 +159,7 @@ public abstract class Link extends Module{
 
     public void addFrc(double frc,int i,Vect3D symPos){}
     public void setPoint(int index,Vect3D pos){}
+    public void setPointR(int index,Vect3D pos){}
     public void setPointX(int index,float pX){}
     public void setPointY(int index,float pY){}
     public void setPointZ(int index,float pZ){}

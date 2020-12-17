@@ -18,7 +18,7 @@ public class BasicTests {
     public @Test void testOneMass1D() throws Exception
     {
         PhysicalModel pm = new PhysicalModel("toto",100,25);
-    //    pm.addMass1D("m",1,new Vect3D(0,0,0),new Vect3D(0,0,0));
+        pm.addModule("org.micreative.miPhysics.Engine.Modules.Mass3D","m");
 
         pm.init();
 

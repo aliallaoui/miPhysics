@@ -3,11 +3,11 @@ package org.micreative.miPhysics.Engine;
 import org.micreative.miPhysics.Engine.Modules.String2D;
 import org.micreative.miPhysics.Vect3D;
 
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.io.FileReader;
+import java.io.InputStream;
 
 public abstract class MetaModule implements AbstractModule{
 
@@ -26,6 +26,7 @@ public abstract class MetaModule implements AbstractModule{
         isInit = false;
     }
     public String getType(){return name;} // not an error ! That's the essence of meta modules
+    public Module getModule(String name){return modules.get(name);}
     public void computeForces()
     {
         modules.forEach((name,module)->module.computeForces());
@@ -34,6 +35,10 @@ public abstract class MetaModule implements AbstractModule{
     public void computeMoves()
     {
         modules.forEach((name,module)->module.computeMoves());
+    }
+    public void init()
+    {
+        modules.forEach((name,module)->module.init());
     }
 
     public Vect3D getPoint(String name,int index)
@@ -45,10 +50,61 @@ public abstract class MetaModule implements AbstractModule{
     {
         return modules.get(name).getPointR(name,index);// something to do with split(".") to handle recursive tree structure
     }
+    public void setPoint(String name,int index,Vect3D point)
+    {
+        modules.get(name).setPoint(index,point);
+    }
+    public void setPointR(String name,int index,Vect3D point)
+    {
+        modules.get(name).setPointR(index,point);
+    }
+
+    protected Properties getPropertySubset(Properties prop, String key)
+    {
+        final Properties p = new Properties();
+
+        for (String s : prop.stringPropertyNames()) {
+            if (s.startsWith(key) && s.length() > key.length())
+            {
+                p.put(s.substring(key.length()), p.getProperty(s));
+            }
+        }
+        return p;
+    }
+
+    protected Map<String,String> getPropertySubsetAsMap(Properties prop, String key)
+    {
+        final Map<String,String> p = new HashMap<>();
+
+        for (String s : prop.stringPropertyNames()) {
+            if (s.startsWith(key) && s.length() > key.length())
+            {
+                p.put(s.substring(key.length()), prop.getProperty(s));
+            }
+        }
+        return p;
+    }
 
     public void addModule(String type, String name) throws Exception {
         if(modules.containsKey(name)) throw new Exception("Module named " +name + "already exists");
-        modules.put(name,(Module)Class.forName(type).newInstance());
+
+        try(InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties")) {
+            Properties p = new Properties();
+            if (input == null) {
+                System.out.println("defaultParams.properties not found");
+                return;
+            }
+            //p.load(new FileReader(defaultParamsPropertiesPath));
+            p.load(input);
+            Map defaultParams = getPropertySubsetAsMap(p, type + ".");
+            defaultParams.putAll(getPropertySubsetAsMap(p, "Global."));
+            modules.put(name,(Module)Class.forName(type).newInstance());
+            modules.get(name).loadParameters(defaultParams);
+        }
+    }
+
+    public void addMassModule(String type, String name) throws Exception {
+
     }
 
     public void addModuleController(String name,
@@ -57,9 +113,9 @@ public abstract class MetaModule implements AbstractModule{
                                     String controlledData) throws Exception {
         if(moduleControllers.containsKey(name)) throw new Exception("ModuleController named " +name + "already exists");
         moduleControllers.put(name,new ModuleController(modules.get(moduleName),
-                                                        dataProviders.get(dataProviderName),
-                                                        controlledData)
-                             );
+                dataProviders.get(dataProviderName),
+                controlledData)
+        );
     }
 
     public void addPositionScalarController(String name,

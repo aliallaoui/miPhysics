@@ -137,25 +137,6 @@ public class PhysicalModel extends MetaModule{
 	}
 
 
-	/**
-	 * Initialise the physical model once all the modules have been created.
-	 */
-	public void init() {
-
-		System.out.println("Initialisation of the physical model: ");
-		System.out.println("Nb of modules int model: " + getNumberOfModules());
-
-
-		/* Initialise the stored distances for the springs */
-		for (int i = 0; i < modules.size(); i++) {
-			modules.get(i).init();
-		}
-
-		// Should init grav and friction here, in case they were set after the module
-		// creation...
-		System.out.println("Finished model init.\n");
-	}
-
 
 
 
@@ -268,124 +249,12 @@ public class PhysicalModel extends MetaModule{
 	}
 
 
-
-
-
-
-
-	/**************************************************/
-	/* Methods so that we can draw the model */
-	/**************************************************/
-
-	/**
-	 * Fill an ArrayList with the positions of all masses of a given type.
-	 *
-	 * @param mArray
-	 *            the ArrayList (that will be cleared and refilled).
-	 * @param m
-	 *            the module type that we are looking for.
-	 */
-	public void getAllmodulesOfType(ArrayList<PVector> mArray, String m) {
-		mArray.clear();
-		Module mat;
-		Vect3D pos = new Vect3D();
-		for (int i = 0; i < modules.size(); i++) {
-			mat = modules.get(i);
-			if (mat.getType() == m) {
-				pos.set(mat.getPoint(0));
-				mArray.add(new PVector((float) pos.x, (float) pos.y, (float) pos.z));
-			}
-		}
+	public void setVelocity(String name,int index,Vect3D velocity)
+	{
+		modules.get(name).setPointR(index,Vect3D.constructDelayedPos(getPoint(name,index),
+		velocity,simRate));
 	}
 
-	/**
-	 * Create and fill two Array Lists with the positions and velocities (per
-	 * sample) of all modules of a given type. DEPRECEATED FUNCTION, use
-	 * createPosSpeedArraysForModType and update instead.
-	 *
-	 * @param pArray
-	 *            the position ArrayList (that will be cleared and refilled).
-	 * @param vArray
-	 *            the velocity ArrayList (that will be cleared and refilled).
-	 * @param m
-	 *            the module type that we are looking for.
-	 */
-	public void getAllmodulespeedsOfType(ArrayList<PVector> pArray, ArrayList<PVector> vArray, String m) {
-		pArray.clear();
-		vArray.clear();
-		Module mat;
-		Vect3D pos = new Vect3D();
-		for (int i = 0; i < modules.size(); i++) {
-			mat = modules.get(i);
-			if (mat.getType() == m) {
-				pos.set(mat.getPoint(0));
-				pArray.add(new PVector((float) pos.x, (float) pos.y, (float) pos.z));
-				pos.sub(mat.getPointR(0));
-				vArray.add(new PVector((float) pos.x, (float) pos.y, (float) pos.z));
-			}
-		}
-	}
-
-	/**
-	 * Create and fill two Array Lists with the positions and velocities (per
-	 * sample) of all modules of a given type. Use this for creating the new arrays
-	 * before the simulation is launched. Once the simulation is running, use the
-	 * updatePosSpeedArraysForModType method to update the existing ArrayLists.
-	 *
-	 * Quite inefficient method (checks all Mat modules for a given type)
-	 *
-	 * @param pArray
-	 *            the position ArrayList (that will be cleared and refilled).
-	 * @param vArray
-	 *            the velocity ArrayList (that will be cleared and refilled).
-	 * @param m
-	 *            the module type that we are looking for.
-	 */
-	public void createPosSpeedArraysForModType(ArrayList<PVector> pArray, ArrayList<PVector> vArray, String m) {
-		pArray.clear();
-		vArray.clear();
-		Module mat;
-		Vect3D pos = new Vect3D();
-		for (int i = 0; i < modules.size(); i++) {
-			mat = modules.get(i);
-			if (mat.getType() == m) {
-				pos.set(mat.getPoint(0));
-				pArray.add(new PVector((float) pos.x, (float) pos.y, (float) pos.z));
-				pos.sub(mat.getPointR(0));
-				vArray.add(new PVector((float) pos.x, (float) pos.y, (float) pos.z));
-			}
-		}
-	}
-
-	/**
-	 * Update two Array Lists with the positions and velocities (per sample) of all
-	 * modules of a given type. Use this after createPosSpeedArraysForModType, once
-	 * the simulation is running to update existing arrays.
-	 *
-	 * Quite inefficient method (checks all Mat modules for a given type)
-	 *
-	 * @param pArray
-	 *            the position ArrayList.
-	 * @param vArray
-	 *            the velocity ArrayList.
-	 * @param m
-	 *            m the module type that we are looking for.
-	 */
-	public void updatePosSpeedArraysForModType(ArrayList<PVector> pArray, ArrayList<PVector> vArray, String m) {
-		Module mat;
-		Vect3D pos = new Vect3D();
-		int arrayIndex = 0;
-		for (int i = 0; i < modules.size(); i++) {
-			mat = modules.get(i);
-			if (mat.getType() == m) {
-				pos.set(mat.getPoint(0));
-				pArray.set(arrayIndex, new PVector((float) pos.x, (float) pos.y, (float) pos.z));
-				pos.sub(mat.getPointR(0));
-				vArray.set(arrayIndex, new PVector((float) pos.x, (float) pos.y, (float) pos.z));
-				arrayIndex++;
-			}
-		}
-	}
 
 
 	/**
