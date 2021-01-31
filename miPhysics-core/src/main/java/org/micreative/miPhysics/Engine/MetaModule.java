@@ -41,20 +41,20 @@ public abstract class MetaModule implements AbstractModule{
         modules.forEach((name,module)->module.init());
     }
 
-    public Vect3D getPoint(String name,int index)
+    public Vect3D getPoint(String name,Index index)
     {
         return modules.get(name).getPoint(name,index);// something to do with split(".") to handle recursive tree structure
     }
 
-    public Vect3D getPointR(String name,int index)
+    public Vect3D getPointR(String name,Index index)
     {
         return modules.get(name).getPointR(name,index);// something to do with split(".") to handle recursive tree structure
     }
-    public void setPoint(String name,int index,Vect3D point)
+    public void setPoint(String name,Index index,Vect3D point)
     {
         modules.get(name).setPoint(index,point);
     }
-    public void setPointR(String name,int index,Vect3D point)
+    public void setPointR(String name,Index index,Vect3D point)
     {
         modules.get(name).setPointR(index,point);
     }

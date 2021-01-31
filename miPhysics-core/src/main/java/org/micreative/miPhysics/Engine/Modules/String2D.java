@@ -1,6 +1,7 @@
 package org.micreative.miPhysics.Engine.Modules;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.micreative.miPhysics.Engine.Index;
 import org.micreative.miPhysics.Engine.MacroModule;
 import org.micreative.miPhysics.Vect3D;
 
@@ -229,32 +230,32 @@ public class String2D extends MacroModule {
 
 
 
-    public void addFrc(double frc,int i,Vect3D symPos)
+    public void addFrc(double frc,Index i,Vect3D symPos)
     {
-        if(i>0 && i<m_pos.size()-1) addFrc(frc,i,symPos,i-1);
+        if(i.x()>0 && i.x()<m_pos.size()-1) addFrc(frc,i.x(),symPos,i.x()-1);
     }
 
     //getNbPoints should be reimplemented as nbMats = size+2 and not size as defined in MacroModule
     public int getNbPoints(){return size+2;}
 
-    public void setPoint(int i,Vect3D pos)
+    public void setPoint(Index i, Vect3D pos)
     {
-        m_pos.set(i,pos);
+        m_pos.set(i.x(),pos);
     }
-    public void setPointR(int i,Vect3D pos)
+    public void setPointR(Index i,Vect3D pos)
     {
-        m_pos.set(i,pos);
+        m_pos.set(i.x(),pos);
     }
 
-    public void setPointX(int i,float pX) {
-        this.m_pos.get(i).x = pX;
+    public void setPointX(Index i,float pX) {
+        this.m_pos.get(i.x()).x = pX;
     }
-    public void setPointY(int i,float pY) {
-        this.m_pos.get(i).y = pY;
+    public void setPointY(Index i,float pY) {
+        this.m_pos.get(i.x()).y = pY;
     }
 
-    public void setPointZ(int i,float pZ) {
-        this.m_pos.get(i).z = pZ;
+    public void setPointZ(Index i,float pZ) {
+        this.m_pos.get(i.x()).z = pZ;
     }
 
 }

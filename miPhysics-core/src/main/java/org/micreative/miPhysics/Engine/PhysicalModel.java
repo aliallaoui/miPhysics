@@ -227,7 +227,6 @@ public class PhysicalModel extends MetaModule{
 				if(!init) computeMoves();
 				//controlModulePositions() ?
 				if(!init) computeForces(); //TODO those if should be put outside the loop
-				System.out.println(getPoint("m",0));
 				}
 		nbStepsSimulated+=N;
 	/*	if(nbStepsSimulated%(simRate*5) == 0)
@@ -251,7 +250,7 @@ public class PhysicalModel extends MetaModule{
 	}
 
 
-	public void setVelocity(String name,int index,Vect3D velocity)
+	public void setVelocity(String name,Index index,Vect3D velocity)
 	{
 		modules.get(name).setPointR(index,Vect3D.constructDelayedPos(getPoint(name,index),
 		velocity,simRate));

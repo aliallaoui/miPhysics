@@ -1,5 +1,6 @@
 package org.micreative.miPhysics.Engine.Modules;
 
+import org.micreative.miPhysics.Engine.Index;
 import org.micreative.miPhysics.Engine.MacroLink;
 import org.micreative.miPhysics.Engine.Module;
 
@@ -30,7 +31,8 @@ public class MContact2D extends MacroLink {
         for (int i = 0; i < m1.getNbPoints(); i++) {
             for (int j = 0; j < m2.getNbPoints(); j++) {
                 if (m_dist.get(i * m2.getNbPoints() + j) < distance)
-                    this.applyForces((m_dist.get(i * m2.getNbPoints() + j) - distance) * stiffness + getVel(i * m2.getNbPoints() + j) * damping, i, j);
+                    this.applyForces((m_dist.get(i * m2.getNbPoints() + j) - distance) * stiffness + getVel(i * m2.getNbPoints() + j) * damping,
+                            new Index(i), new Index(j)); // TODO there should be an index iterator
             }
         }
     }

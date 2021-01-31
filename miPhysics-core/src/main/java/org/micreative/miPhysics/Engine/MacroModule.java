@@ -29,8 +29,8 @@ public abstract class MacroModule extends Module {
         return size;
     }
 
-    public Vect3D getPoint(int i){return m_pos.get(i);}
-    public Vect3D getPointR(int i){return m_posR.get(i);}
+    public Vect3D getPoint(Index i){return m_pos.get(i.x());}
+    public Vect3D getPointR(Index i){return m_posR.get(i.x());}
 
     public void addFrc(double frc,int i,Vect3D symPos,int f_index)
     {
@@ -47,10 +47,10 @@ public abstract class MacroModule extends Module {
 
 
 
-    public void setPosition(int index,Vect3D pos)
+    public void setPosition(Index index,Vect3D pos)
     {
-        m_posR.set(index,m_pos.get(index));
-        m_pos.set(index,pos);
+        m_posR.set(index.x(),m_pos.get(index.x()));
+        m_pos.set(index.x(),pos);
     }
 
 }

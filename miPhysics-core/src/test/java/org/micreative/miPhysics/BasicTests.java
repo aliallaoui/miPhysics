@@ -3,6 +3,7 @@ package org.micreative.miPhysics;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.micreative.miPhysics.Engine.Control.MidiController;
+import org.micreative.miPhysics.Engine.Index;
 import org.micreative.miPhysics.Engine.PhysicalModel;
 import org.micreative.miPhysics.Engine.Sound.miPhyAudioClient;
 
@@ -32,8 +33,8 @@ public class BasicTests {
         PhysicalModel pm = new PhysicalModel("toto",100,25);
         pm.addModule("Ground3D","g");
         pm.addModule("Mass3D","m");
-        pm.setPoint("m",0,new Vect3D(0,2,0));
-        pm.setPointR("m",0,new Vect3D(0,2,0));
+        pm.setPoint("m",new Index(0),new Vect3D(0,2,0));
+        pm.setPointR("m",new Index(0),new Vect3D(0,2,0));
         //        pm.setVelocity("m",0,new Vect3D(0,0,0));
         pm.addInteraction("SpringDamper3D","s","g","m");
         pm.init();

@@ -54,7 +54,7 @@ public abstract class Mat extends Module{
         m_frc.add(force);
     }
 
-    public void addFrc(double frc,int i,Vect3D symPos)
+    public void addFrc(double frc,Index i,Vect3D symPos)
     {
         //TODO should throw exception if i > 0
         //This should be in a lambda function, choosen at init with string param in values in ["XY","XZ,"XYZ","X"...]
@@ -68,8 +68,8 @@ public abstract class Mat extends Module{
     public Vect3D getPoint(){return m_pos;}
     public Vect3D getPointR(){return m_posR;}
 
-    public Vect3D getPoint(int i){return m_pos;}
-    public Vect3D getPointR(int i){return m_posR;}
+    public Vect3D getPoint(Index i){return m_pos;}
+    public Vect3D getPointR(Index i){return m_posR;}
 
     public void setPoint(Vect3D pos)
     {
@@ -79,23 +79,23 @@ public abstract class Mat extends Module{
         m_posR.set(pos);
     }
 
-    public void setPoint(int i,Vect3D pos)
+    public void setPoint(Index i,Vect3D pos)
     {
         m_pos.set(pos);
     }
-    public void setPointR(int i,Vect3D pos)
+    public void setPointR(Index i,Vect3D pos)
     {
         m_posR.set(pos);
     }
 
-    public void setPointX(int i,float pX) {
+    public void setPointX(Index i,float pX) {
         this.m_pos.x = pX;
     }
-    public void setPointY(int i,float pY) {
+    public void setPointY(Index i,float pY) {
         this.m_pos.y = pY;
     }
 
-    public void setPointZ(int i,float pZ) {
+    public void setPointZ(Index i,float pZ) {
         this.m_pos.z = pZ;
     }
 

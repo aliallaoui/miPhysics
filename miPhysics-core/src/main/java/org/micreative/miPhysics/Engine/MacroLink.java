@@ -31,20 +31,20 @@ public abstract class MacroLink extends Module {
             for(int j=0;j<m2.getNbPoints();j++)
             {
                 m_distR.set(i*m2.getNbPoints()+j,m_dist.get(i*m2.getNbPoints()+j));
-                m_dist.set(i*m2.getNbPoints()+j,m1.getPoint(i).dist(m2.getPoint(j)));
+                m_dist.set(i*m2.getNbPoints()+j,m1.getPoint(new Index(i)).dist(m2.getPoint(new Index(j))));
             }
         }
     }
 
-    protected void updateEuclidDist(int i,int j)
+    protected void updateEuclidDist(Index i,Index j)
     {
-       m_distR.set(i*m2.getNbPoints()+j,m_dist.get(i*m2.getNbPoints()+j));
-       m_dist.set(i*m2.getNbPoints()+j,m1.getPoint(i).dist(m2.getPoint(j)));
+       m_distR.set(i.x()*m2.getNbPoints()+j.x(),m_dist.get(i.x()*m2.getNbPoints()+j.x()));
+       m_dist.set(i.x()*m2.getNbPoints()+j.x(),m1.getPoint(i).dist(m2.getPoint(j)));
     }
 
     public int getNbPoints(){return 0;}
 
-    public void applyForces(double frc,int indM1,int indM2)
+    public void applyForces(double frc,Index indM1,Index indM2)
     {
         // to reproduce historical bug, repeat this m1.getNbPoints()*m2.getNbPoints() times
         m1.addFrc(frc,indM1,m2.getPoint(indM2));
@@ -64,8 +64,8 @@ public abstract class MacroLink extends Module {
         for (int i = 0; i < m1.getNbPoints(); i++) {
             for (int j = 0; j < m2.getNbPoints(); j++) {
                 //i * m2.getNbPoints() + j iteration
-                m_dist.add( m1.getPoint(i).dist(m2.getPoint(j)));
-                m_distR.add( m1.getPointR(i).dist(m2.getPointR(j)));
+                m_dist.add( m1.getPoint(new Index(i)).dist(m2.getPoint(new Index(j))));
+                m_distR.add( m1.getPointR(new Index(i)).dist(m2.getPointR(new Index(j))));
             }
         }
     }
@@ -75,17 +75,17 @@ public abstract class MacroLink extends Module {
         initDistances();
     }
 
-    public Vect3D getPoint(int index) {
+    public Vect3D getPoint(Index index) {
         return null;
     }
-    public Vect3D getPointR(int index) {
+    public Vect3D getPointR(Index index) {
         return null;
     }
 
-    public void addFrc(double frc,int i,Vect3D symPos){}
-    public void setPoint(int index,Vect3D pos){}
-    public void setPointR(int index,Vect3D pos){}
-    public void setPointX(int index,float pX){}
-    public void setPointY(int index,float pY){}
-    public void setPointZ(int index,float pZ){}
+    public void addFrc(double frc,Index i,Vect3D symPos){}
+    public void setPoint(Index index,Vect3D pos){}
+    public void setPointR(Index index,Vect3D pos){}
+    public void setPointX(Index index,float pX){}
+    public void setPointY(Index index,float pY){}
+    public void setPointZ(Index index,float pZ){}
 }

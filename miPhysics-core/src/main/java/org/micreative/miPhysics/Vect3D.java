@@ -5,6 +5,9 @@ import processing.core.PVector;
 /* A simple vector class based on double precision floats
  * as opposed to Processing's PVector class
  */
+//TODO rename to Vector, make dimension free by replacing double x,y,z by double vector[]
+// keep x,y,z setters/getters, add three constructors for 1D, 2D and 3D
+// make that member private
 public class Vect3D {
 	public double x, y, z;
 

@@ -95,26 +95,26 @@ public abstract class Module implements AbstractModule {
         return getClass().toString().split("\\.")[5];
     }
 
-    abstract public void addFrc(double frc,int i,Vect3D symPos);
-    abstract public void setPoint(int index,Vect3D pos);
-    abstract public void setPointR(int index,Vect3D pos);
+    abstract public void addFrc(double frc,Index i,Vect3D symPos);
+    abstract public void setPoint(Index index,Vect3D pos);
+    abstract public void setPointR(Index index,Vect3D pos);
 
-    public Vect3D getPoint(String name,int index)
+    public Vect3D getPoint(String name,Index index)
     {
         return getPoint(index);
     }
-    public Vect3D getPointR(String name,int index)
+    public Vect3D getPointR(String name,Index index)
     {
         return getPointR(index);
     }
 
 
 
-    abstract public Vect3D getPoint(int i);
-    abstract public Vect3D getPointR(int i);
-    public abstract void setPointX(int index,float pX);
-    public abstract void setPointY(int index,float pY);
-    public abstract void setPointZ(int index,float pZ);
+    abstract public Vect3D getPoint(Index i);
+    abstract public Vect3D getPointR(Index i);
+    public abstract void setPointX(Index index,float pX);
+    public abstract void setPointY(Index index,float pY);
+    public abstract void setPointZ(Index index,float pZ);
 
 
     protected double friction;
