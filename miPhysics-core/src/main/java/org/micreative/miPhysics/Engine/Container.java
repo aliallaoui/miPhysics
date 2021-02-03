@@ -2,6 +2,9 @@ package org.micreative.miPhysics.Engine;
 
 import org.micreative.miPhysics.Vect3D;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
 public abstract class Container {
 
@@ -13,9 +16,9 @@ public abstract class Container {
 }
 */
 
-public class Container {
+public class Container<E>{
 
-    protected Vect3D[] vectors;
+    protected List<E> data;
     protected int size;
     protected int dim;
     protected int[] dimensions;
@@ -28,19 +31,19 @@ public class Container {
         {
             size = size*dimensions[i];
         }
-        vectors = new Vect3D[size];
+        data = new ArrayList<E>(size);
     }
 
-    public Vect3D getVector(Index index)
+    public E get(Index index)
     {
-        return vectors[offset(index)];
+        return data.get(offset(index));
     }
 
-    public void addVector(Index index,Vect3D vector)
+    public void add(Index index,E vector)
     {
 
     }
-    public void setVector(Index index,Vect3D vector)
+    public void set(Index index,E vector)
     {
 
     }
