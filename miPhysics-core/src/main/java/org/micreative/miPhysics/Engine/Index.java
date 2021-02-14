@@ -4,9 +4,8 @@ import java.util.List;
 
 public class Index {
 
-    private int[] coordinates;
-    private int[] dimensions;
-    private List<Index> ignoredIndexes;
+    protected int[] coordinates;
+
     public Index(int l)
     {
         coordinates= new int[1];
@@ -28,47 +27,23 @@ public class Index {
         coordinates[2]=h;
     }
 
-    public Index(int[] dimensions)
+    public Index(Index index)
     {
-        this.dimensions = dimensions;
-        for (int i=0;i<dimensions.length;i++) coordinates[i]=0;
+        coordinates = new int[index.coordinates.length];
+        for(int i=0;i<index.coordinates.length;i++) coordinates[i]=index.coordinates[i];
     }
 
-    public Index(int[] dimensions, List<Index> ignoredIndexes_)
+    //maybe should be a static method called buildBegin()?
+    public Index(int[] dimensions)
     {
-        this.dimensions = dimensions;
-        for (int i=0;i<dimensions.length;i++) coordinates[i]=0;
-        ignoredIndexes=ignoredIndexes_;
+        coordinates = new int[dimensions.length];
+        for(int i=0;i<dimensions.length;i++) coordinates[i]=0;
     }
+
 
     public int x(){return coordinates[0];}
     public int y(){return coordinates[1];}
     public int z(){return coordinates[2];}
 
-    public void begin()
-    {
-        this.dimensions = dimensions;
-        for (int i=0;i<dimensions.length;i++) coordinates[i]=0;
-    }
 
-    public boolean next()
-    {
-        //TODO lambda functions here
-        if (dimensions.length ==1 )
-        {
-            if(coordinates[0]< dimensions[0]) coordinates[0]++;
-            while(isIgnored()) coordinates[0]++;
-            if(coordinates[0]>= dimensions[0]) return false;
-        }
-        return false;
-    }
-
-    public boolean isIgnored()
-    {
-        for(Index i :ignoredIndexes)
-        {
-            if (i.x() ==x()) return true;
-        }
-        return false;
-    }
 }

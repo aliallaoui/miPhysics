@@ -34,7 +34,7 @@ public abstract class MacroModule extends Module {
 
     public void addFrc(double frc,int i,Vect3D symPos,int f_index)
     {
-    //This should be in a lambda function, choosen at init with string param in values in ["XY","XZ,"XYZ","X"...]
+        //This should be in a lambda function, chosen at init with string param in values in ["XY","XZ,"XYZ","X"...]
         double invDist = 1 / m_pos.get(i).dist(symPos);
         double x_proj = (m_pos.get(i).x - symPos.x) * invDist;
         double y_proj = (m_pos.get(i).y - symPos.y) * invDist;
@@ -42,10 +42,7 @@ public abstract class MacroModule extends Module {
         m_frc.get(f_index).x += frc * x_proj;
         m_frc.get(f_index).y += frc * y_proj;
 
-
     }
-
-
 
     public void setPosition(Index index,Vect3D pos)
     {

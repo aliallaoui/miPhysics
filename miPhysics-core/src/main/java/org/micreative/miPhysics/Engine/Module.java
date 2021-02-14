@@ -33,7 +33,6 @@ public abstract class Module implements AbstractModule {
                 System.out.println("error creating string2D with " + params + " cause : " + e.getMessage());
             }
         });
-        init();
     }
 
     public Module(Map<String,String> defaultParams,Map<String,Object> params)
@@ -41,8 +40,9 @@ public abstract class Module implements AbstractModule {
 
 
     }
-    public void loadParameters(Map<String,String> params)
-    {
+
+    //TODO if this throws Exception, should be renamaed loadAllParameters
+    public void loadParameters(Map<String,String> params) throws Exception {
         params.forEach((k,v)->{
             try {
                 PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, k);

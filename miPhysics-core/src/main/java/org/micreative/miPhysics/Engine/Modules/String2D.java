@@ -15,11 +15,7 @@ public class String2D extends MacroModule {
 
 
     private double restDistance;
-
-
-
     /* Class attributes */
-
 
     protected double stretchFactor;
     protected Vect3D direction;

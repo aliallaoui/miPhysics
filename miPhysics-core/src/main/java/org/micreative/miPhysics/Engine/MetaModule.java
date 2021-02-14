@@ -1,5 +1,6 @@
 package org.micreative.miPhysics.Engine;
 
+import org.apache.commons.chain.web.MapEntry;
 import org.micreative.miPhysics.Engine.Modules.String2D;
 import org.micreative.miPhysics.Vect3D;
 
@@ -36,9 +37,12 @@ public abstract class MetaModule implements AbstractModule{
     {
         modules.forEach((name,module)->module.computeMoves());
     }
-    public void init()
+    public void init()throws Exception
     {
-        modules.forEach((name,module)->module.init());
+        for(Map.Entry<String,Module> module :modules.entrySet())
+        {
+            module.getValue().init();
+        }
     }
 
     public Vect3D getPoint(String name,Index index)
@@ -123,7 +127,28 @@ public abstract class MetaModule implements AbstractModule{
         }
     }
 
-    public void addMassModule(String type, String name) throws Exception {
+    public void addMacroMass(String name,String iteratorType,String containerType, int[]dimensions) throws Exception {
+//        try
+ //       {
+            Index begin= new Index(dimensions);
+            AbstractIterator iterator = (AbstractIterator) Class.forName("org.micreative.miPhysics.Engine." + iteratorType)
+                    .getDeclaredConstructor(dimensions.getClass(),Index.class)
+                    .newInstance(dimensions,begin);
+            modules.put(name,new MacroMass(dimensions,iterator,containerType));
+
+            InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties");
+        Properties p = new Properties();
+        if (input == null) {
+            System.out.println("defaultParams.properties not found");
+            return;
+        }
+        p.load(input);
+        Map defaultParams = getPropertySubsetAsMap(p, "MacroMass.");
+        defaultParams.putAll(getPropertySubsetAsMap(p, "Global."));
+        defaultParams.putAll(getPropertySubsetAsMap(p, containerType+"."));
+        modules.get(name).loadParameters(defaultParams);
+   //     }
+
 
     }
 
