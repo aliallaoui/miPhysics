@@ -95,7 +95,10 @@ public abstract class Module implements AbstractModule {
         return getClass().toString().split("\\.")[5];
     }
 
-    abstract public void addFrc(double frc,Index i,Vect3D symPos);
+    //abstract public void addFrc(double frc,Index i,Vect3D symPos);
+    abstract public int[] getDimensions();
+    abstract public void addFrc(Vect3D force,Index i);
+
     abstract public void setPoint(Index index,Vect3D pos);
     abstract public void setPointR(Index index,Vect3D pos);
 

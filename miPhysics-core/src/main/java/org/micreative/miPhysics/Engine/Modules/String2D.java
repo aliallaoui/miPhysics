@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
 public class String2D extends MacroModule {
 
 
 
     private double restDistance;
-    /* Class attributes */
+
 
     protected double stretchFactor;
     protected Vect3D direction;
@@ -139,15 +140,6 @@ public class String2D extends MacroModule {
         isInit = true;
     }
 
-   /*
-    public void setSize(int size)
-    {
-        m_pos = new ArrayList<Vect3D>(size+2);
-        m_posR = new ArrayList<Vect3D>(size+2);
-        m_frc = new ArrayList<Vect3D>(size);
-        distR = new ArrayList<Double>(size+1);
-    }
-*/
     public void computeForces()
     {
         double curDist;
@@ -165,10 +157,7 @@ public class String2D extends MacroModule {
 
     }
 
-    /**
-     * Apply forces to internal Mat modules
-     * @param lnkFrc force to apply symetrically.
-     */
+
     protected void applyForces(double lnkFrc,double dist,int i)
     {
         double invDist = 1 / dist;
@@ -200,13 +189,12 @@ public class String2D extends MacroModule {
         {
 
             tmp.set(m_pos.get(i));
-/*
-        if (m_controlled) {
-            m_pos.add(m_controlVelocity);
-        }
-        else
-        {
-        */
+//        if (m_controlled) {
+//            m_pos.add(m_controlVelocity);
+//        }
+//        else
+//        {
+
 
             // Calculate the update of the mass's position
             m_frc.get(i-1).mult(m_invMass);
@@ -255,3 +243,4 @@ public class String2D extends MacroModule {
     }
 
 }
+*/

@@ -22,10 +22,12 @@ public abstract class AbstractContainer<E> {
 
     public void add(Index index,E vector)
     {
+      //  data.get(offset(index)).add(vector);
     }
 
     public void set(Index index,E vector)
     {
+        data.set(offset(index),vector);
     }
 
     abstract protected int offset(Index index);

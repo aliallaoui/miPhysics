@@ -33,7 +33,7 @@ public class BasicTests {
         PhysicalModel pm = new PhysicalModel("macroMass3D",100,25);
         int[] dim = new int[1];
         dim[0] = 10;
-        pm.addMacroMass("macro","BoundedIterator","GridContainer",dim);
+        pm.addMacroMass("macro","BoundedIterator","LEFT0|RIGHT0","GridContainer",dim);
         pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
         pm.init();
 
@@ -57,6 +57,18 @@ public class BasicTests {
 
     public @Test void testString2D() throws Exception
     {
+        PhysicalModel pm = new PhysicalModel("macroMass3D",100,25);
+        int[] dim = new int[1];
+        dim[0] = 10;
+        pm.addMacroMass("macro","BoundedIterator","LEFT1|RIGHT1","GridContainer",dim);
+        pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
+        pm.addInteraction("SpringDamper","string","macro","macro");
+
+        pm.init();
+
+        pm.computeNSteps(300,false);
+
+
         /*
         PhysicalModel pm = new PhysicalModel("toto",100,25);
         Map<String,Object> params = new HashMap<>();

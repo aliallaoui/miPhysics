@@ -41,6 +41,16 @@ public abstract class Link extends Module{
      public Vect3D getPoint(Index index){return null;}
      public Vect3D getPointR(Index index) {return null;}
 
+     static int[] dimensions=new int[1];
+     public int[] getDimensions()
+     {
+         return dimensions;
+     }
+
+     public void addFrc(Vect3D force,Index i)
+     {
+         //should throw exception
+     }
     /**
      * Access the first Mat connected to this Link.
      * @return the first Mat module.
@@ -131,14 +141,21 @@ public abstract class Link extends Module{
         return getDist() - restDistance;
     }
 
+
+    // Default implementation for radial forces, but could be overrided
+    public Vect3D getForceUnitVector()
+    {
+        return getMat1().getPoint(index1).getUnitTo(getMat2().getPoint(index2));
+    }
+
     /**
      * Apply forces to the connected Mat modules
      * @param lnkFrc force to apply symetrically.
      */
     protected void applyForces(double lnkFrc) {
-
-        getMat1().addFrc(lnkFrc,index1,getMat2().getPoint(index2));
-        getMat2().addFrc(lnkFrc,index2,getMat1().getPoint(index1));
+        Vect3D unit = getForceUnitVector();
+        getMat1().addFrc(Vect3D.mult(unit,lnkFrc),index1);
+        getMat2().addFrc(Vect3D.mult(unit,-lnkFrc),index2);
 /*
         m_invDist = 1 / m_dist;
 

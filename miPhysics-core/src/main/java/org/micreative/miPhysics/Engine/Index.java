@@ -40,6 +40,10 @@ public class Index {
         for(int i=0;i<dimensions.length;i++) coordinates[i]=0;
     }
 
+    public Index()
+    {
+
+    }
 
     public int x(){return coordinates[0];}
     public int y(){return coordinates[1];}

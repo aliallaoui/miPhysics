@@ -1,6 +1,7 @@
 package org.micreative.miPhysics.Engine.Modules;
 
 
+import org.micreative.miPhysics.Engine.Index;
 import org.micreative.miPhysics.Engine.Link;
 import org.micreative.miPhysics.Engine.Mat;
 
@@ -23,7 +24,9 @@ public class Contact3D extends Link {
     public Contact3D( Mat m1, Mat m2) {
         super( m1, m2);
     }
-
+ public Contact3D(Mat m1, Mat m2, Index i1, Index i2) {
+        super( m1, m2,i1,i2);
+    }
     public void init()
     {
         m_dRsquared = restDistance * restDistance;

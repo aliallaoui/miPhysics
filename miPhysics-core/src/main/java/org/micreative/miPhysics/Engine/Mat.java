@@ -41,7 +41,12 @@ public abstract class Mat extends Module{
      * Compute the physics of the Mat module.
      *
      */
-
+    public int[] getDimensions()
+    {
+        int[] ret = new int[1];
+        ret[0]=1;
+        return ret;
+    }
 
     public void computeForces(){}
 
@@ -105,6 +110,11 @@ public abstract class Mat extends Module{
      */
     protected Vect3D getFrc() {
         return m_frc;
+    }
+
+    public void addFrc(Vect3D force,Index i)
+    {
+        m_frc.add(force);
     }
 
     /**

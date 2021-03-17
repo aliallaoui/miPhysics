@@ -35,13 +35,17 @@ public class MacroMass extends Module{
         iterator = iterator_;
     }
 
+    public int[] getDimensions()
+    {
+        return positions.dimensions;
+    }
     @Override
-    public void computeForces() {
+    public void computeForces() throws Exception{
 
     }
 
     @Override
-    public void computeMoves() {
+    public void computeMoves() throws Exception{
         Vect3D tmp = new Vect3D(0,0,0);
 
         for(iterator.begin();iterator.next();)
@@ -84,7 +88,8 @@ public class MacroMass extends Module{
         return positions.size;
     }
 
-    @Override
+      /*  @Override
+
     public void addFrc(double frc, Index i, Vect3D symPos) {
         //TODO should be a Vect3D method
         double invDist = 1 / positions.get(i).dist(symPos);
@@ -94,6 +99,12 @@ public class MacroMass extends Module{
         forces.get(i).x += frc * x_proj;
         forces.get(i).y += frc * y_proj;
 //TODO        forces.add(i,new Vect3D(frc*x_proj,frc*y_proj,0));
+    }
+*/
+
+    public void addFrc(Vect3D force,Index i)
+    {
+        forces.add(i,force);
     }
 
     @Override

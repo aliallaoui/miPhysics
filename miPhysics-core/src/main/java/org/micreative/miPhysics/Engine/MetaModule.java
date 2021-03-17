@@ -1,7 +1,6 @@
 package org.micreative.miPhysics.Engine;
 
 import org.apache.commons.chain.web.MapEntry;
-import org.micreative.miPhysics.Engine.Modules.String2D;
 import org.micreative.miPhysics.Vect3D;
 
 import java.io.InputStream;
@@ -26,17 +25,19 @@ public abstract class MetaModule implements AbstractModule{
         moduleControllers = new HashMap<>();
         isInit = false;
     }
+
     public String getType(){return name;} // not an error ! That's the essence of meta modules
     public Module getModule(String name){return modules.get(name);}
-    public void computeForces()
+    public void computeForces() throws Exception
     {
-        modules.forEach((name,module)->module.computeForces());
+        for(Map.Entry<String,Module> module:modules.entrySet()) module.getValue().computeForces();
     }
 
-    public void computeMoves()
+    public void computeMoves() throws Exception
     {
-        modules.forEach((name,module)->module.computeMoves());
+        for(Map.Entry<String,Module> module:modules.entrySet()) module.getValue().computeMoves();
     }
+
     public void init()throws Exception
     {
         for(Map.Entry<String,Module> module :modules.entrySet())
@@ -127,13 +128,45 @@ public abstract class MetaModule implements AbstractModule{
         }
     }
 
-    public void addMacroMass(String name,String iteratorType,String containerType, int[]dimensions) throws Exception {
+    public void addMacroInteraction(String type, String name,String module1,String module2,
+                                    String iterator1Type,String iterator1Description,
+                                    String iterator2Type,String iterator2Description) throws Exception {
+        if(modules.containsKey(name)) throw new Exception("Module named " +name + "already exists");
+
+        try(InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties")) {
+            Properties p = new Properties();
+            if (input == null) {
+                System.out.println("defaultParams.properties not found");
+                return;
+            }
+            //p.load(new FileReader(defaultParamsPropertiesPath));
+            p.load(input);
+            Map defaultParams = getPropertySubsetAsMap(p, type + ".");
+            defaultParams.putAll(getPropertySubsetAsMap(p, "Global."));
+            int [] dimensions1 = getModule(module1).getDimensions();
+            int [] dimensions2 = getModule(module2).getDimensions();
+            AbstractIterator iterator1 = (AbstractIterator) Class.forName("org.micreative.miPhysics.Engine." + iterator1Type)
+                    .getDeclaredConstructor(dimensions1.getClass(),String.class)
+                    .newInstance(dimensions1,iterator1Description);
+            AbstractIterator iterator2 = (AbstractIterator) Class.forName("org.micreative.miPhysics.Engine." + iterator2Type)
+                    .getDeclaredConstructor(dimensions2.getClass(),String.class)
+                    .newInstance(dimensions2,iterator2Description);
+
+            modules.put(name,(Module)Class.forName("org.micreative.miPhysics.Engine.Modules." + type)
+                    .getDeclaredConstructor(Module.class,Module.class,
+                            Iterator.class,Iterator.class)
+                    .newInstance(getModule(module1),getModule(module2),iterator1,iterator2));
+            modules.get(name).loadParameters(defaultParams);
+        }
+    }
+
+    public void addMacroMass(String name,String iteratorType,String iteratorDescription,
+                             String containerType, int[]dimensions) throws Exception {
 //        try
  //       {
-            Index begin= new Index(dimensions);
             AbstractIterator iterator = (AbstractIterator) Class.forName("org.micreative.miPhysics.Engine." + iteratorType)
-                    .getDeclaredConstructor(dimensions.getClass(),Index.class)
-                    .newInstance(dimensions,begin);
+                    .getDeclaredConstructor(dimensions.getClass(),String.class)
+                    .newInstance(dimensions,iteratorDescription);
             modules.put(name,new MacroMass(dimensions,iterator,containerType));
 
             InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties");

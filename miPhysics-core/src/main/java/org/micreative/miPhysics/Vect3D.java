@@ -138,6 +138,12 @@ public class Vect3D {
 		return this;
 	}
 
+	public Vect3D getUnitTo(Vect3D other)
+	{
+		double invDist = 1/this.dist(other);
+		return new Vect3D((x-other.x)*invDist,(y-other.y)*invDist,(z-other.z)*invDist);
+	}
+
 	public PVector toPVector() {
 		return new PVector((float)x, (float)y, (float)z);
 	}
