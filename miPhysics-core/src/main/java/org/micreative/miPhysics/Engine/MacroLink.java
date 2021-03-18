@@ -16,9 +16,8 @@ public abstract class MacroLink extends Module {
     protected Module m2;
     protected AbstractIterator iterator1;
     protected AbstractIterator iterator2;
-    protected AbstractIterator iterator;
 
-    public MacroLink(Module m1,Module m2,int[] dimensions,
+    public MacroLink(Module m1,Module m2,
                      AbstractIterator iterator1,AbstractIterator iterator2)
     {
        this.iterator1 = iterator1;
@@ -30,9 +29,8 @@ public abstract class MacroLink extends Module {
     protected abstract double computeForce(Index i1,Index i2);
 
     public void computeForces() throws Exception{
-        iterator1.begin();
-        iterator2.begin();
-        for(;iteratorsNext();) {
+
+        for(iteratorsBegin();!iteratorsEnd();iteratorsNext()) {
             updateEuclidDist(iterator1, iterator2);
             applyForces(computeForce(iterator1,iterator2),iterator1,iterator2);
          }
@@ -69,12 +67,25 @@ public abstract class MacroLink extends Module {
         return distance.get(i) - distanceR.get(i);
     }
 */
-    protected boolean iteratorsNext() throws Exception
+    protected void iteratorsNext() throws Exception
     {
-        boolean ret=iterator1.next();
-        ret= ret && iterator2.next();
-        return ret;
+        iterator1.next();
+        iterator2.next();
     }
+
+    protected void iteratorsBegin() throws Exception
+    {
+        iterator1.begin();
+        iterator2.begin();
+    }
+
+    protected boolean iteratorsEnd() throws Exception
+    {
+        //both should be false or both should be true, we don't check... to do in debug mode
+        return iterator1.end() || iterator2.end();
+    }
+
+
     /**
      * Initialise distance and delayed distance for this Link.
      *

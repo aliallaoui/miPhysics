@@ -16,7 +16,7 @@ public abstract class Container {
 }
 */
 
-public class GridContainer<E> extends AbstractContainer<E>{
+public class GridContainer extends AbstractContainer{
 
     protected float length;
     protected float height;
@@ -32,7 +32,7 @@ public class GridContainer<E> extends AbstractContainer<E>{
         {
             size = size*dimensions[i];
         }
-        data = new ArrayList<E>(size);
+        data = new ArrayList<Vect3D>(size);
     }
 
     //public void init(E value) //throws Exception
@@ -49,7 +49,7 @@ public class GridContainer<E> extends AbstractContainer<E>{
         if (dim == 1) {
             Vect3D left = Vect3D.add(center, Vect3D.mult(direction, -length / 2.));
             for (int i = 0; i < dimensions[0]; i++) {
-                data.add((E)Vect3D.add(left, Vect3D.mult(direction, i * length / (dimensions[0] -
+                data.add(Vect3D.add(left, Vect3D.mult(direction, i * length / (dimensions[0] -
                         1))));
             }
         }
@@ -57,7 +57,7 @@ public class GridContainer<E> extends AbstractContainer<E>{
     else if(initType == "zeroVector")
     {
         for (int i = 0; i < size; i++) {
-            data.add((E)new Vect3D(0,0,0));
+            data.add(new Vect3D(0,0,0));
         }
     }
 

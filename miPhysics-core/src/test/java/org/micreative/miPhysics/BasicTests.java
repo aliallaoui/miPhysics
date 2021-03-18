@@ -57,12 +57,16 @@ public class BasicTests {
 
     public @Test void testString2D() throws Exception
     {
-        PhysicalModel pm = new PhysicalModel("macroMass3D",100,25);
+        PhysicalModel pm = new PhysicalModel("string2D",100,25);
         int[] dim = new int[1];
         dim[0] = 10;
         pm.addMacroMass("macro","BoundedIterator","LEFT1|RIGHT1","GridContainer",dim);
         pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
-        pm.addInteraction("SpringDamper","string","macro","macro");
+        pm.addMacroInteraction("SpringDamper","string",
+                "macro","macro",
+                "BoundedIterator","LEFT0|RIGHT1",
+                "BoundedIterator","LEFT1|RIGHT0"
+                );
 
         pm.init();
 

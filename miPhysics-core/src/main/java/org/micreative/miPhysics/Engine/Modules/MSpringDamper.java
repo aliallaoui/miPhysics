@@ -5,11 +5,18 @@ import org.micreative.miPhysics.Engine.Index;
 import org.micreative.miPhysics.Engine.MacroLink;
 import org.micreative.miPhysics.Engine.Module;
 
-public class MContact2D extends MacroLink {
+public class MSpringDamper extends MacroLink {
 
 
+    public double getRestDistance() {
+        return restDistance;
+    }
 
-    protected double restLength;
+    public void setRestDistance(double restDistance) {
+        this.restDistance = restDistance;
+    }
+
+    protected double restDistance;
 
 
     /**
@@ -18,7 +25,7 @@ public class MContact2D extends MacroLink {
      * @param iterator1
      * @param iterator2
      */
-    public MContact2D(Module m1, Module m2,
+    public MSpringDamper(Module m1, Module m2,
                       AbstractIterator iterator1, AbstractIterator iterator2)
     {
         super(m1,m2,iterator1,iterator2);
@@ -26,10 +33,7 @@ public class MContact2D extends MacroLink {
 
     public double computeForce(Index i1,Index i2)
     {
-        if(distance < restLength)
-            return (distance - restLength) * stiffness +  (distance - distanceR )* damping;
-        else
-            return 0.;
+        return (distance - restDistance) * stiffness +  (distance - distanceR )* damping;
     }
 
 

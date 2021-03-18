@@ -10,9 +10,9 @@ import java.util.Map;
 //This should called GridMat, there are other topologies -> there should be an abstract class
 public class MacroMass extends Module{
 
-    AbstractContainer<Vect3D> positions;
-    AbstractContainer<Vect3D> positionsR;
-    AbstractContainer<Vect3D> forces;
+    AbstractContainer positions;
+    AbstractContainer positionsR;
+    AbstractContainer forces;
     AbstractIterator iterator;
 
     public MacroMass(int[] dimensions, AbstractIterator iterator_, String containerType)
@@ -48,9 +48,8 @@ public class MacroMass extends Module{
     public void computeMoves() throws Exception{
         Vect3D tmp = new Vect3D(0,0,0);
 
-        for(iterator.begin();iterator.next();)
+        for(iterator.begin();!iterator.end();iterator.next())
         {
-
             tmp.set(positions.get(iterator));
 /*
         if (m_controlled) {

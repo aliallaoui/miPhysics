@@ -152,9 +152,9 @@ public abstract class MetaModule implements AbstractModule{
                     .getDeclaredConstructor(dimensions2.getClass(),String.class)
                     .newInstance(dimensions2,iterator2Description);
 
-            modules.put(name,(Module)Class.forName("org.micreative.miPhysics.Engine.Modules." + type)
+            modules.put(name,(Module)Class.forName("org.micreative.miPhysics.Engine.Modules.M" + type)
                     .getDeclaredConstructor(Module.class,Module.class,
-                            Iterator.class,Iterator.class)
+                            AbstractIterator.class,AbstractIterator.class)
                     .newInstance(getModule(module1),getModule(module2),iterator1,iterator2));
             modules.get(name).loadParameters(defaultParams);
         }

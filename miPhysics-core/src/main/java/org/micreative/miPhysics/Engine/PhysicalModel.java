@@ -224,9 +224,10 @@ public class PhysicalModel extends MetaModule{
 				loopFrame = frame;
 				gatherData();
 				controlModules();
-				if(!init) computeMoves();
 				//controlModulePositions() ?
-				if(!init) computeForces(); //TODO those if should be put outside the loop
+				if(!init) computeForces();
+				if(!init) computeMoves();
+ //TODO those if should be put outside the loop
 				}
 		nbStepsSimulated+=N;
 	/*	if(nbStepsSimulated%(simRate*5) == 0)
