@@ -19,10 +19,11 @@ public class BasicTests {
     public @Test void testOneMass3D() throws Exception
     {
         PhysicalModel pm = new PhysicalModel("toto",100,25);
-        pm.addModule("org.micreative.miPhysics.Engine.Modules.Mass3D","m");
-        pm.getModule("m").setGravity(new Vect3D(0,-0.001,0));
+        pm.addModule("Mass3D","m");
+       pm.getModule("m").setGravity(new Vect3D(0,-0.001,0));
         pm.init();
-
+        pm.getModule("m").setPointX(null,1);
+        pm.getModule("m").getPointR(null).x=1;
         pm.computeNSteps(300,false);
 
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
@@ -32,9 +33,9 @@ public class BasicTests {
     {
         PhysicalModel pm = new PhysicalModel("macroMass3D",100,25);
         int[] dim = new int[1];
-        dim[0] = 10;
+        dim[0] = 2;
         pm.addMacroMass("macro","BoundedIterator","LEFT0|RIGHT0","GridContainer",dim);
-        pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
+      //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
         pm.init();
 
         pm.computeNSteps(300,false);
@@ -59,16 +60,18 @@ public class BasicTests {
     {
         PhysicalModel pm = new PhysicalModel("string2D",100,25);
         int[] dim = new int[1];
-        dim[0] = 10;
+        dim[0] = 3;
         pm.addMacroMass("macro","BoundedIterator","LEFT1|RIGHT1","GridContainer",dim);
-        pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
-        pm.addMacroInteraction("SpringDamper","string",
+      //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
+              pm.addMacroInteraction("SpringDamper","string",
                 "macro","macro",
                 "BoundedIterator","LEFT0|RIGHT1",
                 "BoundedIterator","LEFT1|RIGHT0"
                 );
 
         pm.init();
+        pm.getModule("macro").setPointR(new Index(1),
+                Vect3D.add(new Vect3D(0.1,0,0),pm.getModule("macro").getPoint(new Index(1))));
 
         pm.computeNSteps(300,false);
 

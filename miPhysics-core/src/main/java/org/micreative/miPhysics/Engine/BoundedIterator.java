@@ -20,6 +20,7 @@ public class BoundedIterator extends AbstractIterator{
 
     public void beginLeftN()
     {
+        coordinates[0]=0;
         while(coordinates[0]<bounds[0]) coordinates[0]++;
     }
 

@@ -46,11 +46,10 @@ public class MacroMass extends Module{
 
     @Override
     public void computeMoves() throws Exception{
-        Vect3D tmp = new Vect3D(0,0,0);
 
         for(iterator.begin();!iterator.end();iterator.next())
         {
-            tmp.set(positions.get(iterator));
+            Vect3D tmp = new Vect3D(positions.get(iterator));
 /*
         if (m_controlled) {
             m_pos.add(m_controlVelocity);
@@ -166,9 +165,8 @@ public class MacroMass extends Module{
             }
             catch(Exception e)
             {
-                System.out.println("error creating string2D with " + params + " cause : " + e.getMessage());
+                System.out.println("error creating MacroMass with " + params + " cause : " + e.getMessage());
             }
         });
-        init();
     }
 }

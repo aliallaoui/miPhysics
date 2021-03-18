@@ -51,8 +51,8 @@ public abstract class MacroLink extends Module {
     {
         Vect3D unit = getForceUnitVector(i1,i2);
         // to reproduce historical bug, repeat this m1.getNbPoints()*m2.getNbPoints() times
-        m1.addFrc(Vect3D.mult(unit,frc),i1);
-        m2.addFrc(Vect3D.mult(unit,-frc),i2);
+        m1.addFrc(Vect3D.mult(unit,-frc),i1);
+        m2.addFrc(Vect3D.mult(unit,frc),i2);
     }
 
     // Default implementation for radial forces, but could be overrided
