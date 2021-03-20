@@ -68,7 +68,7 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
 
     public miPhyAudioClient(float sampleRate,int inputChannelCount, int outputChannelCount, int bufferSize, String serverType) throws Exception
     {
-        super("AudioPhysicalModel",(int)sampleRate, 0); //maybe not a good thing to have a default name
+        super("AudioPhysicalModel",(int)sampleRate); //maybe not a good thing to have a default name
         AudioServerProvider provider = null;
         for (AudioServerProvider p : ServiceLoader.load(AudioServerProvider.class)) {
             if (serverType.equals(p.getLibraryName())) {

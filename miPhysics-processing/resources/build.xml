@@ -110,7 +110,7 @@
         </antcall>
        <!-- <antcall target="generate.source" /> -->
         <antcall target="copy.jar"/>
-        <antcall target="generate.javadoc" />
+<!--        <antcall target="generate.javadoc" /> -->
         <antcall target="generate.libprops" />
         <antcall target="copyToSketchbook">
             <param name="folder" value="libraries" />
@@ -223,19 +223,7 @@
 
 
 
-    <target name="generate.javadoc" if="is.normal">
-        <!-- create the java reference of the Library -->
-        <javadoc bottom="Processing Library ${library.name} by ${author.name}. ${library.copyright}" classpath="${classpath.local.location}/core.jar;{project.bin}" destdir="${project.tmp}/${library.name}/reference" verbose="false" stylesheetfile="resources/stylesheet.css" doctitle="Javadocs: ${library.name}" public="true" version="false" windowtitle="Javadocs: ${library.name}">
 
-            <link href="${javadoc.java.href}" />
-            <link href="${javadoc.processing.href}" />
-            <taglet name="ExampleTaglet" path="resources/code" />
-            <fileset dir="${project.tmp}/${library.name}/src" defaultexcludes="yes">
-                <!-- add packages to be added to reference. -->
-                <include name="**/*" />
-            </fileset>
-        </javadoc>
-    </target>
 
 
       <!-- find and replace ##placeholder## keywords in a file -->

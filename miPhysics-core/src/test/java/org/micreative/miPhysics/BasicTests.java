@@ -18,7 +18,7 @@ public class BasicTests {
 
     public @Test void testOneMass3D() throws Exception
     {
-        PhysicalModel pm = new PhysicalModel("toto",100,25);
+        PhysicalModel pm = new PhysicalModel("toto",100);
         pm.addModule("Mass3D","m");
        pm.getModule("m").setGravity(new Vect3D(0,-0.001,0));
         pm.init();
@@ -31,7 +31,7 @@ public class BasicTests {
 
     public @Test void testMacroMass3D() throws Exception
     {
-        PhysicalModel pm = new PhysicalModel("macroMass3D",100,25);
+        PhysicalModel pm = new PhysicalModel("macroMass3D",100);
         int[] dim = new int[1];
         dim[0] = 2;
         pm.addMacroMass("macro","BoundedIterator","LEFT0|RIGHT0","GridContainer",dim);
@@ -45,7 +45,7 @@ public class BasicTests {
 
     public @Test void testMassSpring3D() throws Exception
     {
-        PhysicalModel pm = new PhysicalModel("toto",100,25);
+        PhysicalModel pm = new PhysicalModel("toto",100);
         pm.addModule("Ground3D","g");
         pm.addModule("Mass3D","m");
         pm.setPoint("m",new Index(0),new Vect3D(0,2,0));
@@ -58,7 +58,7 @@ public class BasicTests {
 
     public @Test void testString2D() throws Exception
     {
-        PhysicalModel pm = new PhysicalModel("string2D",100,25);
+        PhysicalModel pm = new PhysicalModel("string2D",100);
         int[] dim = new int[1];
         dim[0] = 3;
         pm.addMacroMass("macro","BoundedIterator","LEFT1|RIGHT1","GridContainer",dim);
@@ -201,7 +201,7 @@ public class BasicTests {
 
     public @Test void testString2DMidi() throws Exception
     {
-        PhysicalModel pm = new PhysicalModel("toto",100,25);
+        PhysicalModel pm = new PhysicalModel("toto",100);
         //pm.addString2D("string");
 
         pm.init();

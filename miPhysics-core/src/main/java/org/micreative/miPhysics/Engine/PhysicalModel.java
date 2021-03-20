@@ -42,10 +42,7 @@ public class PhysicalModel extends MetaModule{
 	/* The simulation rate (mono rate only) */
 	private int simRate;
 
-	/* The processing sketch display rate */
-	private int displayRate;
 
-	private double simDisplayFactor;
 	private int nbStepsToSim;
 	private double residue;
 	private long nbStepsSimulated=0;
@@ -64,10 +61,8 @@ public class PhysicalModel extends MetaModule{
 	 *
 	 * @param sRate
 	 *            the sample rate for the physics simulation
-	 * @param displayRate
-	 *            the display Rate for the processing sketch
 	 */
-	public PhysicalModel(String name,int sRate, int displayRate)
+	public PhysicalModel(String name,int sRate)
 	{
 		super(name);
 		Vect3D tmp = new Vect3D(0., 0., 0.);
@@ -79,21 +74,14 @@ public class PhysicalModel extends MetaModule{
 			setSimRate(50);
 		}
 
-		this.displayRate = displayRate;
 		this.residue = 0;
-
-		this.calculateSimDisplayFactor();
 
 		m_lock = new ReentrantLock();
 
 		System.out.println("Physical Model Class Initialised");
 	}
 
-	private void calculateSimDisplayFactor() {
-		simDisplayFactor = (float) simRate / (float) displayRate;
-	}
-
-	/*************************************************/
+		/*************************************************/
 	/* Some utility functions for the class */
 	/*************************************************/
 
@@ -114,31 +102,7 @@ public class PhysicalModel extends MetaModule{
 	 */
 	public void setSimRate(int rate) {
 		simRate = rate;
-		this.calculateSimDisplayFactor();
 	}
-
-	/**
-	 * Get the simulation's display rate (should be same as Sketch's frame rate).
-	 *
-	 * @return the simulation rate
-	 */
-	public int getDisplayRate() {
-		return displayRate;
-	}
-
-	/**
-	 * Set the simulation's display rate (should be same as Sketch's frame rate).
-	 *
-	 * @param rate
-	 *            the rate to set the display to (FPS).
-	 */
-	public void setDisplayRate(int rate) {
-		displayRate = rate;
-		this.calculateSimDisplayFactor();
-	}
-
-
-
 
 
 	/**
