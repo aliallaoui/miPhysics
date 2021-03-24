@@ -14,16 +14,13 @@ import org.jaudiolibs.audioservers.AudioServerProvider;
 import org.jaudiolibs.audioservers.ext.ClientID;
 import org.jaudiolibs.audioservers.ext.Connections;
 import org.micreative.miPhysics.Engine.*;
+import org.micreative.miPhysics.Vect3D;
 
 
 /* Based on SineAudioClient, in the example project of jaudiolibs */
 public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
 
     final protected AudioServer server;
-
-    protected long step;
-
-    protected ArrayList<AudioOutputChannel> audioOutputChannels;
 
     private float[] data;
     private Thread runner;
@@ -36,10 +33,20 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
         this.state = state;
     }
 
-    static public int bufferSize = 1024;
+
     private int state = 0; // should be an enum : 0 = not started, 1=started, not computing, initializing params
                            // 2= params initialized, start simulation
                            // 3= listening to simulation
+
+    public boolean isMute() {
+        return mute;
+    }
+
+    public void setMute(boolean mute) {
+        this.mute = mute;
+    }
+
+    private boolean mute = true;
 
 
     public static miPhyAudioClient miPhyJack(float sampleRate,int inputChannelCount, int outputChannelCount)
@@ -57,7 +64,7 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     public static miPhyAudioClient miPhyClassic(float sampleRate,int inputChannelCount, int outputChannelCount)
     {
         try {
-            return new miPhyAudioClient(sampleRate, inputChannelCount, outputChannelCount, 1024, "JavaSound");
+            return new miPhyAudioClient(sampleRate, inputChannelCount, outputChannelCount, bufferSize, "JavaSound");
         }
         catch(Exception e)
         {
@@ -69,6 +76,7 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     public miPhyAudioClient(float sampleRate,int inputChannelCount, int outputChannelCount, int bufferSize, String serverType) throws Exception
     {
         super("AudioPhysicalModel",(int)sampleRate); //maybe not a good thing to have a default name
+        outputBuffers = new ArrayList<OutputBuffer>(outputChannelCount);
         AudioServerProvider provider = null;
         for (AudioServerProvider p : ServiceLoader.load(AudioServerProvider.class)) {
             if (serverType.equals(p.getLibraryName())) {
@@ -128,20 +136,20 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
         synchronized (getLock()) {
 
             try {
-                computeNSteps(nframes,state==1);
+                computeNSteps(nframes);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         for(OutputBuffer ob:outputBuffers) {
             AudioOutputChannel aof =(AudioOutputChannel) ob;
-            if (state <= 2) aof.fillZeroBuffer();
+            if (mute) aof.fillZeroBuffer();
             aof.copyToOutputs(outputs);
         }
             return true;
     }
 
-    public void addAudioOutputChannel(int channel,String moduleName, ModuleObserver observer)
+    public void addAudioOutputChannel(int channel,DataProvider observer)
     {
         outputBuffers.add(new AudioOutputChannel(channel,bufferSize,observer));
     }
@@ -161,7 +169,7 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     public void start()
     {
         runner.start();
-        state = 1;
+        state = 3;
     }
 
     public List<InputBuffer> getInputBuffers()
@@ -175,7 +183,26 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     }
 
     public static void main(String[] args) throws Exception {
-        miPhyAudioClient simUGen = miPhyAudioClient.miPhyJack(44100.f,2,2);//new miPhyAudioClient(44100.f,0,2,1024,"JACK"); //<>// //<>//
+        miPhyAudioClient pm = miPhyAudioClient.miPhyJack(44100.f,0,2);
+        int[] dim = new int[1];
+        dim[0] = 3;
+        pm.addMacroMass("macro","BoundedIterator","LEFT1|RIGHT1","GridContainer",dim);
+        //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
+        pm.addMacroInteraction("SpringDamper","string",
+                "macro","macro",
+                "BoundedIterator","LEFT0|RIGHT1",
+                "BoundedIterator","LEFT1|RIGHT0"
+        );
+        pm.addPositionScalarObserver("micro","macro",new Index(1),new Vect3D(0,1,0));
+        pm.addAudioOutputChannel(0,pm.getDataProvider("micro"));
+        pm.addAudioOutputChannel(1,pm.getDataProvider("micro"));
+
+        pm.init();
+
+        pm.getModule("macro").setPointR(new Index(1),
+                Vect3D.add(new Vect3D(0,1,0),pm.getModule("macro").getPoint(new Index(1))));
+
+        pm.setMute(false);
 /*
         simUGen.getMdl().setGravity(0);
         simUGen.getMdl().setFriction(0);
@@ -197,7 +224,7 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
         simUGen.getMdl().addSimpleParamController("osc_perc_ctrl","osc_perc","pointAy",1);
         simUGen.getMdl().init();
 */
-        simUGen.start();
+        pm.start();
 
 
     }

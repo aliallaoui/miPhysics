@@ -32,7 +32,7 @@ import processing.core.PVector;
 
 public class PhysicalModel extends MetaModule{
 
-	// dummy comment
+	static public int bufferSize = 1024;
 
 	// myParent is a reference to the parent sketch
 	PApplet myParent;
@@ -48,6 +48,7 @@ public class PhysicalModel extends MetaModule{
 	private long nbStepsSimulated=0;
 	public static int loopFrame = 0;
 	private Timestamp timestamp ;
+	private boolean computePhysics=true;
 
 	protected List<OutputBuffer> outputBuffers;
 	protected List<InputBuffer> inputBuffers;
@@ -174,7 +175,15 @@ public class PhysicalModel extends MetaModule{
 	}
 */
 
+	public void fillOutputBuffers()
+	{
+		outputBuffers.forEach(b->b.fillBuffer());
+	}
 
+	public void fillInputBuffers()
+	{
+//		inputBuffers.forEach(b->b.fillBuffer());
+	}
 	/**
 	 * Explicitly compute N steps of the physical simulation. Should be called once
 	 * the model creation is finished and the init() method has been called.
@@ -182,15 +191,17 @@ public class PhysicalModel extends MetaModule{
 	 * @param N
 	 *            number of steps to compute.
 	 */
-	public void computeNSteps(int N,boolean init) throws Exception {
+	public void computeNSteps(int N) throws Exception {
 			for (int frame = 0; frame < N; frame++) {
 //				if(nbStepsSimulated== 0) timestamp = new Timestamp(System.currentTimeMillis());
 				loopFrame = frame;
+				// fillInputBuffers(); already done in gather data ?
 				gatherData();
 				controlModules();
 				//controlModulePositions() ?
-				if(!init) computeForces();
-				if(!init) computeMoves();
+				if(computePhysics) computeForces();
+				if(computePhysics) computeMoves();
+				fillOutputBuffers();
  //TODO those if should be put outside the loop
 				}
 		nbStepsSimulated+=N;
@@ -209,9 +220,9 @@ public class PhysicalModel extends MetaModule{
 	 * Compute a single step of the physical simulation. Should be called once the
 	 * model creation is finished and the init() method has been called.
 	 */
-	public void computeStep(boolean init)throws Exception
+	public void computeBufferSteps()throws Exception
 	{
-		computeNSteps(1,init);
+		computeNSteps(bufferSize);
 	}
 
 

@@ -17,9 +17,12 @@ public class PositionScalarObserver extends ModuleObserver {
         projection=projection_;
     }
     public void init() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+       /*
         PropertyDescriptor p = null;
         p = PropertyUtils.getPropertyDescriptor(module,observedData);
         readMethod = PropertyUtils.getReadMethod(p);
+
+        */
     }
     @Override
     public void gatherData() throws Exception

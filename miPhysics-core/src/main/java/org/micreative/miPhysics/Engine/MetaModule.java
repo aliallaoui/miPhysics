@@ -28,6 +28,7 @@ public abstract class MetaModule implements AbstractModule{
 
     public String getType(){return name;} // not an error ! That's the essence of meta modules
     public Module getModule(String name){return modules.get(name);}
+    public DataProvider getDataProvider(String name){return dataProviders.get(name);}
     public void computeForces() throws Exception
     {
         for(Map.Entry<String,Module> module:modules.entrySet()) module.getValue().computeForces();
@@ -212,7 +213,11 @@ public abstract class MetaModule implements AbstractModule{
         dataProviders.put(name,(DataProvider) Class.forName(type).newInstance());
     }
 
-
+    public void addPositionScalarObserver(String name,String module,Index index,Vect3D projDir) throws Exception
+    {
+        if(dataProviders.containsKey(name)) throw new Exception("DataProvider named " +name + "already exists");
+        dataProviders.put(name,(DataProvider) new PositionScalarObserver(modules.get(module),index,projDir));
+    }
     public void gatherData() throws Exception
     {
         for(Map.Entry<String,DataProvider> dataProvider:dataProviders.entrySet()) {

@@ -24,7 +24,7 @@ public class BasicTests {
         pm.init();
         pm.getModule("m").setPointX(null,1);
         pm.getModule("m").getPointR(null).x=1;
-        pm.computeNSteps(300,false);
+        pm.computeNSteps(300);
 
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }
@@ -38,7 +38,7 @@ public class BasicTests {
       //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
         pm.init();
 
-        pm.computeNSteps(300,false);
+        pm.computeNSteps(300);
 
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }
@@ -53,7 +53,7 @@ public class BasicTests {
         //        pm.setVelocity("m",0,new Vect3D(0,0,0));
         pm.addInteraction("SpringDamper3D","s","g","m");
         pm.init();
-        pm.computeNSteps(5000,false);
+        pm.computeNSteps(5000);
     }
 
     public @Test void testString2D() throws Exception
@@ -73,7 +73,7 @@ public class BasicTests {
         pm.getModule("macro").setPointR(new Index(1),
                 Vect3D.add(new Vect3D(0.1,0,0),pm.getModule("macro").getPoint(new Index(1))));
 
-        pm.computeNSteps(300,false);
+        pm.computeNSteps(300);
 
 
         /*
@@ -207,9 +207,9 @@ public class BasicTests {
         pm.init();
         //MidiController mc = MidiController.addMidiController(pm,3, 0.5f, 1.5f, "string", "mass", 0.05f);
         //MidiController mc2 = MidiController.addMidiController(pm,4, 0.5f, 1.5f, "string", "stretchFactor", 0.05f);
-        pm.computeNSteps(3,false);
+        pm.computeNSteps(3);
         //mc2.changeParam(67);
-        pm.computeNSteps(300,false);
+        pm.computeNSteps(300);
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }
 

@@ -1,6 +1,6 @@
 package org.micreative.miPhysics.Engine.Sound;
 import org.micreative.miPhysics.Engine.OutputBuffer;
-import org.micreative.miPhysics.Engine.ModuleObserver; // would it be interesting to have a more generic DataProvider ?
+import org.micreative.miPhysics.Engine.DataProvider;
 
 import java.nio.FloatBuffer;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 public class AudioOutputChannel extends OutputBuffer {
 
     AudioOutputChannel(int channel_, int bufferSize_,
-                       ModuleObserver observer_)
+                       DataProvider observer_)
     {
         super(bufferSize_,observer_);
         channel = channel_;

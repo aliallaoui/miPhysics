@@ -2,11 +2,11 @@ package org.micreative.miPhysics.Engine;
 
 public class OutputBuffer {
     protected int channel;
-    protected ModuleObserver observer;
+    protected DataProvider observer;
     protected float[] buffer;
     protected int bufferSize;
 
-    public OutputBuffer(int bufferSize_, ModuleObserver observer_)
+    public OutputBuffer(int bufferSize_, DataProvider observer_)
     {
         observer= observer_;
         buffer = new float[bufferSize_];

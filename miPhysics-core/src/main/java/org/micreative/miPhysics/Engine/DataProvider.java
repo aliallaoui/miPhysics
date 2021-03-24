@@ -2,7 +2,6 @@ package org.micreative.miPhysics.Engine;
 
 abstract public class DataProvider {
 
-
     public float getData() {
         return data;
     }
