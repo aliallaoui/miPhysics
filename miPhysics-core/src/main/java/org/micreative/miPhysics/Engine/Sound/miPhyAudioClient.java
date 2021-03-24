@@ -134,7 +134,6 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
         // always use nframes as the number of samples to process
         //System.out.println("input=" + inputs.get(0).get(0));
         synchronized (getLock()) {
-
             try {
                 computeNSteps(nframes);
             } catch (Exception e) {
@@ -169,7 +168,6 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     public void start()
     {
         runner.start();
-        state = 3;
     }
 
     public List<InputBuffer> getInputBuffers()

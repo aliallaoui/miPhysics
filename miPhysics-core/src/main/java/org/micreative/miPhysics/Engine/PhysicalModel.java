@@ -314,9 +314,6 @@ public class PhysicalModel extends MetaModule{
 		return m_lock;
 	}
 
-
-
-
 	/**
 	 * return the version of the Library.
 	 *

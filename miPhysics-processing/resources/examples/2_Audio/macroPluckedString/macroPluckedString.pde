@@ -8,7 +8,7 @@ import peasy.*;
 PeasyCam cam;
 Index iA = new Index(0);
 Index iB = new Index(1);
-miPhyAudioClient  pm=miPhyAudioClient.miPhyClassic(22050,0,2);
+miPhyAudioClient  pm=miPhyAudioClient.miPhyJack(22050,0,2);
 void setup()
 {
 size(1000,700,P3D);
@@ -37,9 +37,10 @@ pm.addAudioOutputChannel(1,pm.getDataProvider("micro"));
 
 pm.init();
 pm.getModule("macro").setPointR(iB,
-Vect3D.add(new Vect3D(0.1,0,0),pm.getModule("macro").getPoint(iB)));
+Vect3D.add(new Vect3D(0,1,0),pm.getModule("macro").getPoint(iB)));
 
-pm.init();
+pm.setMute(false);
+pm.start();
         }
         catch(Exception e)
         {
