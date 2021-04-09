@@ -63,7 +63,7 @@ public class BasicTests {
         dim[0] = 3;
         pm.addMacroMass("macro","BoundedIterator","LEFT1|RIGHT1","GridContainer",dim);
       //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
-              pm.addMacroInteraction("SpringDamper","string",
+        pm.addMacroInteraction("SpringDamper","string",
                 "macro","macro",
                 "BoundedIterator","LEFT0|RIGHT1",
                 "BoundedIterator","LEFT1|RIGHT0"

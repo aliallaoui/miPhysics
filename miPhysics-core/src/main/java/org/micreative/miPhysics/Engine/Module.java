@@ -30,7 +30,7 @@ public abstract class Module implements AbstractModule {
             }
             catch(Exception e)
             {
-                System.out.println("error creating string2D with " + params + " cause : " + e.getMessage());
+                System.out.println("error creating Module with " + params + " cause : " + e.getMessage());
             }
         });
     }

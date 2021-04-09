@@ -45,6 +45,10 @@ public abstract class MetaModule implements AbstractModule{
         {
             module.getValue().init();
         }
+        for(Map.Entry<String,ModuleController> module :moduleControllers.entrySet())
+        {
+            module.getValue().init();
+        }
     }
 
     public Vect3D getPoint(String name,Index index)
@@ -201,7 +205,7 @@ public abstract class MetaModule implements AbstractModule{
                                     String moduleName,
                                     String dataProviderName,
                                     String controlledData,
-                                            int index) throws Exception {
+                                            Index index) throws Exception {
         if(moduleControllers.containsKey(name)) throw new Exception("ModuleController named " +name + "already exists");
         moduleControllers.put(name, new PositionScalarController(modules.get(moduleName),
                 dataProviders.get(dataProviderName),

@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.maven.doxia.macro.EchoMacro;
 import org.jaudiolibs.audioservers.AudioClient;
 import org.jaudiolibs.audioservers.AudioConfiguration;
 import org.jaudiolibs.audioservers.AudioServer;
@@ -24,19 +26,6 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
 
     private float[] data;
     private Thread runner;
-
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
-    }
-
-
-    private int state = 0; // should be an enum : 0 = not started, 1=started, not computing, initializing params
-                           // 2= params initialized, start simulation
-                           // 3= listening to simulation
 
     public boolean isMute() {
         return mute;
@@ -127,9 +116,15 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     }
     public boolean process(long time, List<FloatBuffer> inputs, List<FloatBuffer> outputs, int nframes) {
 
-        for(InputBuffer ib:getInputBuffers()) {
-            AudioInputChannel aic = (AudioInputChannel)ib;
-            aic.copyFromInputs(inputs);
+        try {
+            for (InputBuffer ib : getInputBuffers()) {
+                AudioInputChannel aic = (AudioInputChannel) ib;
+                aic.copyFromInputs(inputs);
+            }
+        }
+        catch (Exception e)
+        {
+
         }
         // always use nframes as the number of samples to process
         //System.out.println("input=" + inputs.get(0).get(0));
@@ -181,7 +176,7 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     }
 
     public static void main(String[] args) throws Exception {
-        miPhyAudioClient pm = miPhyAudioClient.miPhyJack(44100.f,0,2);
+        miPhyAudioClient pm = miPhyAudioClient.miPhyJack(44100.f,1,2);
         int[] dim = new int[1];
         dim[0] = 3;
         pm.addMacroMass("macro","BoundedIterator","LEFT1|RIGHT1","GridContainer",dim);
@@ -191,14 +186,22 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
                 "BoundedIterator","LEFT0|RIGHT1",
                 "BoundedIterator","LEFT1|RIGHT0"
         );
+
+        pm.addModule("Mass3D","perc");
+        pm.addMacroInteraction("Contact","ping",
+                "macro","perc",
+                "StaticIterator","1","StaticIterator","0");
+
         pm.addPositionScalarObserver("micro","macro",new Index(1),new Vect3D(0,1,0));
         pm.addAudioOutputChannel(0,pm.getDataProvider("micro"));
         pm.addAudioOutputChannel(1,pm.getDataProvider("micro"));
-
+        pm.addAudioInputChannel(0);
+        pm.addPositionScalarController("percControl","perc",
+                "audioInput0","PointY",new Index(0));
         pm.init();
 
-        pm.getModule("macro").setPointR(new Index(1),
-                Vect3D.add(new Vect3D(0,1,0),pm.getModule("macro").getPoint(new Index(1))));
+       // pm.getModule("macro").setPointR(new Index(1),
+        //        Vect3D.add(new Vect3D(0,1,0),pm.getModule("macro").getPoint(new Index(1))));
 
         pm.setMute(false);
 /*

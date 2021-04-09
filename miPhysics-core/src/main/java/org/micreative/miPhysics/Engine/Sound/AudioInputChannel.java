@@ -14,6 +14,7 @@ public class AudioInputChannel extends InputBuffer {
     }
     public void copyFromInputs(List<FloatBuffer> inputs)
     {
-        buffer = inputs.get(channel).array();
+//        buffer =
+        inputs.get(channel).get(buffer);
     }
 }
