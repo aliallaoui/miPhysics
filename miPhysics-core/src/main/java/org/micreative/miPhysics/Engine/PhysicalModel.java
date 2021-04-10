@@ -44,11 +44,20 @@ public class PhysicalModel extends MetaModule{
 
 
 	private int nbStepsToSim;
-	private double residue;
 	private long nbStepsSimulated=0;
 	public static int loopFrame = 0;
 	private Timestamp timestamp ;
+
 	private boolean computePhysics=true;
+	public boolean isComputePhysics() {
+		return computePhysics;
+	}
+
+	public void setComputePhysics(boolean computePhysics) {
+		this.computePhysics = computePhysics;
+	}
+
+
 
 	protected List<OutputBuffer> outputBuffers;
 	protected List<InputBuffer> inputBuffers;
@@ -74,8 +83,6 @@ public class PhysicalModel extends MetaModule{
 			System.out.println("Invalid simulation Rate: defaulting to 50 Hz");
 			setSimRate(50);
 		}
-
-		this.residue = 0;
 
 		m_lock = new ReentrantLock();
 

@@ -8,7 +8,7 @@ import peasy.*;
 PeasyCam cam;
         Index iA = new Index(0);
         Index iB = new Index(1);
-        miPhyAudioClient  pm=miPhyAudioClient.miPhyJack(22050,1,2);
+        miPhyAudioClient  pm=miPhyAudioClient.miPhyJack(22050,4,2);
         void setup()
         {
         size(1000,700,P3D);
@@ -38,13 +38,17 @@ PeasyCam cam;
         pm.addPositionScalarObserver("micro","macro",iB,new Vect3D(0,1,0));
         pm.addAudioOutputChannel(0,pm.getDataProvider("micro"));
         pm.addAudioOutputChannel(1,pm.getDataProvider("micro"));
-        pm.addAudioInputChannel(0);
         pm.addPositionScalarController("percControl","perc",
         "audioInput0","PointY",new Index(0));
+        pm.addModuleController("stiffControl","string","audioInput1","stiffness");
+        pm.addModuleController("dampingControl","string","audioInput2","damping");
+        pm.addModuleController("frictionControl","string","audioInput3","friction");
+
         pm.init();
         pm.getModule("macro").setPointR(iB,
         Vect3D.add(new Vect3D(0,1,0),pm.getModule("macro").getPoint(iB)));
 
+        pm.setComputePhysics(false);
         pm.setMute(false);
         pm.start();
         }
@@ -61,6 +65,7 @@ PeasyCam cam;
         strokeWeight(1 / 10f);
         background(0);
         fill(255, 0, 0);
+
         Vect3D A = pm.getModule("macro").getPoint(iB);
         pushMatrix();
         translate((float)A.x(),(float)A.y(),(float)A.z());
@@ -72,7 +77,26 @@ PeasyCam cam;
         translate((float)perc.x(),(float)perc.y(),(float)perc.z());
         sphere(5);
         popMatrix();
-
+        cam.beginHUD();
+        stroke(125, 125, 255);
+        strokeWeight(2);
+        fill(0, 0, 60, 220);
+        rect(0, 0, 250, 50);
+        textSize(16);
+        fill(255, 255, 255);
+        text("muted :" +pm.isMute() + " compute phy:"+pm.isComputePhysics(),10,30);
+        text("stiffness 1: " + pm.getParam("string","stiffness"),10,50);
+        text("damping 1: " + pm.getParam("string","damping"),10,70);
+        text("friction 1: " + pm.getParam("string","friction"),10,90);
+        cam.endHUD();
 //pm.computeNSteps(50, false);
+
+        }
+
+        void keyPressed() {
+
+        if (key == 'm') pm.setMute(!pm.isMute());
+        if (key == 'p') pm.setComputePhysics(!pm.isComputePhysics());
+
 
         }

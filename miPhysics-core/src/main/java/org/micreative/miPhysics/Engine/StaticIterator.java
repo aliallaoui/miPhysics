@@ -24,7 +24,7 @@ public class StaticIterator extends AbstractIterator{
 
     public boolean end() throws Exception
     {
-        return first;
+        return !first;
     }
 
 
