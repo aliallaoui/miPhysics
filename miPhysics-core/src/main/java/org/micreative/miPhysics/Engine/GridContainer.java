@@ -24,6 +24,10 @@ public class GridContainer extends AbstractContainer{
     protected Vect3D center;
     protected Vect3D direction;
 
+
+
+    protected float stretchFactor;
+
     public GridContainer(int[] dimensions)
     {
         super(dimensions);
@@ -44,23 +48,32 @@ public class GridContainer extends AbstractContainer{
         ParameterizedType dataType = (ParameterizedType) dataField.getGenericType();
         Class<?> dataClass = (Class<?>) dataType.getActualTypeArguments()[0];
         */
-    if(initType == "gridVector")
-    {
-        if (dim == 1) {
-            Vect3D left = Vect3D.add(center, Vect3D.mult(direction, -length / 2.));
-            for (int i = 0; i < dimensions[0]; i++) {
-                data.add(Vect3D.add(left, Vect3D.mult(direction, i * length / (dimensions[0] -
-                        1))));
+        if(initType == "gridVector")
+        {
+            if (dim == 1) {
+                for (int i = 0; i < dimensions[0]; i++) {
+                    data.add(computePosition(new Index(i)));
+                }
             }
         }
-    }
-    else if(initType == "zeroVector")
-    {
-        for (int i = 0; i < size; i++) {
-            data.add(new Vect3D(0,0,0));
+        else if(initType == "zeroVector")
+        {
+            for (int i = 0; i < size; i++) {
+                data.add(new Vect3D(0,0,0));
+            }
         }
+        init = true;
+
     }
 
+    protected Vect3D computePosition(Index i)
+    {
+        if (dim==1)
+        {
+            return Vect3D.add(center,Vect3D.mult(direction,
+                    i.x()*length*stretchFactor/(dimensions[0]-1)-length*stretchFactor/2.));
+        }
+        else return new Vect3D(0,0,0);
     }
 
     protected int offset(Index index)
@@ -109,4 +122,36 @@ public class GridContainer extends AbstractContainer{
     public void setDirection(Vect3D direction) {
         this.direction = direction;
     }
+
+    public float getStretchFactor() {
+        return stretchFactor;
+    }
+
+    public void setStretchFactor(float stretchFactor) throws Exception{
+         this.stretchFactor = stretchFactor;
+        if(init) {
+            for (fixedPointIterator.begin(); !fixedPointIterator.end(); fixedPointIterator.next()) {
+                set(fixedPointIterator, computePosition(fixedPointIterator));
+            }
+        }
+    }
+
+        /*
+        if (dim == 1) {
+            Vect3D left = Vect3D.add(center, Vect3D.mult(direction, -length*stretchFactor / 2.));
+            for (int i = 0; i < dimensions[0]; i++) {
+                data.add(Vect3D.add(left, Vect3D.mult(direction, i * length*stretchFactor / (dimensions[0] -
+                        1))));
+            }
+        }
+        this.stretchFactor = stretchFactor;
+        Vect3D dir = new Vect3D(direction);
+        dir.mult(restDistance* stretchFactor);
+        Vect3D left = Vect3D.add(center,Vect3D.mult(dir,-(size+1.)/2.));
+        Vect3D right = Vect3D.add(center,Vect3D.mult(dir,(size+1.)/2.));
+        m_pos.set(0,left);
+        m_pos.set(size+1,right);
+        */
+
+
 }

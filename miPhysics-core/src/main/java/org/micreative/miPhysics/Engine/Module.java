@@ -5,6 +5,8 @@ import org.micreative.miPhysics.Vect3D;
 import org.micreative.miPhysics.Engine.AbstractModule;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,79 +17,12 @@ public abstract class Module implements AbstractModule {
         isInit = false;
     }
 
-    public Module(Map<String,String> params)
-    {
-        params.forEach((k,v)->{
-            try {
-                PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, k);
-                String type = p.getPropertyType().toString();
-                Object value = null;
-                if (type.equals("double")) value = Double.parseDouble(v);
-                else if (type.equals("float")) value = Float.parseFloat(v);
-                else if (type.equals("int")) value = Integer.parseInt(v);
-                else if (type.equals("class org.micreative.miPhysics.Vect3D")) value = Vect3D.fromString(v);
-                p.getWriteMethod().invoke(this,value);
-            }
-            catch(Exception e)
-            {
-                System.out.println("error creating Module with " + params + " cause : " + e.getMessage());
-            }
-        });
-    }
-
-    public Module(Map<String,String> defaultParams,Map<String,Object> params)
-    {
-
-
-    }
-
     //TODO if this throws Exception, should be renamaed loadAllParameters
     public void loadParameters(Map<String,String> params) throws Exception {
-        params.forEach((k,v)->{
-            try {
-                PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, k);
-                String type = p.getPropertyType().toString();
-                Object value = null;
-                if (type.equals("double")) value = Double.parseDouble(v);
-                else if (type.equals("float")) value = Float.parseFloat(v);
-                else if (type.equals("int")) value = Integer.parseInt(v);
-                else if (type.equals("class org.micreative.miPhysics.Vect3D")) value = Vect3D.fromString(v);
-                p.getWriteMethod().invoke(this,value);
-            }
-            catch(Exception e)
-            {
-                System.out.println("error creating string2D with " + params + " cause : " + e.getMessage());
-            }
-        });
+        for(Map.Entry<String,String> param:params.entrySet()) {
+            setParam(param.getKey(), param.getValue());
+        }
         init();
-    }
-
-    public void loadParameters(Map<String,String> defaultParams,Map<String,Object> params) throws Exception
-    {
-
-        Map<String,Object> finalParams = new HashMap<>();
-    //    try {
-        for(Map.Entry<String,String> defaultParam:defaultParams.entrySet()) {
-            String param = defaultParam.getKey();
-            String svalue = defaultParam.getValue();
-
-            PropertyDescriptor p = null;
-            p = PropertyUtils.getPropertyDescriptor(this, param);
-            String type = p.getPropertyType().toString();
-            Object value = null;
-            if (type.equals("double")) value = Double.parseDouble(svalue);
-            else if (type.equals("float")) value = Float.parseFloat(svalue);
-            else if (type.equals("int")) value = Integer.parseInt(svalue);
-            else if (type.equals("class org.micreative.miPhysics.Vect3D")) value = Vect3D.fromString(svalue);
-            finalParams.put(param, value);
-
-        }
-        finalParams.putAll(params);
-        for(Map.Entry<String,Object> finalParam:finalParams.entrySet()) {
-            PropertyDescriptor p = PropertyUtils.getPropertyDescriptor(this, finalParam.getKey());
-            p.getWriteMethod().invoke(this, finalParam.getValue());
-        }
-
     }
 
     public String getType()
@@ -177,6 +112,51 @@ public abstract class Module implements AbstractModule {
     public double getFriction() {
         return friction;
     }
+
+    public void setParam(String paramName,Object value) throws Exception{
+        getSetMethod(paramName).invoke(this,value);
+    }
+    public void setParam(String paramName,String v) throws Exception{
+        setParam(paramName,getParamValue(paramName,v));
+    }
+
+    public void setParam(Method setter,Object value) throws Exception{
+        setter.invoke(this,value);
+    }
+
+    public Method getSetMethod(String param) throws Exception {
+        return getParamDescriptor(param).getWriteMethod();
+    }
+
+    public Object getParamValue(String param,String value) throws Exception
+    {
+        PropertyDescriptor p = getParamDescriptor(param);
+        String type = p.getPropertyType().toString();
+        if (type.equals("double")) return Double.parseDouble(value);
+        else if (type.equals("float")) return Float.parseFloat(value);
+        else if (type.equals("int")) return Integer.parseInt(value);
+        else if (type.equals("class org.micreative.miPhysics.Vect3D")) return Vect3D.fromString(value);
+        else throw new RuntimeException("Unknow parameter type " + type);
+    }
+
+    public PropertyDescriptor getParamDescriptor(String param) throws Exception
+    {
+        PropertyDescriptor p  =  PropertyUtils.getPropertyDescriptor(this, param);
+        if (p==null) throw new RuntimeException("Unknown parameter " + param);
+        return p;
+    }
+
+    public boolean hasParam(String param) throws Exception
+    {
+       return PropertyUtils.getPropertyDescriptor(this, param)!=null;
+    }
+    public boolean hasContainerParam(String param) throws Exception {
+        return false;
+    }
+    public AbstractContainer getPositionsContainer(){return null;}
+    public AbstractContainer getPositionsRContainer(){return null;}
+
+
 
 
 }

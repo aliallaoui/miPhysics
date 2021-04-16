@@ -22,14 +22,12 @@ public class ModuleController
         controlledData=controlledData_;
     }
 
-    public void init() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        PropertyDescriptor p = null;
-        p = PropertyUtils.getPropertyDescriptor(module,controlledData);
-        writeMethod = PropertyUtils.getWriteMethod(p);
+    public void init() throws Exception {
+        writeMethod = module.getSetMethod(controlledData);
     }
 
-    public void setData() throws InvocationTargetException, IllegalAccessException {
-        writeMethod.invoke(module,dataProvider.getData());
+    public void setData() throws Exception {
+        module.setParam(writeMethod,dataProvider.getData());
     }
 /*
     protected     String param;

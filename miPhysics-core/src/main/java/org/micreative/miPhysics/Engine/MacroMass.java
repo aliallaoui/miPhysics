@@ -4,6 +4,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.micreative.miPhysics.Vect3D;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 
@@ -76,8 +77,13 @@ public class MacroMass extends Module{
 
     @Override
     public void init() throws Exception{
+        iterator.init();
         positions.init("gridVector");
         positionsR.init("gridVector");
+        AbstractIterator inverseIterator = iterator.getInverseIterator();
+        inverseIterator.init();
+        positions.setFixedPointIterator(inverseIterator);
+        positionsR.setFixedPointIterator(inverseIterator);
        forces.init("zeroVector");
     }
 
@@ -140,33 +146,44 @@ public class MacroMass extends Module{
         positions.get(index).z = pZ;
     }
 
-     public void loadParameters(Map<String,String> params) throws Exception
+    public PropertyDescriptor getParamDescriptor(String param) throws Exception
     {
-        params.forEach((k,v)->{
-            try {
-                PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, k);
-                boolean positions_parameter=false;
-                if(p==null) {
-                    p =  PropertyUtils.getPropertyDescriptor(positions, k);
-                    positions_parameter=true;
-                }
-                String type = p.getPropertyType().toString();
-                Object value = null;
-                if (type.equals("double")) value = Double.parseDouble(v);
-                else if (type.equals("float")) value = Float.parseFloat(v);
-                else if (type.equals("int")) value = Integer.parseInt(v);
-                else if (type.equals("class org.micreative.miPhysics.Vect3D")) value = Vect3D.fromString(v);
-                if(positions_parameter)
-                {
-                    p.getWriteMethod().invoke(positions,value);
-                    p.getWriteMethod().invoke(positionsR,value);
-                }
-                else p.getWriteMethod().invoke(this,value);
-            }
-            catch(Exception e)
-            {
-                System.out.println("error creating MacroMass with " + params + " cause : " + e.getMessage());
-            }
-        });
+        PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, param);
+        if(p==null) {
+            p = PropertyUtils.getPropertyDescriptor(positions, param);
+        }
+        if (p==null) throw new RuntimeException("Unknown parameter " + param);
+        return p;
     }
+
+    public void setParam(String param,Object value) throws Exception
+    {
+        PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, param);
+        boolean positions_parameter = (p==null);
+        if(positions_parameter)
+        {
+           getSetMethod(param).invoke(positions,value);
+           getSetMethod(param).invoke(positionsR,value);
+        }
+        else getSetMethod(param).invoke(this,value);
+    }
+
+    public void setParam(Method setter, String param,Object value) throws Exception
+    {
+        PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, param);
+        boolean positions_parameter = (p==null);
+        if(positions_parameter)
+        {
+            setter.invoke(positions,value);
+            setter.invoke(positionsR,value);
+        }
+        else setter.invoke(this,value);
+    }
+    public boolean hasContainerParam(String param) throws Exception {
+        return PropertyUtils.getPropertyDescriptor(positions, param) != null;
+    }
+
+    public AbstractContainer getPositionsContainer(){return positions;}
+    public AbstractContainer getPositionsRContainer(){return positionsR;}
+
 }

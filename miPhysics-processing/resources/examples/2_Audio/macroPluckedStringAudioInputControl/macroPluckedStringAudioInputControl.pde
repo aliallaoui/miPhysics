@@ -8,7 +8,8 @@ import peasy.*;
 PeasyCam cam;
         Index iA = new Index(0);
         Index iB = new Index(1);
-        miPhyAudioClient  pm=miPhyAudioClient.miPhyJack(22050,4,2);
+        Index iC = new Index(2);
+        miPhyAudioClient  pm=miPhyAudioClient.miPhyJack(22050,5,2);
         void setup()
         {
         size(1000,700,P3D);
@@ -43,6 +44,7 @@ PeasyCam cam;
         pm.addModuleController("stiffControl","string","audioInput1","stiffness");
         pm.addModuleController("dampingControl","string","audioInput2","damping");
         pm.addModuleController("frictionControl","string","audioInput3","friction");
+        pm.addModuleController("stretchControl","macro","audioInput4","stretchFactor");
 
         pm.init();
         pm.getModule("macro").setPointR(iB,
@@ -72,6 +74,19 @@ PeasyCam cam;
         sphere(5);
         popMatrix();
         fill(0, 255, 0);
+
+        fill(0, 0, 255);
+        Vect3D B = pm.getModule("macro").getPoint(iA);
+        pushMatrix();
+        translate((float)B.x(),(float)B.y(),(float)B.z());
+        sphere(5);
+        popMatrix();
+        Vect3D C = pm.getModule("macro").getPoint(iC);
+        pushMatrix();
+        translate((float)C.x(),(float)C.y(),(float)C.z());
+        sphere(5);
+        popMatrix();
+
         Vect3D perc = pm.getModule("perc").getPoint(iA);
         pushMatrix();
         translate((float)perc.x(),(float)perc.y(),(float)perc.z());
@@ -88,6 +103,7 @@ PeasyCam cam;
         text("stiffness 1: " + pm.getParam("string","stiffness"),10,50);
         text("damping 1: " + pm.getParam("string","damping"),10,70);
         text("friction 1: " + pm.getParam("string","friction"),10,90);
+       // text("stretchFactor 1: " + pm.getParam("macro","stretchFactor"),10,110);
         cam.endHUD();
 //pm.computeNSteps(50, false);
 

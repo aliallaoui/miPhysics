@@ -17,7 +17,7 @@ public abstract class MetaModule implements AbstractModule{
 
     protected boolean isInit; // in AbstractModule ?
     protected String name;
-    MetaModule(String name_)
+    public MetaModule(String name_)
     {
         name=name_;
         modules = new HashMap<>();
@@ -153,10 +153,11 @@ public abstract class MetaModule implements AbstractModule{
             AbstractIterator iterator1 = (AbstractIterator) Class.forName("org.micreative.miPhysics.Engine." + iterator1Type)
                     .getDeclaredConstructor(dimensions1.getClass(),String.class)
                     .newInstance(dimensions1,iterator1Description);
+            iterator1.init();
             AbstractIterator iterator2 = (AbstractIterator) Class.forName("org.micreative.miPhysics.Engine." + iterator2Type)
                     .getDeclaredConstructor(dimensions2.getClass(),String.class)
                     .newInstance(dimensions2,iterator2Description);
-
+            iterator2.init();
             modules.put(name,(Module)Class.forName("org.micreative.miPhysics.Engine.Modules.M" + type)
                     .getDeclaredConstructor(Module.class,Module.class,
                             AbstractIterator.class,AbstractIterator.class)
@@ -172,6 +173,7 @@ public abstract class MetaModule implements AbstractModule{
             AbstractIterator iterator = (AbstractIterator) Class.forName("org.micreative.miPhysics.Engine." + iteratorType)
                     .getDeclaredConstructor(dimensions.getClass(),String.class)
                     .newInstance(dimensions,iteratorDescription);
+            iterator.init();
             modules.put(name,new MacroMass(dimensions,iterator,containerType));
 
             InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties");
@@ -195,10 +197,17 @@ public abstract class MetaModule implements AbstractModule{
                                     String dataProviderName,
                                     String controlledData) throws Exception {
         if(moduleControllers.containsKey(name)) throw new Exception("ModuleController named " +name + "already exists");
-        moduleControllers.put(name,new ModuleController(modules.get(moduleName),
+        Module mod=modules.get(moduleName);
+        if (mod.hasParam(controlledData))
+            moduleControllers.put(name,new ModuleController(mod,
                 dataProviders.get(dataProviderName),
-                controlledData)
-        );
+                controlledData));
+        else
+            moduleControllers.put(name,new ContainerController(mod,
+                    dataProviders.get(dataProviderName),
+                    controlledData));
+
+
     }
 
     public void addPositionScalarController(String name,
@@ -241,6 +250,13 @@ public abstract class MetaModule implements AbstractModule{
      */
     public void clearModel() {
 
+    }
+
+    public int getNbPoints()
+    {
+        int nbPoints=0;
+        for(Module m:modules.values()) nbPoints=nbPoints+m.getNbPoints();
+        return nbPoints;
     }
 /*
     public List<Mat> getMats()
