@@ -51,7 +51,7 @@ PeasyCam cam;
         Vect3D.add(new Vect3D(0,1,0),pm.getModule("macro").getPoint(iB)));
 
         pm.setComputePhysics(false);
-        pm.setMute(false);
+        pm.setMute(true);
         pm.start();
         }
         catch(Exception e)

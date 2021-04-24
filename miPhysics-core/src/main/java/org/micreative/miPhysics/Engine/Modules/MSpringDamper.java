@@ -8,15 +8,15 @@ import org.micreative.miPhysics.Engine.Module;
 public class MSpringDamper extends MacroLink {
 
 
-    public double getRestDistance() {
-        return restDistance;
+    public double getRestLength() {
+        return restLength;
     }
 
-    public void setRestDistance(double restDistance) {
-        this.restDistance = restDistance;
+    public void setRestLength(double restLength) {
+        this.restLength = restLength;
     }
 
-    protected double restDistance;
+    protected double restLength;
 
 
     /**
@@ -33,7 +33,7 @@ public class MSpringDamper extends MacroLink {
 
     public double computeForce(Index i1,Index i2)
     {
-        return (distance - restDistance) * stiffness +  (distance - distanceR )* damping;
+        return (distance - restLength) * stiffness +  (distance - distanceR )* damping;
     }
 
 

@@ -62,9 +62,9 @@ public class BoundedIterator extends AbstractIterator{
 
     public void rightOrJumpToBoundM()
     {
-        if(coordinates[0]<=bounds[0]) coordinates[0]++;
-        else if(coordinates[0]<bounds[1]) coordinates[0]=bounds[1];
-        else coordinates[0]++;
+        coordinates[0]++;
+        if(coordinates[0]>=bounds[0] && coordinates[0]<dimensions[0]-bounds[1])
+            coordinates[0]= dimensions[0]-bounds[1];
     }
 
     public boolean end0()

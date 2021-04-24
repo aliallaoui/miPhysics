@@ -191,6 +191,7 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
                 "BoundedIterator","LEFT0|RIGHT1",
                 "BoundedIterator","LEFT1|RIGHT0"
         );
+        pm.getModule("string").setParam("restLength",5);
         pm.addModule("Mass3D","perc");
         pm.addMacroInteraction("Contact","ping",
                 "macro","perc",
@@ -199,18 +200,19 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
         pm.addPositionScalarObserver("micro","macro",iB,new Vect3D(0,1,0));
         pm.addAudioOutputChannel(0,pm.getDataProvider("micro"));
         pm.addAudioOutputChannel(1,pm.getDataProvider("micro"));
-        pm.addPositionScalarController("percControl","perc",
+     /*   pm.addPositionScalarController("percControl","perc",
                 "audioInput0","PointY",new Index(0));
         pm.addModuleController("stiffControl","string","audioInput1","stiffness");
         pm.addModuleController("dampingControl","string","audioInput2","damping");
         pm.addModuleController("frictionControl","string","audioInput3","friction");
+       */
         pm.addModuleController("stretchControl","macro","audioInput4","stretchFactor");
 
         pm.init();
         pm.getModule("macro").setPointR(iB,
                 Vect3D.add(new Vect3D(0,1,0),pm.getModule("macro").getPoint(iB)));
 
-        pm.setComputePhysics(false);
+        pm.setComputePhysics(true);
         pm.setMute(false);
         pm.start();
 
