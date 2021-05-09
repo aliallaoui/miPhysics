@@ -207,7 +207,7 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
         pm.addModuleController("frictionControl","string","audioInput3","friction");
        */
         pm.addModuleController("stretchControl","macro","audioInput4","stretchFactor");
-
+AbstractIterator it = pm.getModule("macro").getMassesIterator();
         pm.init();
         pm.getModule("macro").setPointR(iB,
                 Vect3D.add(new Vect3D(0,1,0),pm.getModule("macro").getPoint(iB)));

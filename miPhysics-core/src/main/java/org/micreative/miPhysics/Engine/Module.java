@@ -155,6 +155,8 @@ public abstract class Module implements AbstractModule {
     }
     public AbstractContainer getPositionsContainer(){return null;}
     public AbstractContainer getPositionsRContainer(){return null;}
+    public AbstractIterator getMassesIterator(){return null;}
+    public AbstractIterator getFixedPointsIterator(){return null;}
 
 
 

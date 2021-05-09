@@ -75,18 +75,15 @@ public class PhysicalModel extends MetaModule{
 	public PhysicalModel(String name,int sRate)
 	{
 		super(name);
-		Vect3D tmp = new Vect3D(0., 0., 0.);
 
 		if (sRate > 0)
 			setSimRate(sRate);
 		else {
-			System.out.println("Invalid simulation Rate: defaulting to 50 Hz");
 			setSimRate(50);
 		}
 
 		m_lock = new ReentrantLock();
 
-		System.out.println("Physical Model Class Initialised");
 	}
 
 		/*************************************************/
@@ -200,7 +197,7 @@ public class PhysicalModel extends MetaModule{
 	 */
 	public void computeNSteps(int N) throws Exception {
 			for (int frame = 0; frame < N; frame++) {
-//				if(nbStepsSimulated== 0) timestamp = new Timestamp(System.currentTimeMillis());
+				if(nbStepsSimulated== 0) timestamp = new Timestamp(System.currentTimeMillis());
 				loopFrame = frame;
 				// fillInputBuffers(); already done in gather data ?
 				gatherData();
@@ -212,14 +209,14 @@ public class PhysicalModel extends MetaModule{
  //TODO those if should be put outside the loop
 				}
 		nbStepsSimulated+=N;
-	/*	if(nbStepsSimulated%(simRate*5) == 0)
+		if(nbStepsSimulated%(simRate*5) == 0)
 		{
 			Timestamp current = new Timestamp(System.currentTimeMillis());
 			double secs = (double)(current.getTime() - timestamp.getTime())/1000.;
 			double sim_secs = (double)nbStepsSimulated/(double)simRate;
 			if(Math.abs(secs-sim_secs) > 0.05) System.out.println(secs + " seconds ellapsed " +  sim_secs + " simulated");
 		}
-		*/
+
 
 	}
 

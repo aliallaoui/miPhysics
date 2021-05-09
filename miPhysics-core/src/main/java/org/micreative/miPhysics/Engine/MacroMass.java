@@ -185,5 +185,6 @@ public class MacroMass extends Module{
 
     public AbstractContainer getPositionsContainer(){return positions;}
     public AbstractContainer getPositionsRContainer(){return positionsR;}
-
+    public AbstractIterator getMassesIterator(){return iterator;}
+    public AbstractIterator getFixedPointsIterator(){return iterator.getInverseIterator();}
 }
