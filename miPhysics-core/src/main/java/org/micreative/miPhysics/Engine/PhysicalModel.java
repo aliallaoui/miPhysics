@@ -40,7 +40,7 @@ public class PhysicalModel extends MetaModule{
 	private Lock m_lock;
 
 	/* The simulation rate (mono rate only) */
-	private int simRate;
+	static public int simRate;
 
 
 	private int nbStepsToSim;

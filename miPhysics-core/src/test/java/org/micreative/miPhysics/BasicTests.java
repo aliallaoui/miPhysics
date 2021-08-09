@@ -4,6 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.micreative.miPhysics.Engine.Control.MidiController;
 import org.micreative.miPhysics.Engine.Index;
+import org.micreative.miPhysics.Engine.MidiControlProvider;
 import org.micreative.miPhysics.Engine.PhysicalModel;
 import org.micreative.miPhysics.Engine.Sound.miPhyAudioClient;
 
@@ -95,6 +96,24 @@ public class BasicTests {
         pm.computeNSteps(500,false);
 */
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
+    }
+    public @Test void testMidiControlProvider() throws Exception {
+        PhysicalModel pm = new PhysicalModel("toto", 100);
+
+        pm.addDataProvider("MidiControlProvider", "midictrl1");
+        pm.getDataProvider("midictrl1").setParam("control", 0);
+        pm.addDataProvider("RampInterpolator","stiffctrl1");
+        pm.getDataProvider("stiffctrl1").setParam("rampTime",0.005f);
+
+        pm.addDataProviderController("rampctrl1","stiffctrl1","midictrl1","max");
+        MidiControlProvider mc  = pm.getMidiControlProviders().get(0);
+        mc.setParam("min",0.001f);
+        mc.setParam("max",0.01f);
+
+        pm.init();
+
+        mc.changeParam(0, 63);
+        pm.getAsynchronousControllerByDataProvider(mc.getName()).setData();
     }
 
     public @Test void testOsc2DControl() throws Exception

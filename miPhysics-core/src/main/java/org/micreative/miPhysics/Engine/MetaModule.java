@@ -1,19 +1,20 @@
 package org.micreative.miPhysics.Engine;
 
-import org.apache.commons.chain.web.MapEntry;
+import ddf.minim.ugens.Abs;
 import org.micreative.miPhysics.Vect3D;
 
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.io.FileReader;
-import java.io.InputStream;
 
 public abstract class MetaModule implements AbstractModule{
 
     protected Map<String,Module> modules;
     protected Map<String,DataProvider> dataProviders;
-    protected Map<String,ModuleController> moduleControllers;
+    protected Map<String,DataProvider> asynchronousDataProviders;
+
+    protected Map<String,AbstractController> controllers;
+    protected Map<String,AbstractController> asynchronousControllers;
+    protected Map<String,AbstractController> asynchronousControllersByDataProvider;
 
     protected boolean isInit; // in AbstractModule ?
     protected String name;
@@ -22,13 +23,36 @@ public abstract class MetaModule implements AbstractModule{
         name=name_;
         modules = new HashMap<>();
         dataProviders = new HashMap<>();
-        moduleControllers = new HashMap<>();
+        controllers = new HashMap<>();
+        asynchronousControllers = new HashMap<>();
+        asynchronousControllersByDataProvider = new HashMap<>();
         isInit = false;
     }
 
     public String getType(){return name;} // not an error ! That's the essence of meta modules
     public Module getModule(String name){return modules.get(name);}
-    public DataProvider getDataProvider(String name){return dataProviders.get(name);}
+    public DataProvider getDataProvider(String name) throws Exception
+    {
+        if(!dataProviders.containsKey(name)) throw new RuntimeException("Unknown dataProvider " + name);
+        return dataProviders.get(name);
+    }
+
+    public DataProvider getAsynchronousDataProvider(String name)throws Exception
+    {
+        if(!asynchronousDataProviders.containsKey(name)) throw new RuntimeException("Unknown dataProvider " + name);
+        return asynchronousDataProviders.get(name);
+    }
+
+    public List<MidiControlProvider> getMidiControlProviders()
+    {
+        List<MidiControlProvider> ret= new ArrayList<>();
+        for(Map.Entry<String,DataProvider> dataProvider:dataProviders.entrySet())
+        {
+            if (dataProvider.getValue() instanceof  MidiControlProvider)
+                ret.add((MidiControlProvider) dataProvider.getValue());
+        }
+        return ret;
+    }
     public void computeForces() throws Exception
     {
         for(Map.Entry<String,Module> module:modules.entrySet()) module.getValue().computeForces();
@@ -45,9 +69,13 @@ public abstract class MetaModule implements AbstractModule{
         {
             module.getValue().init();
         }
-        for(Map.Entry<String,ModuleController> module :moduleControllers.entrySet())
+        for(Map.Entry<String,AbstractController> module : controllers.entrySet())
         {
             module.getValue().init();
+        }
+        for(Map.Entry<String,AbstractController> ctrl : asynchronousControllers.entrySet())
+        {
+            ctrl.getValue().init();
         }
     }
 
@@ -196,14 +224,14 @@ public abstract class MetaModule implements AbstractModule{
                                     String moduleName,
                                     String dataProviderName,
                                     String controlledData) throws Exception {
-        if(moduleControllers.containsKey(name)) throw new Exception("ModuleController named " +name + "already exists");
+        if(controllers.containsKey(name)) throw new Exception("ModuleController named " +name + "already exists");
         Module mod=modules.get(moduleName);
         if (mod.hasParam(controlledData))
-            moduleControllers.put(name,new ModuleController(mod,
+            controllers.put(name,new ModuleController(mod,
                 dataProviders.get(dataProviderName),
                 controlledData));
         else
-            moduleControllers.put(name,new ContainerController(mod,
+            controllers.put(name,new ContainerController(mod,
                     dataProviders.get(dataProviderName),
                     controlledData));
 
@@ -215,15 +243,37 @@ public abstract class MetaModule implements AbstractModule{
                                     String dataProviderName,
                                     String controlledData,
                                             Index index) throws Exception {
-        if(moduleControllers.containsKey(name)) throw new Exception("ModuleController named " +name + "already exists");
-        moduleControllers.put(name, new PositionScalarController(modules.get(moduleName),
+        if(controllers.containsKey(name)) throw new Exception("ModuleController named " +name + "already exists");
+        controllers.put(name, new PositionScalarController(modules.get(moduleName),
                 dataProviders.get(dataProviderName),
                 controlledData,index));
     }
 
+    public void addDataProviderController(String name,
+                                            String controlledDataProviderName,
+                                            String dataProviderName,
+                                            String controlledData) throws Exception {
+        if(asynchronousControllers.containsKey(name)) throw new Exception("ModuleController named " +name + "already exists");
+        if(!dataProviders.containsKey(controlledDataProviderName))
+            throw new Exception("No data provider named " + controlledDataProviderName );
+        if(!dataProviders.containsKey(dataProviderName))
+            throw new Exception("No data provider named " + dataProviderName );
+        DataProviderController dpc =new DataProviderController(dataProviders.get(controlledDataProviderName),
+                dataProviders.get(dataProviderName),
+                controlledData);
+        asynchronousControllers.put(name, dpc);
+        asynchronousControllersByDataProvider.put(dataProviderName,dpc);
+    }
+
+    public AbstractController getAsynchronousControllerByDataProvider(String dataProviderName)
+    {
+        return asynchronousControllersByDataProvider.get(dataProviderName);
+    }
+
     public void addDataProvider(String type,String name) throws Exception {
         if(dataProviders.containsKey(name)) throw new Exception("DataProvider named " +name + "already exists");
-        dataProviders.put(name,(DataProvider) Class.forName(type).newInstance());
+        dataProviders.put(name,(DataProvider) Class.forName("org.micreative.miPhysics.Engine." + type).newInstance());
+        dataProviders.get(name).setName(name);
     }
 
     public void addPositionScalarObserver(String name,String module,Index index,Vect3D projDir) throws Exception
@@ -240,8 +290,8 @@ public abstract class MetaModule implements AbstractModule{
 
     public void controlModules() throws Exception
     {
-        for(Map.Entry<String,ModuleController> moduleController:moduleControllers.entrySet()) {
-            moduleController.getValue().setData();
+        for(Map.Entry<String,AbstractController> controller: controllers.entrySet()) {
+            controller.getValue().setData();
         }
     }
 

@@ -2,7 +2,6 @@ package org.micreative.miPhysics.Engine;
 
 public class BoundedIterator extends AbstractIterator{
 
-
     private int[] bounds;
 
     public BoundedIterator(int[] dimensions, String boundsDescr)  {
