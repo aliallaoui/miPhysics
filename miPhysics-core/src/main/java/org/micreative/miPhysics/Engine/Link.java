@@ -188,6 +188,9 @@ public abstract class Link extends Module{
     public void setPointY(Index index,float pY){}
     public void setPointZ(Index index,float pZ){}
 
+    public void setForceX(Index index,float fX){}
+    public void setForceY(Index index,float fY){}
+    public void setForceZ(Index index,float fZ){}
     /* Class attributes */
 
     private Module m_mat1;

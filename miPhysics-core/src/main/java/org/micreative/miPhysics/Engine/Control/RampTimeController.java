@@ -8,7 +8,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 
-public class ScalarController
+public class RampTimeController
 {
 
 
@@ -21,7 +21,7 @@ public class ScalarController
     private boolean moduleController = true;
 
 
-    public ScalarController(PhysicalModel pm_, float rampTime, String name, String param_ ) {
+    public RampTimeController(PhysicalModel pm_, float rampTime, String name, String param_ ) {
         //super(pm_,name,param_);
 
     }

@@ -53,6 +53,9 @@ public abstract class Module implements AbstractModule {
     public abstract void setPointX(Index index,float pX);
     public abstract void setPointY(Index index,float pY);
     public abstract void setPointZ(Index index,float pZ);
+    public abstract void setForceX(Index index,float fX);
+    public abstract void setForceY(Index index,float fY);
+    public abstract void setForceZ(Index index,float fZ);
 
 
     protected double friction;

@@ -146,6 +146,21 @@ public class MacroMass extends Module{
         positions.get(index).z = pZ;
     }
 
+    @Override
+    public void setForceX(Index index, float pX) {
+        forces.get(index).x = pX;
+    }
+
+    @Override
+    public void setForceY(Index index, float pY) {
+        forces.get(index).y = pY;
+    }
+
+    @Override
+    public void setForceZ(Index index, float pZ) {
+        forces.get(index).z = pZ;
+    }
+
     public PropertyDescriptor getParamDescriptor(String param) throws Exception
     {
         PropertyDescriptor p  = PropertyUtils.getPropertyDescriptor(this, param);

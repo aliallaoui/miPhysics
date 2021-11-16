@@ -103,7 +103,9 @@ public abstract class Mat extends Module{
     public void setPointZ(Index i,float pZ) {
         this.m_pos.z = pZ;
     }
-
+    public void setForceX(Index index,float fX){}
+    public void setForceY(Index index,float fY){}
+    public void setForceZ(Index index,float fZ){}
     /**
      * Get the value in the force buffer.
      * @return force value.

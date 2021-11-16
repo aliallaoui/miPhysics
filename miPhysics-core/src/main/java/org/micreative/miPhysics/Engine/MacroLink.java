@@ -120,6 +120,9 @@ public abstract class MacroLink extends Module {
     public void setPointX(Index index,float pX){}
     public void setPointY(Index index,float pY){}
     public void setPointZ(Index index,float pZ){}
+    public void setForceX(Index index,float fX){}
+    public void setForceY(Index index,float fY){}
+    public void setForceZ(Index index,float fZ){}
 
     static int[] dimensions=new int[1];
     public int[] getDimensions()

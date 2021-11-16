@@ -1,6 +1,5 @@
 package org.micreative.miPhysics.Engine;
 
-import ddf.minim.ugens.Abs;
 import org.micreative.miPhysics.Vect3D;
 
 import java.io.InputStream;
@@ -238,13 +237,15 @@ public abstract class MetaModule implements AbstractModule{
 
     }
 
-    public void addPositionScalarController(String name,
+    public void addScalarController(String name,
                                     String moduleName,
                                     String dataProviderName,
                                     String controlledData,
-                                            Index index) throws Exception {
+                                    Index index) throws Exception {
         if(controllers.containsKey(name)) throw new Exception("ModuleController named " +name + "already exists");
-        controllers.put(name, new PositionScalarController(modules.get(moduleName),
+        if(!controlledData.contains("Point") && !controlledData.contains("Force"))
+            throw new Exception("Cannot control " + controlledData);
+        controllers.put(name, new ScalarController(modules.get(moduleName),
                 dataProviders.get(dataProviderName),
                 controlledData,index));
     }

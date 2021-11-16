@@ -39,7 +39,7 @@ PeasyCam cam;
         pm.addPositionScalarObserver("micro","macro",iB,new Vect3D(0,1,0));
         pm.addAudioOutputChannel(0,pm.getDataProvider("micro"));
         pm.addAudioOutputChannel(1,pm.getDataProvider("micro"));
-        pm.addPositionScalarController("percControl","perc",
+        pm.addScalarController("percControl","perc",
         "audioInput0","PointY",new Index(0));
         pm.addModuleController("stiffControl","string","audioInput1","stiffness");
         pm.addModuleController("dampingControl","string","audioInput2","damping");

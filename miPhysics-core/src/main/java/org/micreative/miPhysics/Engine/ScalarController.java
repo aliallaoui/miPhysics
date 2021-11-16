@@ -5,9 +5,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 
-public class PositionScalarController extends ModuleController {
+public class ScalarController extends ModuleController {
     protected Index index;
-    PositionScalarController(Module module_, DataProvider dataProvider_, String controlledData_, Index index_) {
+    ScalarController(Module module_, DataProvider dataProvider_, String controlledData_, Index index_) {
         super(module_, dataProvider_, controlledData_);
         index=index_;
     }
