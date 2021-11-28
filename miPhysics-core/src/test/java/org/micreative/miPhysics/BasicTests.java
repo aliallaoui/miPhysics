@@ -52,12 +52,28 @@ public class BasicTests {
         pm.setPoint("m",new Index(0),new Vect3D(0,2,0));
         pm.setPointR("m",new Index(0),new Vect3D(0,2,0));
         //        pm.setVelocity("m",0,new Vect3D(0,0,0));
-        pm.addInteraction("SpringDamper3D","s","g","m");
+        pm.addInteraction("SpringDamper3D","s","g","m",
+                "StaticIterator","0",
+                "StaticIterator","0");
         pm.init();
         pm.computeNSteps(5000);
     }
 
-    public @Test void testString2D() throws Exception
+    public @Test void testConstantForce() throws Exception {
+        PhysicalModel pm = new PhysicalModel("string2D", 100);
+        int[] dim = new int[1];
+        dim[0] = 3;
+        pm.addMacroMass("macro", "BoundedIterator", "LEFT1|RIGHT1", "GridContainer", dim);
+        pm.getModule("macro").setParam("length", 20);
+        //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
+        pm.addInteraction("ConstantForce", "macrodfq", "macro", "macro", "StaticIterator", "1", "StaticIterator", "0");
+
+        pm.init();
+
+        pm.computeNSteps(300);
+    }
+
+        public @Test void testString2D() throws Exception
     {
         PhysicalModel pm = new PhysicalModel("string2D",100);
         int[] dim = new int[1];

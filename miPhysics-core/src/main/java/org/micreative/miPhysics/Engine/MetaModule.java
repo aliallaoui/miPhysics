@@ -140,7 +140,9 @@ public abstract class MetaModule implements AbstractModule{
         }
     }
 
-    public void addInteraction(String type, String name,String moduleA,String moduleB) throws Exception {
+    public void addInteraction(String type, String name,String moduleA,String moduleB,
+                               String iterator1Type,String iterator1Description,
+                               String iterator2Type,String iterator2Description) throws Exception {
         if(modules.containsKey(name)) throw new Exception("Module named " +name + "already exists");
 
         try(InputStream input = PhysicalModel.class.getClassLoader().getResourceAsStream("defaultParams.properties")) {
@@ -153,9 +155,20 @@ public abstract class MetaModule implements AbstractModule{
             p.load(input);
             Map defaultParams = getPropertySubsetAsMap(p, type + ".");
             defaultParams.putAll(getPropertySubsetAsMap(p, "Global."));
+            int [] dimensions1 = getModule(moduleA).getDimensions();
+            int [] dimensions2 = getModule(moduleB).getDimensions();
+            AbstractIterator iterator1 = (AbstractIterator) Class.forName("org.micreative.miPhysics.Engine." + iterator1Type)
+                    .getDeclaredConstructor(dimensions1.getClass(),String.class)
+                    .newInstance(dimensions1,iterator1Description);
+            iterator1.init();
+            AbstractIterator iterator2 = (AbstractIterator) Class.forName("org.micreative.miPhysics.Engine." + iterator2Type)
+                    .getDeclaredConstructor(dimensions2.getClass(),String.class)
+                    .newInstance(dimensions2,iterator2Description);
+            iterator2.init();
             modules.put(name,(Module)Class.forName("org.micreative.miPhysics.Engine.Modules." + type)
-                    .getDeclaredConstructor(Module.class,Module.class)
-                    .newInstance(getModule(moduleA),getModule(moduleB)));
+                    .getDeclaredConstructor(Module.class,Module.class,
+                            AbstractIterator.class,AbstractIterator.class)
+                    .newInstance(getModule(moduleA),getModule(moduleB),iterator1,iterator2));
             modules.get(name).loadParameters(defaultParams);
         }
     }
