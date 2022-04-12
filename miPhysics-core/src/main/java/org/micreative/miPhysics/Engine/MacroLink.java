@@ -81,8 +81,18 @@ public abstract class MacroLink extends Module {
 
     protected boolean iteratorsEnd() throws Exception
     {
-        //both should be false or both should be true, we don't check... to do in debug mode
-        return iterator1.end() || iterator2.end();
+        if( iterator1.end() && !iterator2.end())
+        {
+            iterator1.begin();
+            return false;
+        }
+        else if( iterator2.end() && !iterator1.end())
+        {
+            iterator2.begin();
+            return false;
+        }
+        else if( iterator1.end() && iterator2.end())  return true;
+        else return false;
     }
 
 
