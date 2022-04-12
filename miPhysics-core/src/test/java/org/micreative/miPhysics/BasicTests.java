@@ -17,26 +17,26 @@ import java.util.Map;
 
 public class BasicTests {
 
-    public @Test void testOneMass3D() throws Exception
-    {
-        PhysicalModel pm = new PhysicalModel("toto",100);
-        pm.addModule("Mass3D","m");
-       pm.getModule("m").setGravity(new Vect3D(0,-0.001,0));
+    public @Test
+    void testOneMass3D() throws Exception {
+        PhysicalModel pm = new PhysicalModel("toto", 100);
+        pm.addModule("Mass3D", "m");
+        pm.getModule("m").setGravity(new Vect3D(0, -0.001, 0));
         pm.init();
-        pm.getModule("m").setPointX(null,1);
-        pm.getModule("m").getPointR(null).x=1;
+        pm.getModule("m").setPointX(null, 1);
+        pm.getModule("m").getPointR(null).x = 1;
         pm.computeNSteps(300);
 
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }
 
-    public @Test void testMacroMass3D() throws Exception
-    {
-        PhysicalModel pm = new PhysicalModel("macroMass3D",100);
+    public @Test
+    void testMacroMass3D() throws Exception {
+        PhysicalModel pm = new PhysicalModel("macroMass3D", 100);
         int[] dim = new int[1];
         dim[0] = 2;
-        pm.addMacroMass("macro","BoundedIterator","LEFT0|RIGHT0","GridContainer",dim);
-      //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
+        pm.addMacroMass("macro", "BoundedIterator", "LEFT0|RIGHT0", "GridContainer", dim);
+        //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
         pm.init();
 
         pm.computeNSteps(300);
@@ -44,22 +44,23 @@ public class BasicTests {
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }
 
-    public @Test void testMassSpring3D() throws Exception
-    {
-        PhysicalModel pm = new PhysicalModel("toto",100);
-        pm.addModule("Ground3D","g");
-        pm.addModule("Mass3D","m");
-        pm.setPoint("m",new Index(0),new Vect3D(0,2,0));
-        pm.setPointR("m",new Index(0),new Vect3D(0,2,0));
+    public @Test
+    void testMassSpring3D() throws Exception {
+        PhysicalModel pm = new PhysicalModel("toto", 100);
+        pm.addModule("Ground3D", "g");
+        pm.addModule("Mass3D", "m");
+        pm.setPoint("m", new Index(0), new Vect3D(0, 2, 0));
+        pm.setPointR("m", new Index(0), new Vect3D(0, 2, 0));
         //        pm.setVelocity("m",0,new Vect3D(0,0,0));
-        pm.addInteraction("SpringDamper3D","s","g","m",
-                "StaticIterator","0",
-                "StaticIterator","0");
+        pm.addInteraction("SpringDamper3D", "s", "g", "m",
+                "StaticIterator", "0",
+                "StaticIterator", "0");
         pm.init();
         pm.computeNSteps(5000);
     }
 
-    public @Test void testConstantForce() throws Exception {
+    public @Test
+    void testConstantForce() throws Exception {
         PhysicalModel pm = new PhysicalModel("string2D", 100);
         int[] dim = new int[1];
         dim[0] = 3;
@@ -73,23 +74,23 @@ public class BasicTests {
         pm.computeNSteps(300);
     }
 
-        public @Test void testString2D() throws Exception
-    {
-        PhysicalModel pm = new PhysicalModel("string2D",100);
+    public @Test
+    void testString2D() throws Exception {
+        PhysicalModel pm = new PhysicalModel("string2D", 100);
         int[] dim = new int[1];
         dim[0] = 3;
-        pm.addMacroMass("macro","BoundedIterator","LEFT1|RIGHT1","GridContainer",dim);
-        pm.getModule("macro").setParam("length",20);
-      //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
-        pm.addMacroInteraction("SpringDamper","string",
-                "macro","macro",
-                "BoundedIterator","LEFT0|RIGHT1",
-                "BoundedIterator","LEFT1|RIGHT0"
-                );
+        pm.addMacroMass("macro", "BoundedIterator", "LEFT1|RIGHT1", "GridContainer", dim);
+        pm.getModule("macro").setParam("length", 20);
+        //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
+        pm.addMacroInteraction("SpringDamper", "string",
+                "macro", "macro",
+                "BoundedIterator", "LEFT0|RIGHT1",
+                "BoundedIterator", "LEFT1|RIGHT0"
+        );
 
         pm.init();
         pm.getModule("macro").setPointR(new Index(1),
-                Vect3D.add(new Vect3D(0.1,0,0),pm.getModule("macro").getPoint(new Index(1))));
+                Vect3D.add(new Vect3D(0.1, 0, 0), pm.getModule("macro").getPoint(new Index(1))));
 
         pm.computeNSteps(300);
 
@@ -113,18 +114,20 @@ public class BasicTests {
 */
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }
-    public @Test void testMidiControlProvider() throws Exception {
+
+    public @Test
+    void testMidiControlProvider() throws Exception {
         PhysicalModel pm = new PhysicalModel("toto", 100);
 
         pm.addDataProvider("MidiControlProvider", "midictrl1");
         pm.getDataProvider("midictrl1").setParam("control", 0);
-        pm.addDataProvider("RampInterpolator","stiffctrl1");
-        pm.getDataProvider("stiffctrl1").setParam("rampTime",0.005f);
+        pm.addDataProvider("RampInterpolator", "stiffctrl1");
+        pm.getDataProvider("stiffctrl1").setParam("rampTime", 0.005f);
 
-        pm.addDataProviderController("rampctrl1","stiffctrl1","midictrl1","max");
-        MidiControlProvider mc  = pm.getMidiControlProviders().get(0);
-        mc.setParam("min",0.001f);
-        mc.setParam("max",0.01f);
+        pm.addDataProviderController("rampctrl1", "stiffctrl1", "midictrl1", "max");
+        MidiControlProvider mc = pm.getMidiControlProviders().get(0);
+        mc.setParam("min", 0.001f);
+        mc.setParam("max", 0.01f);
 
         pm.init();
 
@@ -132,8 +135,8 @@ public class BasicTests {
         pm.getAsynchronousControllerByDataProvider(mc.getName()).setData();
     }
 
-    public @Test void testOsc2DControl() throws Exception
-    {
+    public @Test
+    void testOsc2DControl() throws Exception {
         /*
         PhysicalModel pm = new PhysicalModel("toto",100,25);
         pm.addGround3D("ground",new Vect3D(0,0,0));
@@ -151,8 +154,8 @@ public class BasicTests {
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }
 
-    public @Test void testString2DControl() throws Exception
-    {
+    public @Test
+    void testString2DControl() throws Exception {
         /*
         PhysicalModel pm = new PhysicalModel("toto",100,25);
         pm.addGround3D("ground",new Vect3D(0,0,0));
@@ -176,13 +179,10 @@ public class BasicTests {
     }
 
 
+    public @Test
+    void testString2DAudioJACK() throws Exception {
 
-
-
-    public @Test void testString2DAudioJACK() throws Exception
-    {
-
-        miPhyAudioClient simUGen = new miPhyAudioClient(44100.f,0,2,256,"JavaSound"); //<>// //<>//
+        miPhyAudioClient simUGen = new miPhyAudioClient(44100.f, 0, 2, 256, "JavaSound"); //<>// //<>//
 /*
         simUGen.getMdl().setGravity(0);
         simUGen.getMdl().setFriction(0);
@@ -235,9 +235,9 @@ public class BasicTests {
 
     }
 
-    public @Test void testString2DMidi() throws Exception
-    {
-        PhysicalModel pm = new PhysicalModel("toto",100);
+    public @Test
+    void testString2DMidi() throws Exception {
+        PhysicalModel pm = new PhysicalModel("toto", 100);
         //pm.addString2D("string");
 
         pm.init();
@@ -249,5 +249,24 @@ public class BasicTests {
         //assertTrue(pm.getMatPosAt(0) == new Vect3D(0,0,0));
     }
 
+    public @Test
+    void testStringMultiPerc() throws Exception {
+        PhysicalModel pm = new PhysicalModel("toto", 100);
+        int[] dim = new int[1];
+        dim[0] = 3;
+        pm.init();
+        pm.addMacroMass("macro", "BoundedIterator", "LEFT1|RIGHT1", "GridContainer", dim);
+        //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
+        pm.addMacroInteraction("SpringDamper", "string",
+                "macro", "macro",
+                "BoundedIterator", "LEFT0|RIGHT1",
+                "BoundedIterator", "LEFT1|RIGHT0"
+        );
+        pm.addModule("Mass3D", "perc");
+        pm.addMacroInteraction("Contact", "ping",
+                "macro", "perc",
+                "BoundedIterator", "LEFT1|RIGHT1", "StaticIterator", "0");
 
+        pm.computeNSteps(3);
+    }
 }
