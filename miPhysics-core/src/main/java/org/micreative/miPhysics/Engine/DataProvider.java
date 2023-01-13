@@ -48,4 +48,14 @@ abstract public class DataProvider {
     public void setName(String name) {
         this.name = name;
     }
+
+    public float getOffset() {
+        return offset;
+    }
+
+    public void setOffset(float offset) {
+        this.offset = offset;
+    }
+
+    protected float offset;
 }

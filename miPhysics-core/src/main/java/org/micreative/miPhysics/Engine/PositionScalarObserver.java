@@ -10,11 +10,14 @@ import java.lang.reflect.InvocationTargetException;
 public class PositionScalarObserver extends ModuleObserver {
     protected Index posIndex;
     protected Vect3D projection;
+
+
     PositionScalarObserver(Module module_, Index posIndex_, Vect3D projection_)
     {
         super(module_,"position");
         posIndex=posIndex_;
         projection=projection_;
+        offset = 0.f;
     }
     public void init() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
        /*
@@ -27,6 +30,6 @@ public class PositionScalarObserver extends ModuleObserver {
     @Override
     public void gatherData() throws Exception
     {
-        data=module.getPoint(posIndex).scalarProduct(projection);
+        data=module.getPoint(posIndex).scalarProduct(projection)- offset;
     }
 }
