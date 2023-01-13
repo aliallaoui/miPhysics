@@ -65,7 +65,8 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     public miPhyAudioClient(float sampleRate,int inputChannelCount, int outputChannelCount, int bufferSize, String serverType) throws Exception
     {
         super("AudioPhysicalModel",(int)sampleRate); //maybe not a good thing to have a default name
-        outputBuffers = new ArrayList<OutputBuffer>(outputChannelCount);
+        outputBuffers = new ArrayList<>(outputChannelCount);
+        inputBuffers = new ArrayList<>(inputChannelCount);
         for(int i=0;i< inputChannelCount;i++) addAudioInputChannel(i);
 
         AudioServerProvider provider = null;
@@ -178,32 +179,91 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
     }
 
     public static void main(String[] args) throws Exception {
-        miPhyAudioClient pm = miPhyAudioClient.miPhyJack(44100.f,5,2);
+        miPhyAudioClient pm = miPhyAudioClient.miPhyJack(44100.f,9,2);
         int[] dim = new int[1];
-        dim[0] = 3;
+        dim[0] = 11;
         Index iA = new Index(0);
         Index iB = new Index(1);
+
+        for(int i=1;i<3;i++) {
+            pm.addMacroMass("macro"+i,"BoundedIterator","LEFT1|RIGHT1","GridContainer",dim);
+            pm.getModule("macro" +i).setParam("center",new Vect3D(0,(i-1)*5,0));
+
+            pm.addMacroInteraction("SpringDamper","string"+i,
+                    "macro"+i,"macro"+i,
+                    "BoundedIterator","LEFT0|RIGHT1",
+                    "BoundedIterator","LEFT1|RIGHT0"
+            );
+            pm.addModule("Mass3D","perc"+i);
+            pm.addMacroInteraction("Contact","ping"+i,
+                    "macro"+i,"perc"+i,
+                    "StaticIterator","5","StaticIterator","0");
+
+            pm.addPositionScalarObserver("micro"+i,"macro"+i,iB,new Vect3D(0,1,0));
+            pm.addAudioOutputChannel(i-1,pm.getDataProvider("micro"+i));
+
+            pm.addScalarController("percControlX" + i, "perc" + i,
+                    "audioInput" + (9 * (i - 1)), "PointX", new Index(0));
+            pm.addScalarController("percControlY" + i, "perc" + i,
+                    "audioInput" + (1 + 9 * (i - 1)), "PointY", new Index(0));
+            pm.addScalarController("percControlZ" + i, "perc" + i,
+                    "audioInput" + (2 + 9 * (i - 1)), "PointZ", new Index(0));
+
+            pm.addModuleController("stiffControl" + i, "string" + i, "audioInput" + (3 + 9 * (i - 1)), "stiffness");
+            pm.addModuleController("dampingControl" + i, "string" + i, "audioInput" + (4 + 9 * (i - 1)), "damping");
+
+            //    pm.addModuleController("stretchControl" + i, "macro" + i, "audioInput" + (5 + 9 * (i - 1)), "stretchFactor");
+
+            pm.addModuleController("stiffPingControl" + i, "ping" + i, "audioInput" + (6 + 9 * (i - 1)), "stiffness");
+            pm.addModuleController("dampingPingControl" + i, "ping" + i, "audioInput" +(7 + 9 * (i - 1)), "damping");
+
+            pm.addModuleController("frictionControl" + i, "macro" + i, "audioInput" + (8 + 9 * (i - 1)), "friction");
+            // pm.getModule("ping").setParam("restDistance",2);
+
+        }
+
+        /*
+        try
+        {
         pm.addMacroMass("macro","BoundedIterator","LEFT1|RIGHT1","GridContainer",dim);
-//  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
+
+        //  pm.getModule("macro").setGravity(new Vect3D(0,-0.001,0));
         pm.addMacroInteraction("SpringDamper","string",
                 "macro","macro",
                 "BoundedIterator","LEFT0|RIGHT1",
                 "BoundedIterator","LEFT1|RIGHT0"
         );
-        pm.getModule("string").setParam("restLength",5);
-        pm.addModule("Mass3D","perc");
-      /*  pm.addMacroInteraction("Contact","ping",
-                "macro","perc",
-                "StaticIterator","1","StaticIterator","0");
-       */
-        pm.addInteraction("ConstantForce", "macrodfq", "macro", "macro", "StaticIterator", "1", "StaticIterator", "0");
-        pm.addModuleController("percControl","macrodfq","audioInput0","forceY");
 
+        pm.addModule("Mass3D","perc");
+        pm.addMacroInteraction("Contact","ping",
+                "macro","perc",
+                "StaticIterator","5","StaticIterator","0");
 
         pm.addPositionScalarObserver("micro","macro",iB,new Vect3D(0,1,0));
         pm.addAudioOutputChannel(0,pm.getDataProvider("micro"));
         pm.addAudioOutputChannel(1,pm.getDataProvider("micro"));
-     /*   pm.addPositionScalarController("percControl","perc",
+        pm.addScalarController("percControl","perc",
+                "audioInput0","PointY",new Index(0));
+        pm.addScalarController("percControlX","perc",
+                "audioInput7","PointX",new Index(0));
+        pm.addScalarController("percControlZ","perc",
+                "audioInput8","PointZ",new Index(0));
+
+        pm.addModuleController("stiffControl","string","audioInput1","stiffness");
+        pm.addModuleController("dampingControl","string","audioInput2","damping");
+
+        pm.addModuleController("stretchControl","macro","audioInput3","stretchFactor");
+
+        pm.addModuleController("stiffPingControl","ping","audioInput4","stiffness");
+        pm.addModuleController("dampingPingControl","ping","audioInput5","damping");
+
+        pm.addModuleController("frictionControl","macro","audioInput6","friction");
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);	    ;
+        }
+        /*   pm.addPositionScalarController("percControl","perc",
                 "audioInput0","PointY",new Index(0));
         pm.addModuleController("stiffControl","string","audioInput1","stiffness");
         pm.addModuleController("dampingControl","string","audioInput2","damping");
@@ -211,13 +271,12 @@ public class miPhyAudioClient extends PhysicalModel implements  AudioClient {
 
         pm.addModuleController("stretchControl","macro","audioInput4","stretchFactor");
        */
-        AbstractIterator it = pm.getModule("macro").getMassesIterator();
         pm.init();
       //  pm.getModule("macro").setPointR(iB,
       //          Vect3D.add(new Vect3D(0,1,0),pm.getModule("macro").getPoint(iB)));
 
         pm.setComputePhysics(true);
-        pm.setMute(true);
+        pm.setMute(false);
         pm.start();
 
 
