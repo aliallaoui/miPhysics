@@ -25,7 +25,13 @@ public class ModuleController implements AbstractController
 
     public void setData() throws Exception {
  //       System.out.println("control " + controlledData + " on " + module.getType());
-        module.setParam(writeMethod,dataProvider.getData());
+        try {
+            module.setParam(writeMethod, dataProvider.getData());
+        }
+        catch(Exception e)
+        {
+            System.out.println(name + " could not set " + controlledData + " on ");
+        }
     }
 
 
