@@ -22,7 +22,7 @@ public abstract class Module implements AbstractModule {
         for(Map.Entry<String,String> param:params.entrySet()) {
             setParam(param.getKey(), param.getValue());
         }
-        init();
+
     }
 
     public String getType()
